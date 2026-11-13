@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_PROFILE, calcAge, currentWeight, goalProgress, migrateLegacy, ageOf } from '../src/services/profileService'
-import { suggestWeekdays, scheduleNotes, buildDefaultPlan } from '../src/services/planningService'
-import { prescribe } from '../src/services/progressionService'
-import { fitToTime } from '../src/services/workoutService'
-import { loadStatus } from '../src/services/fatigueService'
-import { planAdjustment } from '../src/services/progressionService'
-import { readiness } from '../src/services/recoveryService'
-import { recommendWeight } from '../src/services/progressionService'
+import { DEFAULT_PROFILE, calcAge, currentWeight, goalProgress, migrateLegacy, ageOf } from '../src/shared/services/profileService'
+import { suggestWeekdays, scheduleNotes, composeWeek, defaultCombatPlan } from '../src/shared/services/planningService'
+import { prescribe } from '../src/modules/gym/services/progressionService'
+import { fitToTime } from '../src/modules/gym/services/workoutService'
+import { loadStatus } from '../src/shared/services/fatigueService'
+import { planAdjustment } from '../src/shared/services/adjustmentService'
+import { readiness } from '../src/shared/services/recoveryService'
+import { recommendWeight } from '../src/modules/gym/services/progressionService'
 import type { Activity, BodyEntry, Goal, Profile, Session, Wellness } from '../src/types'
 
 const DAY = 86400000
@@ -108,7 +108,7 @@ describe('entrenador', () => {
   })
   it('avisa de choques con Jiu-Jitsu y disponibilidad', () => {
     const p = { ...profile, availableDays: [0, 1, 2] }
-    const plan = buildDefaultPlan() // combate: martes y viernes
+    const plan = composeWeek(undefined, defaultCombatPlan(), {}) // combate: martes y viernes
     const notes = scheduleNotes(p, [{ id: 'a', name: 'Pierna', weekdays: [1], exercises: [] }, { id: 'b', name: 'Torso', weekdays: [5], exercises: [] }], plan)
     expect(notes.join('|')).toMatch(/Pierna.*martes.*combate/)
     expect(notes.join('|')).toMatch(/Torso.*sábado.*fuera/)

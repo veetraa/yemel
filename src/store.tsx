@@ -1,14 +1,20 @@
+/**
+ * Store raíz. Solo gestiona lo COMPARTIDO: perfil, recuperación, medidas, carga global y las dos
+ * fuentes de entrenamiento que alimentan el motor (gimnasio: rutinas/sesiones; combate: plan/actividades).
+ * Filosofía y los vídeos de Combat tienen sus propios proveedores.
+ */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { dbAll, dbClearAll, dbDelete, dbGet, dbPut, requestPersistence, type StoreName } from './lib/db'
-import { setCustomExercises, type Exercise } from './data/exercises'
-import { uid } from './lib/utils'
-import { fitToTime, buildWorkout, defaultHybridRoutine, activeRoutine } from './services/workoutService'
-import { planAdjustment, type Adjustment } from './services/progressionService'
-import { applyIfValid, buildDefaultPlan, syncRoutineWeekdays, type PlanIssue } from './services/planningService'
-import { currentWeight, DEFAULT_PROFILE, DEFAULT_SETTINGS, migrateLegacy, migrateProfile } from './services/profileService'
-import { endDeload, snoozeDeload, startDeload } from './services/recoveryService'
-import { mergeById, parseBackup, type AppliedBundle } from './services/importExportService'
-import type { Activity, ActiveWorkout, BackupFile, BodyEntry, EngineCtx, Profile, Routine, RoutineDay, Session, Settings, Wellness, WeekPlan } from './types'
+import { dbAll, dbClearAll, dbClearCore, dbDelete, dbGet, dbPut, requestPersistence, type StoreName } from './shared/lib/db'
+import { backupContributors } from './shared/lib/backupRegistry'
+import { setCustomExercises, type Exercise } from './modules/gym/data/exercises'
+import { uid } from './shared/lib/utils'
+import { fitToTime, buildWorkout, defaultHybridRoutine, activeRoutine } from './modules/gym/services/workoutService'
+import { planAdjustment, type Adjustment } from './shared/services/adjustmentService'
+import { DEFAULT_REST_DAYS, composeWeek, defaultCombatPlan, migrateLegacyPlan, tryAssignGymDays, tryChangeCombat, tryChangeRestDays, type PlanIssue } from './shared/services/planningService'
+import { currentWeight, DEFAULT_PROFILE, DEFAULT_SETTINGS, migrateLegacy, migrateProfile } from './shared/services/profileService'
+import { endDeload, snoozeDeload, startDeload } from './shared/services/recoveryService'
+import { mergeById, parseBackup, type AppliedBundle } from './shared/services/hybridImportService'
+import type { Activity, ActiveWorkout, BackupFile, BodyEntry, CombatPlan, EngineCtx, Profile, Routine, RoutineDay, Session, Settings, WeekPlan, Wellness } from './types'
 
 export { DEFAULT_SETTINGS }
 
@@ -19,6 +25,8 @@ export interface StartOpts {
   fitMinutes?: number
 }
 
+export type WeekResult = { ok: boolean; issues: PlanIssue[] }
+
 interface Store {
   ready: boolean
   settings: Settings
@@ -27,15 +35,18 @@ interface Store {
   sessions: Session[]
   body: BodyEntry[]
   wellness: Wellness[]
+  /** Registro de entrenamiento fuera del gimnasio (combate, movilidad…) */
   activities: Activity[]
-  plan: WeekPlan
+  combatPlan: CombatPlan
   customExercises: Exercise[]
   active: ActiveWorkout | null
   toast: string | null
   /** Peso corporal actual (última medición o dato del perfil) */
   weight?: number
-  /** Rutina enlazada con el plan semanal */
+  /** Rutina de gimnasio activa */
   planRoutine?: Routine
+  /** Semana DERIVADA (gym + combat + recuperación). No se guarda. */
+  plan: WeekPlan
   /** Contexto con el que los servicios analizan al atleta */
   ctx: EngineCtx
   adjustment: Adjustment
@@ -52,9 +63,14 @@ interface Store {
   updateSession: (id: string, p: Partial<Session>) => void
   saveRoutine: (r: Routine) => void
   deleteRoutine: (id: string) => void
-  /** Cambia el plan solo si respeta las reglas de recuperación */
-  changePlan: (fn: (p: WeekPlan) => WeekPlan) => { ok: boolean; issues: PlanIssue[] }
-  resetPlan: () => void
+  /** GYM: días de la semana de un día de rutina (solo si respeta las reglas de recuperación) */
+  setGymDays: (dayId: string, weekdays: number[]) => WeekResult
+  /** COMBAT: cambia sus sesiones planificadas (solo si respeta las reglas de recuperación) */
+  changeCombatPlan: (fn: (c: CombatPlan) => CombatPlan) => WeekResult
+  /** Recuperación global: días de descanso completo */
+  setRestDays: (days: number[]) => WeekResult
+  /** Restaura gimnasio (días), combate y descansos a la configuración del propietario */
+  resetWeek: () => void
   applyImport: (a: AppliedBundle) => void
   deloadAction: (a: 'start' | 'end' | 'snooze') => void
   startWorkout: (routine: Routine | undefined, day: RoutineDay | undefined, opts?: StartOpts) => void
@@ -82,7 +98,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [body, setBody] = useState<BodyEntry[]>([])
   const [wellness, setWellness] = useState<Wellness[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
-  const [plan, setPlan] = useState<WeekPlan>(() => buildDefaultPlan())
+  const [combatPlan, setCombatPlan] = useState<CombatPlan>(() => defaultCombatPlan())
   const [customs, setCustoms] = useState<Exercise[]>([])
   const [active, setActive] = useState<ActiveWorkout | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -90,10 +106,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     ;(async () => {
-      const [s, p, r, ss, a, b, w, ac, pl, cx] = await Promise.all([
+      const [s, p, r, ss, a, b, w, ac, cp, legacy, cx] = await Promise.all([
         dbGet<Record<string, unknown>>('kv', 'settings'), dbGet<Profile>('kv', 'profile'), dbAll<Routine>('routines'), dbAll<Session>('sessions'),
         dbGet<ActiveWorkout>('kv', 'active'), dbAll<BodyEntry>('body'), dbAll<Wellness>('wellness'), dbAll<Activity>('activities'),
-        dbGet<WeekPlan>('kv', 'plan'), dbGet<Exercise[]>('kv', 'customExercises'),
+        dbGet<CombatPlan>('kv', 'combatPlan'), dbGet<WeekPlan>('kv', 'plan'), dbGet<Exercise[]>('kv', 'customExercises'),
       ])
       setCustomExercises(cx ?? [])
       setCustoms(cx ?? [])
@@ -101,25 +117,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       let prof: Profile
       if (p) {
         prof = migrateProfile({ ...DEFAULT_PROFILE, ...p } as Profile)
-        if (prof !== p && !p.athleteType) void dbPut('kv', 'profile', prof)
+        if (prof !== p) void dbPut('kv', 'profile', prof)
       } else {
         prof = migrateLegacy(s)
         void dbPut('kv', 'profile', prof)
       }
       let routs = r
-      let planV = pl
-      if (!planV) {
-        // Primera ejecución con planificación: se siembra la configuración híbrida del propietario
-        let hr = routs.find((x) => x.id === 'hybrid-default')
-        if (!hr) { hr = defaultHybridRoutine(); routs = [hr, ...routs]; void dbPut('routines', hr.id, hr) }
-        planV = buildDefaultPlan(hr)
-        void dbPut('kv', 'plan', planV)
-        st = { ...st, activeRoutineId: hr.id }
-        void dbPut('kv', 'settings', st)
+      let cplan = cp
+      if (!cplan) {
+        if (legacy) {
+          // Versión anterior: la semana mezclada se reparte en datos propios de cada dominio
+          const m = migrateLegacyPlan(legacy)
+          cplan = m.combat
+          prof = { ...prof, restDays: m.restDays.length ? m.restDays : DEFAULT_REST_DAYS }
+          void dbPut('kv', 'profile', prof)
+          void dbDelete('kv', 'plan')
+        } else {
+          let hr = routs.find((x) => x.id === 'hybrid-default')
+          if (!hr) { hr = defaultHybridRoutine(); routs = [hr, ...routs]; void dbPut('routines', hr.id, hr) }
+          cplan = defaultCombatPlan()
+          st = { ...st, activeRoutineId: hr.id }
+          void dbPut('kv', 'settings', st)
+        }
+        void dbPut('kv', 'combatPlan', cplan)
       }
       setSettings(st)
       setProfile(prof)
-      setPlan(planV)
+      setCombatPlan(cplan)
       setRoutines(routs.sort((x, y) => y.updatedAt - x.updatedAt))
       setSessions(ss.sort((x, y) => y.endedAt - x.endedAt))
       setBody(b.sort(byTsDesc))
@@ -187,7 +211,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setActivities((cur) => cur.filter((x) => x.id !== id))
   }, [])
 
-  // ── Rutinas ──
+  // ── Rutinas (GYM) ──
   const saveRoutine = useCallback((r: Routine) => {
     const n = { ...r, updatedAt: Date.now() }
     void dbPut('routines', n.id, n)
@@ -209,44 +233,48 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       void dbPut('kv', 'settings', s)
       return s
     })
-    // Las franjas de gimnasio enlazadas a esa rutina se desenlazan
-    setPlan((cur) => {
-      if (cur.routineId !== id) return cur
-      const n = { ...cur, routineId: undefined, slots: cur.slots.map((s) => ({ ...s, routineDayId: undefined })) }
-      void dbPut('kv', 'plan', n)
-      return n
-    })
   }, [])
 
   const weight = useMemo(() => currentWeight(profile, body), [profile, body])
-  const planRoutine = useMemo(() => routines.find((r) => r.id === plan.routineId) ?? activeRoutine(routines, settings), [routines, plan.routineId, settings])
+  const planRoutine = useMemo(() => activeRoutine(routines, settings), [routines, settings])
+  const plan = useMemo(() => composeWeek(planRoutine, combatPlan, profile), [planRoutine, combatPlan, profile])
   const ctx = useMemo<EngineCtx>(() => ({ profile: { ...profile, weightKg: weight }, sessions, activities, wellness, plan, routine: planRoutine }), [profile, weight, sessions, activities, wellness, plan, planRoutine])
   const adjustment = useMemo(() => planAdjustment(ctx), [ctx])
 
-  // ── Plan semanal ──
-  const persistPlan = useCallback((p: WeekPlan, routine?: Routine) => {
-    setPlan(p)
-    void dbPut('kv', 'plan', p)
-    if (routine) {
-      const synced = syncRoutineWeekdays(routine, p)
-      void dbPut('routines', synced.id, synced)
-      setRoutines((cur) => cur.map((r) => (r.id === synced.id ? synced : r)))
-    }
-  }, [])
+  // ── Semana: cada dominio edita lo suyo, validado contra las reglas globales de recuperación ──
+  const persistCombat = useCallback((c: CombatPlan) => { setCombatPlan(c); void dbPut('kv', 'combatPlan', c) }, [])
 
-  const changePlan = useCallback((fn: (p: WeekPlan) => WeekPlan) => {
-    const candidate = fn(plan)
-    const res = applyIfValid(plan, candidate, profile, planRoutine)
-    if (res.ok) persistPlan(res.plan, planRoutine)
-    return { ok: res.ok, issues: res.issues }
-  }, [plan, profile, planRoutine, persistPlan])
+  const setGymDays = useCallback((dayId: string, weekdays: number[]): WeekResult => {
+    if (!planRoutine) return { ok: false, issues: [] }
+    const r = tryAssignGymDays(planRoutine, dayId, weekdays, combatPlan, profile)
+    if (r.ok) saveRoutine(r.routine)
+    return { ok: r.ok, issues: r.issues }
+  }, [planRoutine, combatPlan, profile, saveRoutine])
 
-  const resetPlan = useCallback(() => {
+  const changeCombatPlan = useCallback((fn: (c: CombatPlan) => CombatPlan): WeekResult => {
+    const cand = { ...fn(combatPlan), updatedAt: Date.now() }
+    const r = tryChangeCombat(combatPlan, cand, planRoutine, profile)
+    if (r.ok) persistCombat(r.combat)
+    return { ok: r.ok, issues: r.issues }
+  }, [combatPlan, planRoutine, profile, persistCombat])
+
+  const setRestDays = useCallback((days: number[]): WeekResult => {
+    const r = tryChangeRestDays(days, planRoutine, combatPlan, profile)
+    if (r.ok) updateProfile({ restDays: days })
+    return { ok: r.ok, issues: r.issues }
+  }, [planRoutine, combatPlan, profile, updateProfile])
+
+  const resetWeek = useCallback(() => {
     let hr = routines.find((r) => r.id === 'hybrid-default')
-    if (!hr) { hr = defaultHybridRoutine(); void dbPut('routines', hr.id, hr); setRoutines((cur) => [hr!, ...cur]) }
-    persistPlan(buildDefaultPlan(hr), hr)
-    updateSettings({ activeRoutineId: hr.id })
-  }, [routines, persistPlan, updateSettings])
+    const fresh = defaultHybridRoutine()
+    if (!hr) { hr = fresh; setRoutines((cur) => [fresh, ...cur]) } else hr = { ...hr, days: hr.days.map((d) => ({ ...d, weekdays: fresh.days.find((x) => x.id === d.id)?.weekdays ?? [] })) }
+    void dbPut('routines', hr.id, hr)
+    const final = hr
+    setRoutines((cur) => [final, ...cur.filter((x) => x.id !== final.id)])
+    persistCombat(defaultCombatPlan())
+    updateProfile({ restDays: DEFAULT_REST_DAYS })
+    updateSettings({ activeRoutineId: final.id })
+  }, [routines, persistCombat, updateProfile, updateSettings])
 
   const applyImport = useCallback((a: AppliedBundle) => {
     if (a.customExercises.length) {
@@ -263,9 +291,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setRoutines((cur) => [r, ...cur.filter((x) => x.id !== r.id)])
       updateSettings({ activeRoutineId: r.id })
     }
-    if (a.plan) persistPlan({ ...a.plan, routineId: a.routine?.id ?? a.plan.routineId, updatedAt: Date.now() })
+    if (a.combatPlan) persistCombat({ ...a.combatPlan, updatedAt: Date.now() })
     if (a.profilePatch) updateProfile(a.profilePatch)
-  }, [persistPlan, updateSettings, updateProfile])
+  }, [persistCombat, updateSettings, updateProfile])
 
   const deloadAction = useCallback((act: 'start' | 'end' | 'snooze') => {
     updateProfile(act === 'start' ? startDeload() : act === 'end' ? endDeload() : snoozeDeload())
@@ -338,9 +366,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setSessions((cur) => cur.filter((s) => s.id !== id))
   }, [])
 
-  const exportBackup = useCallback((): BackupFile => ({
-    app: 'forma', version: 3, exportedAt: new Date().toISOString(), settings, profile, routines, sessions, body, wellness, activities, plan, customExercises: customs,
-  }), [settings, profile, routines, sessions, body, wellness, activities, plan, customs])
+  const exportBackup = useCallback((): BackupFile => {
+    const out: BackupFile = {
+      app: 'forma', version: 4, exportedAt: new Date().toISOString(), settings, profile, routines, sessions, body, wellness, activities, combatPlan, customExercises: customs,
+    }
+    for (const c of backupContributors()) (out as unknown as Record<string, unknown>)[c.key] = c.export()
+    return out
+  }, [settings, profile, routines, sessions, body, wellness, activities, combatPlan, customs])
 
   const importBackup = useCallback((text: string, mode: 'merge' | 'replace') => {
     const parsed = parseBackup(text)
@@ -351,51 +383,52 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const mergedB = mergeById(data.body, body, mode).sort(byTsDesc)
     const mergedW = mergeById(data.wellness, wellness, mode).sort(byIdDesc)
     const mergedA = mergeById(data.activities, activities, mode).sort(byTsDesc)
-    const incomingCx = (data.customExercises ?? []) as Exercise[]
-    const mergedC = mergeById(incomingCx, customs, mode)
-    // Merge: se conserva el perfil/plan actual salvo que esté vacío; replace: se usa el de la copia
-    const newProfile: Profile | undefined = mode === 'replace'
+    const mergedC = mergeById((data.customExercises ?? []) as Exercise[], customs, mode)
+    // v3 guardaba una semana mezclada: se reparte en datos propios de cada dominio
+    const legacy = data.plan ? migrateLegacyPlan(data.plan) : undefined
+    let newProfile: Profile | undefined = mode === 'replace'
       ? data.profile ? migrateProfile({ ...DEFAULT_PROFILE, ...data.profile } as Profile) : migrateLegacy(data.settings as unknown as Record<string, unknown>)
       : !profile.name && data.profile ? migrateProfile({ ...DEFAULT_PROFILE, ...data.profile } as Profile) : undefined
+    if (legacy && newProfile && !data.combatPlan) newProfile = { ...newProfile, restDays: legacy.restDays.length ? legacy.restDays : DEFAULT_REST_DAYS }
+    const newCombat = mode === 'replace' ? data.combatPlan ?? legacy?.combat : undefined
     const newSettings = mode === 'replace' && data.settings ? { ...DEFAULT_SETTINGS, ...data.settings } : undefined
-    const newPlan = mode === 'replace' ? data.plan : undefined
     void (async () => {
-      if (mode === 'replace') await dbClearAll()
+      if (mode === 'replace') await dbClearCore()
       const put = <T extends { id: string }>(store: StoreName, items: T[]) => Promise.all(items.map((x) => dbPut(store, x.id, x)))
       await Promise.all([put('routines', mergedR), put('sessions', mergedS), put('body', mergedB), put('wellness', mergedW), put('activities', mergedA)])
       await dbPut('kv', 'customExercises', mergedC)
-      if (newProfile) await dbPut('kv', 'profile', newProfile)
-      else if (mode === 'replace') await dbPut('kv', 'profile', profile)
-      if (newSettings) await dbPut('kv', 'settings', newSettings)
-      else if (mode === 'replace') await dbPut('kv', 'settings', settings)
-      await dbPut('kv', 'plan', newPlan ?? plan)
+      await dbPut('kv', 'profile', newProfile ?? profile)
+      await dbPut('kv', 'settings', newSettings ?? settings)
+      await dbPut('kv', 'combatPlan', newCombat ?? combatPlan)
     })()
+    for (const c of backupContributors()) { const d = (data as unknown as Record<string, unknown>)[c.key]; if (d !== undefined || mode === 'replace') c.import(d, mode) }
     setRoutines(mergedR); setSessions(mergedS); setBody(mergedB); setWellness(mergedW); setActivities(mergedA)
     setCustoms(mergedC); setCustomExercises(mergedC)
     if (newProfile) setProfile(newProfile)
     if (newSettings) setSettings(newSettings)
-    if (newPlan) setPlan(newPlan)
+    if (newCombat) setCombatPlan(newCombat)
     if (mode === 'replace') setActive(null)
     return { ok: true, message: `Importadas ${data.routines.length} rutinas y ${data.sessions.length} sesiones${data.profile ? ' (con perfil)' : ''}.` }
-  }, [routines, sessions, body, wellness, activities, customs, profile, settings, plan])
+  }, [routines, sessions, body, wellness, activities, customs, profile, settings, combatPlan])
 
-  /** Vuelve a la configuración de fábrica del propietario (perfil híbrido + plan + rutina GYM A/B/C) */
+  /** Vuelve a la configuración de fábrica del propietario (perfil híbrido + semana + rutina GYM A/B/C) */
   const resetAll = useCallback(async () => {
     await dbClearAll()
+    for (const c of backupContributors()) await c.reset()
     const hr = defaultHybridRoutine()
-    const pl = buildDefaultPlan(hr)
+    const cp = defaultCombatPlan()
     const st = { ...DEFAULT_SETTINGS, activeRoutineId: hr.id }
-    await Promise.all([dbPut('routines', hr.id, hr), dbPut('kv', 'plan', pl), dbPut('kv', 'settings', st), dbPut('kv', 'profile', DEFAULT_PROFILE)])
+    await Promise.all([dbPut('routines', hr.id, hr), dbPut('kv', 'combatPlan', cp), dbPut('kv', 'settings', st), dbPut('kv', 'profile', DEFAULT_PROFILE)])
     setCustomExercises([])
     setCustoms([]); setRoutines([hr]); setSessions([]); setBody([]); setWellness([]); setActivities([]); setActive(null)
-    setSettings(st); setProfile(DEFAULT_PROFILE); setPlan(pl)
+    setSettings(st); setProfile(DEFAULT_PROFILE); setCombatPlan(cp)
   }, [])
 
   const value = useMemo<Store>(() => ({
-    ready, settings, profile, routines, sessions, body, wellness, activities, plan, customExercises: customs, active, toast, weight, planRoutine, ctx, adjustment,
+    ready, settings, profile, routines, sessions, body, wellness, activities, combatPlan, customExercises: customs, active, toast, weight, planRoutine, plan, ctx, adjustment,
     showToast, updateSettings, updateProfile, setCurrentWeight, saveBody, deleteBody, saveWellness, deleteWellness, addActivity, deleteActivity, updateSession,
-    saveRoutine, deleteRoutine, changePlan, resetPlan, applyImport, deloadAction, startWorkout, updateActive, finishWorkout, cancelWorkout, deleteSession, exportBackup, importBackup, resetAll,
-  }), [ready, settings, profile, routines, sessions, body, wellness, activities, plan, customs, active, toast, weight, planRoutine, ctx, adjustment, showToast, updateSettings, updateProfile, setCurrentWeight, saveBody, deleteBody, saveWellness, deleteWellness, addActivity, deleteActivity, updateSession, saveRoutine, deleteRoutine, changePlan, resetPlan, applyImport, deloadAction, startWorkout, updateActive, finishWorkout, cancelWorkout, deleteSession, exportBackup, importBackup, resetAll])
+    saveRoutine, deleteRoutine, setGymDays, changeCombatPlan, setRestDays, resetWeek, applyImport, deloadAction, startWorkout, updateActive, finishWorkout, cancelWorkout, deleteSession, exportBackup, importBackup, resetAll,
+  }), [ready, settings, profile, routines, sessions, body, wellness, activities, combatPlan, customs, active, toast, weight, planRoutine, plan, ctx, adjustment, showToast, updateSettings, updateProfile, setCurrentWeight, saveBody, deleteBody, saveWellness, deleteWellness, addActivity, deleteActivity, updateSession, saveRoutine, deleteRoutine, setGymDays, changeCombatPlan, setRestDays, resetWeek, applyImport, deloadAction, startWorkout, updateActive, finishWorkout, cancelWorkout, deleteSession, exportBackup, importBackup, resetAll])
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

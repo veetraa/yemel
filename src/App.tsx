@@ -1,41 +1,38 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect } from 'react'
-import { Icon } from './components/Icon'
+import { Icon } from './shared/components/Icon'
 import { useNav, type Screen, type Tab } from './nav'
 import { useStore } from './store'
-import { HomeScreen } from './screens/Home'
-import { RoutinesScreen } from './screens/Routines'
-import { TrainScreen } from './screens/Train'
-import { ProgressScreen } from './screens/Progress'
-import { ProfileScreen } from './screens/Profile'
-import { RoutineDetail } from './screens/RoutineDetail'
-import { RoutineEditorScreen } from './screens/RoutineEditorScreen'
-import { ImportScreen } from './screens/Import'
-import { LibraryScreen, ExerciseDetail } from './screens/Library'
-import { SessionDetail, SummaryScreen } from './screens/SessionDetail'
-import { PlanScreen } from './screens/Plan'
-import { MobilityScreen } from './screens/Mobility'
+import { HomeScreen } from './modules/home/screens/Home'
+import { GymRoot, renderGymScreen } from './modules/gym/routes'
+import { CombatRoot, renderCombatScreen } from './modules/combat/routes'
+import { PhilosophyRoot, renderPhilosophyScreen } from './modules/philosophy/routes'
+import { ProgressScreen } from './modules/progress/screens/Progress'
+import { ProfileScreen } from './modules/profile/screens/Profile'
+import { ImportScreen } from './shared/screens/ImportScreen'
+import { WeekOverview } from './shared/screens/WeekOverview'
+import { MobilityScreen } from './shared/screens/Mobility'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'home', label: 'Inicio', icon: 'home' },
-  { id: 'routines', label: 'Rutinas', icon: 'list' },
-  { id: 'train', label: 'Entrenar', icon: 'bolt' },
+  { id: 'gym', label: 'Gym', icon: 'gym' },
+  { id: 'combat', label: 'Combat', icon: 'glove' },
+  { id: 'philosophy', label: 'Filosofía', icon: 'column' },
   { id: 'progress', label: 'Progreso', icon: 'chart' },
   { id: 'profile', label: 'Perfil', icon: 'user' },
 ]
 
+/** Cada módulo renderiza solo sus rutas (prefijo `gym.`, `combat.`, `philo.`). */
 function renderScreen(s: Screen) {
+  if (s.name.startsWith('gym.')) return renderGymScreen(s)
+  if (s.name.startsWith('combat.')) return renderCombatScreen(s)
+  if (s.name.startsWith('philo.')) return renderPhilosophyScreen(s)
   switch (s.name) {
-    case 'routine': return <RoutineDetail id={s.id} />
-    case 'editRoutine': return <RoutineEditorScreen id={s.id} />
-    case 'import': return <ImportScreen />
-    case 'library': return <LibraryScreen />
-    case 'exercise': return <ExerciseDetail id={s.id} />
-    case 'session': return <SessionDetail id={s.id} />
-    case 'summary': return <SummaryScreen id={s.id} />
-    case 'plan': return <PlanScreen />
-    case 'mobility': return <MobilityScreen />
+    case 'shared.week': return <WeekOverview />
+    case 'shared.mobility': return <MobilityScreen />
+    case 'profile.hybridImport': return <ImportScreen scope="hybrid" />
   }
+  return null
 }
 
 export default function App() {
@@ -61,8 +58,9 @@ export default function App() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.16 }} className="absolute inset-0">
             {tab === 'home' && <HomeScreen />}
-            {tab === 'routines' && <RoutinesScreen />}
-            {tab === 'train' && <TrainScreen />}
+            {tab === 'gym' && <GymRoot />}
+            {tab === 'combat' && <CombatRoot />}
+            {tab === 'philosophy' && <PhilosophyRoot />}
             {tab === 'progress' && <ProgressScreen />}
             {tab === 'profile' && <ProfileScreen />}
           </motion.div>
@@ -78,18 +76,18 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <nav className="shrink-0 z-40 bg-bg/95 backdrop-blur border-t border-line/70 pb-safe">
-        <div className="flex h-[60px]">
+      <nav aria-label="Navegación principal" className="shrink-0 z-40 bg-bg/95 backdrop-blur border-t border-line/70 pb-safe pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+        <div className="flex h-[54px]">
           {TABS.map((t) => {
             const on = tab === t.id
             return (
-              <button key={t.id} onClick={() => setTab(t.id)} className={`relative flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${on ? 'text-white' : 'text-dim'}`}>
+              <button key={t.id} onClick={() => setTab(t.id)} aria-label={t.label} aria-current={on ? 'page' : undefined} className={`relative flex-1 min-w-0 flex flex-col items-center justify-center gap-[3px] transition-colors ${on ? 'text-white' : 'text-dim'}`}>
                 <span className="relative">
-                  <Icon name={t.icon} size={23} stroke={on ? 2.2 : 1.8} />
-                  {t.id === 'train' && active && <span className="absolute -top-0.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />}
+                  <Icon name={t.icon} size={22} stroke={on ? 2.1 : 1.7} />
+                  {t.id === 'gym' && active && <span className="absolute -top-0.5 -right-1.5 w-2 h-2 rounded-full bg-accent animate-pulse" />}
                 </span>
-                <span className="text-[10.5px] font-semibold tracking-wide">{t.label}</span>
-                {on && <motion.span layoutId="tabdot" className="absolute top-0 h-[2px] w-8 bg-accent rounded-full" />}
+                <span className="text-[9.5px] font-semibold tracking-wide leading-none">{t.label}</span>
+                {on && <motion.span layoutId="tabdot" className="absolute top-0 h-[2px] w-7 bg-accent rounded-full" />}
               </button>
             )
           })}

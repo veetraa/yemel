@@ -2,6 +2,21 @@
 
 PWA de fuerza e hipertrofia, **gratis, local-first, sin cuentas ni suscripciones**. React + TypeScript + Vite + Tailwind + Framer Motion + IndexedDB. Funciona sin conexión una vez instalada.
 
+## Navegación: seis apartados independientes
+
+`Inicio · Gym · Combat · Filosofía · Progreso · Perfil` (barra inferior con iconos minimalistas, etiquetas cortas y safe areas de iPhone). Cada apartado tiene su propia pantalla, rutas y subnavegación.
+
+| Apartado | Contenido (y solo ese) |
+|---|---|
+| **Gym** | Hoy (entrenar con series, pesos recomendados y temporizador de descanso) · Rutinas (con importación de ChatGPT) · Biblioteca de ejercicios animados · Cargas (historial de lo levantado) |
+| **Combat** | Resumen (próxima sesión, mi semana de combate, importar) · **MMA · BJJ · Boxeo · Kickboxing · Wrestling**, cada una con su propia biblioteca técnica (con animaciones de ejecución en solitario), entrenos, vídeos propios (archivos privados en el iPhone o enlaces), historial y consejos |
+| **Filosofía** | Estoicismo y desarrollo mental: frase del día, frases (por tema), filósofos, reflexiones guiadas, pilares (disciplina, autocontrol, resiliencia), diario personal y favoritos |
+| **Progreso** | General (historial de todo, con filtros) · Gym · Combat (por disciplina) · Cuerpo (evolución física) |
+| **Inicio** | Resumen de las áreas sin mezclar funciones (cada tarjeta lleva a su sección) + indicadores globales de recuperación |
+| **Perfil** | Expediente del atleta y ajustes; semana y recuperación global; importación híbrida; copias de seguridad |
+
+Gym no contiene técnicas de combate, Combat no contiene rutinas de musculación y Filosofía es una experiencia aparte. **Se comparten únicamente** los datos generales del perfil y los indicadores globales de recuperación y carga.
+
 ## Funciones
 
 - **Inicio**: saludo, entrenamiento de hoy / próximo, resumen semanal (anillo de objetivo, días, tiempo, volumen), últimos entrenamientos y botón **COMENZAR ENTRENAMIENTO**.
@@ -40,33 +55,36 @@ Perfil único precargado: **Balanced Hybrid Athlete**, disciplina principal **MM
 | Sábado | GYM C — full body, estabilidad y agarre |
 | Domingo | Descanso completo |
 
-- **Semana editable** (Rutinas → Mi semana): puedes cambiar o intercambiar cualquier día; los cambios que rompan las reglas de recuperación (mín. 2 días de recuperación/descanso y 1 de descanso completo, máx. 3 días de entrenamiento seguidos) **no se aplican** y se explica por qué. Avisa de piernas antes/después de combate intenso, días duros seguidos y días fuera de tu disponibilidad.
+- **Semana editable por sección** (días de gym en Gym → Rutinas, sesiones en Combat → Resumen, descansos en Perfil → Semana y recuperación): los cambios que rompan las reglas de recuperación (mín. 2 días de recuperación/descanso y 1 de descanso completo, máx. 3 días de entrenamiento seguidos) **no se aplican** y se explica por qué. Avisa de piernas antes/después de combate intenso, días duros seguidos y días fuera de tu disponibilidad.
 - **Combate**: Striking, Boxeo, Kickboxing, Wrestling, Brazilian Jiu-Jitsu, Grappling, Transiciones y Defensa/escapes. Se registran técnica, duración, intensidad, RPE, sparring (y rondas), habilidades y observaciones. **No se asume intensidad**: hay que indicar intensidad o RPE, y el sparring realizado es una opción explícita.
 - **Recuperación activa**: sesión guiada de movilidad (RPE 2) que cuenta como carga baja.
 - **Motor de carga y recuperación** (carga interna = duración × RPE de gimnasio, combate y movilidad en un único total): recorta series y carga con recuperación baja o carga semanal muy alta, modera el tren inferior antes y después de combate exigente, omite accesorios cuando un músculo ya acumula mucho volumen semanal, bloquea subidas de peso injustificadas y detecta días duros seguidos.
 - **Semana de descarga** configurable (cada 4-6 semanas): se **sugiere** solo si la recuperación, la carga o el estancamiento lo justifican; nunca se impone y se puede posponer o iniciar a voluntad.
 
-## Importación unificada desde ChatGPT
+## Importación desde ChatGPT (independiente por sección)
 
-Un único JSON (o texto estructurado) vale para **rutinas de gimnasio**, **planificaciones de MMA**, **semanas híbridas completas**, **ejercicios personalizados** y datos de atleta. Antes de guardar, la app comprueba conflictos de horarios, volumen y recuperación; si la semana propuesta rompe las reglas, ofrece importar el resto sin la semana. Los ejercicios personalizados aparecen en la biblioteca con animación.
+- **Gym → Rutinas → Importar:** solo rutinas de musculación y ejercicios de fuerza personalizados.
+- **Combat → Resumen → Importar:** solo sesiones/planificación de combate.
+- **Perfil → Importar planificación híbrida:** un único JSON con rutina, semana, combate y atleta; cada parte se entrega a su módulo.
+
+Cada importador ignora (con aviso) lo que pertenece a otra sección. Antes de guardar, la app comprueba conflictos de horarios, volumen y recuperación; si la semana propuesta rompe las reglas, ofrece importar el resto sin la semana. Los ejercicios personalizados aparecen en la biblioteca con animación.
 
 ## Arquitectura
 
-Lógica de dominio en `src/services/` (TypeScript, tipos compartidos en `src/types.ts`), sin dependencias de React:
+```
+src/
+  modules/
+    gym/         types · data (ejercicios, animaciones) · services (workout, progression, gymImport) · components · screens · routes
+    combat/      types · data (biblioteca por disciplina, animaciones) · services (combat, combatLibrary, combatImport) · store (vídeos) · components · screens · routes
+    philosophy/  types · data (frases, filósofos, reflexiones, pilares) · services (philosophy) · store (diario, favoritos) · screens · routes
+    progress/ home/ profile/   pantallas de resumen (orquestan, no poseen datos)
+  shared/        perfil, recuperación, carga global, planificación, motor de ajuste, UI y utilidades comunes
+```
 
-| Servicio | Responsabilidad |
-|---|---|
-| `profileService` | perfil único, edad, objetivos y progreso, migración |
-| `workoutService` | sesiones, estadísticas, rutina GYM A/B/C, construcción del entrenamiento del día |
-| `combatService` | catálogo de disciplinas, validación y resúmenes de combate |
-| `planningService` | semana tipo, validación de reglas de recuperación, edición segura |
-| `fatigueService` | carga interna, días duros, ratio agudo/crónico, volumen semanal |
-| `progressionService` | progresión de pesos y motor de ajuste (recuperación, combate cercano, descarga) |
-| `recoveryService` | recuperación percibida, semana de descarga, recuperación activa |
-| `philosophyService` | **única fuente** de umbrales y principios del entrenador |
-| `importExportService` | importación unificada, análisis de conflictos y copias de seguridad |
-
-Historial con fuente única: gimnasio en `sessions`, resto de disciplinas en `activities`; la semana (`plan`) deriva los días de rutina, sin duplicarlos. Persistencia local en IndexedDB.
+- **Cada sección es dueña de sus modelos, servicios, rutas y componentes.** Un test automático (`tests/architecture.test.ts`) impide que Gym, Combat y Filosofía se importen entre sí y limita a cuatro archivos documentados lo que `shared` puede tomar de ellas.
+- **Servicios compartidos** (`shared/services`): `profileService`, `recoveryService` (recuperación percibida, semana de descarga), `fatigueService` (carga interna = duración × RPE de todas las disciplinas), `planningService` (semana derivada y reglas de recuperación), `adjustmentService` (motor global que combina recuperación, carga y proximidad de combate), `principlesService` (única fuente de umbrales) e `hybridImportService`.
+- **Sin duplicar datos:** la semana **no se guarda**, se deriva de tres fuentes independientes: los días de cada rutina de Gym, las sesiones de Combat y los días de descanso del perfil. Cada sección edita solo lo suyo y todo cambio se valida contra las reglas globales de recuperación.
+- **Datos propios:** gimnasio en `sessions`, combate/recuperación en `activities`, diario y favoritos en sus propios almacenes de IndexedDB. Los módulos con datos propios se enganchan a la copia de seguridad mediante un registro, sin que el store raíz conozca su modelo.
 
 ## Formato JSON para ChatGPT
 

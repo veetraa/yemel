@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { parseJsonRoutine, parseTextRoutine, parseAuto, parseRest, hasErrors, routineToJson } from '../src/services/importExportService'
-import { recommendWeight } from '../src/services/progressionService'
+import { parseJsonRoutine, parseTextRoutine, parseAuto, parseRest, hasErrors, routineToJson } from '../src/modules/gym/services/gymImportService'
+import { recommendWeight } from '../src/modules/gym/services/progressionService'
 import type { Session } from '../src/types'
 
 const settings = { experience: 'intermediate' as const, bodyWeight: 80 }
