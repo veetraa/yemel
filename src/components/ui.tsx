@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { haptic } from '../lib/utils'
 import { Icon } from './Icon'
 
@@ -48,8 +49,9 @@ export function Chip({ children, active, onClick, className = '' }: { children: 
   return onClick ? <button onClick={onClick} className={base}>{children}</button> : <span className={base}>{children}</span>
 }
 
+/** Hoja inferior. Se pinta en un portal para quedar siempre por encima de la barra de navegación. */
 export function Sheet({ open, onClose, children, title }: { open: boolean; onClose: () => void; children: ReactNode; title?: string }) {
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -62,7 +64,8 @@ export function Sheet({ open, onClose, children, title }: { open: boolean; onClo
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 

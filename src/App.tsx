@@ -13,6 +13,8 @@ import { RoutineEditorScreen } from './screens/RoutineEditorScreen'
 import { ImportScreen } from './screens/Import'
 import { LibraryScreen, ExerciseDetail } from './screens/Library'
 import { SessionDetail, SummaryScreen } from './screens/SessionDetail'
+import { PlanScreen } from './screens/Plan'
+import { MobilityScreen } from './screens/Mobility'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'home', label: 'Inicio', icon: 'home' },
@@ -31,6 +33,8 @@ function renderScreen(s: Screen) {
     case 'exercise': return <ExerciseDetail id={s.id} />
     case 'session': return <SessionDetail id={s.id} />
     case 'summary': return <SummaryScreen id={s.id} />
+    case 'plan': return <PlanScreen />
+    case 'mobility': return <MobilityScreen />
   }
 }
 

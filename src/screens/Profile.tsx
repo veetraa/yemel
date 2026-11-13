@@ -4,10 +4,11 @@ import { Accordion, Seg } from '../components/fields'
 import { Icon } from '../components/Icon'
 import { Button, Header, Label, Row, Sheet, Toggle } from '../components/ui'
 import { copyText, readFileText, saveTextFile } from '../lib/files'
-import { loadStatus, readiness } from '../lib/coach'
-import { GOAL_KIND_LABEL, ageOf, goalProgress } from '../lib/profile'
-import { chatGptPrompt } from '../lib/prompt'
-import { personalRecords, streakWeeks } from '../lib/stats'
+import { loadStatus } from '../services/fatigueService'
+import { readiness } from '../services/recoveryService'
+import { GOAL_KIND_LABEL, ageOf, goalProgress } from '../services/profileService'
+import { chatGptPrompt } from '../services/importExportService'
+import { personalRecords, streakWeeks } from '../services/workoutService'
 import { formatNumber, WEEKDAYS_SHORT } from '../lib/utils'
 import { useNav } from '../nav'
 import { useStore } from '../store'
@@ -57,7 +58,7 @@ export function ProfileScreen() {
           <input ref={photo} type="file" accept="image/*" className="hidden" onChange={async (e) => {
             const f = e.target.files?.[0]; e.target.value = ''
             if (!f) return
-            const { resizeImage } = await import('../lib/profile')
+            const { resizeImage } = await import('../services/profileService')
             try { updateProfile({ photo: await resizeImage(f, 480) }); showToast('Foto guardada solo en este dispositivo') } catch { showToast('No se pudo leer la imagen') }
           }} />
           <div className="min-w-0">

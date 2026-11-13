@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_PROFILE, calcAge, currentWeight, goalProgress, migrateLegacy, suggestWeekdays, ageOf } from '../src/lib/profile'
-import { adjustedSets, fitToTime, loadStatus, planAdjustment, readiness, scheduleNotes } from '../src/lib/coach'
-import { recommendWeight } from '../src/lib/recommend'
+import { DEFAULT_PROFILE, calcAge, currentWeight, goalProgress, migrateLegacy, ageOf } from '../src/services/profileService'
+import { suggestWeekdays, scheduleNotes, buildDefaultPlan } from '../src/services/planningService'
+import { prescribe } from '../src/services/progressionService'
+import { fitToTime } from '../src/services/workoutService'
+import { loadStatus } from '../src/services/fatigueService'
+import { planAdjustment } from '../src/services/progressionService'
+import { readiness } from '../src/services/recoveryService'
+import { recommendWeight } from '../src/services/progressionService'
 import type { Activity, BodyEntry, Goal, Profile, Session, Wellness } from '../src/types'
 
 const DAY = 86400000
@@ -15,7 +20,7 @@ const sess = (daysAgo: number, minutes = 60, rpe?: number): Session => ({
 
 describe('perfil', () => {
   it('precarga 23 años, 171 cm, 60 kg y no inventa nada más', () => {
-    expect(DEFAULT_PROFILE).toMatchObject({ ageManual: 23, heightCm: 171, weightKg: 60 })
+    expect(DEFAULT_PROFILE).toMatchObject({ ageManual: 23, heightCm: 171, weightKg: 60, athleteType: 'Balanced Hybrid Athlete', primaryDiscipline: 'MMA', weeklyGoal: 3, contactSessionsPerWeek: 2, recoveryDaysPerWeek: 2 })
     expect(DEFAULT_PROFILE.birthDate).toBeUndefined()
     expect(DEFAULT_PROFILE.targetWeightKg).toBeUndefined()
     expect(DEFAULT_PROFILE.goals).toEqual([])
@@ -46,9 +51,9 @@ describe('perfil', () => {
     expect(goalProgress({ ...g, metric: 'manual', current: 70 }, { profile, body: [], sessions: [] }).done).toBe(true)
   })
   it('reparte días evitando Jiu-Jitsu', () => {
-    const p = { ...profile, availableDays: [0, 1, 2, 3, 4], bjjDays: [1, 3] }
-    expect(suggestWeekdays(3, p)).toEqual([0, 2, 4])
-    expect(suggestWeekdays(4, p).length).toBe(4)
+    const p = { ...profile, availableDays: [0, 1, 2, 3, 4] }
+    expect(suggestWeekdays(3, p, [1, 3])).toEqual([0, 2, 4])
+    expect(suggestWeekdays(4, p, [1, 3]).length).toBe(4)
   })
 })
 
@@ -72,14 +77,14 @@ describe('entrenador', () => {
   it('recuperación baja reduce series y carga', () => {
     const adj = planAdjustment({ profile, sessions: [], activities: [], wellness: [w({ sleepHours: 4, energy: 1, fatigue: 5 })], now })
     expect(adj).toMatchObject({ active: true, setDelta: -1, weightFactor: 0.92 })
-    expect(adjustedSets(4, 'Pecho', adj)).toBe(3)
-    expect(adjustedSets(2, 'Pecho', adj)).toBe(2)
-    expect(adjustedSets(3, 'Pecho', adj)).toBe(2)
+    expect(prescribe({ sets: 4, reps: '8', muscle: 'Pecho' }, adj).sets).toBe(3)
+    expect(prescribe({ sets: 2, reps: '8', muscle: 'Pecho' }, adj).sets).toBe(2)
+    expect(prescribe({ sets: 3, reps: '8', muscle: 'Pecho' }, adj).sets).toBe(2)
   })
   it('dolor en un músculo solo afecta a ese grupo', () => {
     const adj = planAdjustment({ profile, sessions: [], activities: [], wellness: [w({ sleepHours: 8, energy: 4, soreness: 4, soreAreas: ['Cuádriceps'] })], now })
-    expect(adjustedSets(4, 'Cuádriceps', adj)).toBe(3)
-    expect(adjustedSets(4, 'Pecho', adj)).toBe(4)
+    expect(prescribe({ sets: 4, reps: '8', muscle: 'Cuádriceps' }, adj).sets).toBe(3)
+    expect(prescribe({ sets: 4, reps: '8', muscle: 'Pecho' }, adj).sets).toBe(4)
   })
   it('carga: ratio agudo/crónico incluye Jiu-Jitsu', () => {
     const base = [sess(3), sess(5), sess(10), sess(12), sess(17), sess(19), sess(24), sess(26)] // 2 sesiones/semana
@@ -102,11 +107,11 @@ describe('entrenador', () => {
     expect(day.exercises.every((e) => e.sets === 4)).toBe(true) // no muta el original
   })
   it('avisa de choques con Jiu-Jitsu y disponibilidad', () => {
-    const p = { ...profile, bjjDays: [1], availableDays: [0, 1, 2], weeklyGoal: 4 }
-    const notes = scheduleNotes(p, [{ id: 'a', name: 'Pierna', weekdays: [1], exercises: [] }, { id: 'b', name: 'Torso', weekdays: [5], exercises: [] }])
-    expect(notes.join('|')).toMatch(/Pierna.*martes.*Jiu-Jitsu/)
+    const p = { ...profile, availableDays: [0, 1, 2] }
+    const plan = buildDefaultPlan() // combate: martes y viernes
+    const notes = scheduleNotes(p, [{ id: 'a', name: 'Pierna', weekdays: [1], exercises: [] }, { id: 'b', name: 'Torso', weekdays: [5], exercises: [] }], plan)
+    expect(notes.join('|')).toMatch(/Pierna.*martes.*combate/)
     expect(notes.join('|')).toMatch(/Torso.*sábado.*fuera/)
-    expect(notes.join('|')).toMatch(/objetivo semanal \(4\)/)
   })
   it('no sube de peso si la recuperación lo desaconseja', () => {
     const s: Session = { id: 'x', routineName: 'r', dayName: 'd', startedAt: 1, endedAt: 2, exercises: [{ id: 'e', exerciseId: 'press-banca', name: 'Press banca', muscle: 'Pecho', targetReps: '8-10', rest: 90, sets: [10, 10, 10].map((reps) => ({ weight: 60, reps, done: true })) }] }

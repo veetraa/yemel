@@ -85,3 +85,14 @@ export function haptic(ms = 10) {
     /* iOS Safari no soporta vibrate */
   }
 }
+
+export const dateKey = (d = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+/** 1RM estimado (Epley) */
+export const epley = (w: number, r: number) => (r <= 1 ? w : w * (1 + r / 30))
+
+export function greeting(d = new Date()) {
+  const h = d.getHours()
+  return h < 6 ? 'Buenas noches' : h < 13 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches'
+}

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { NumInput, Tile, TextInput } from '../../components/fields'
 import { Button } from '../../components/ui'
-import { ageOf, calcAge, resizeImage } from '../../lib/profile'
+import { ageOf, calcAge, resizeImage } from '../../services/profileService'
 import { useStore } from '../../store'
 
 export function PersonalSection() {

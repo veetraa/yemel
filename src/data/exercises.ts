@@ -199,6 +199,26 @@ export const EXERCISES: Exercise[] = [
     ['Rodillas a 90° con las almohadillas sobre los muslos.', 'Sube sobre las puntas.', 'Baja hasta estiramiento completo.'],
     ['Trabaja más el sóleo que la versión de pie.'],
     { aliases: ['seated calf raise', 'gemelos sentado', 'gemelo sentado'], ratio: 0.4 }),
+  E('remo-apoyado', 'Remo con apoyo en pecho', 'Espalda', ['Bíceps', 'Trapecio', 'Antebrazos'], ['Mancuernas', 'Banco inclinado'], 'chestRow',
+    ['Túmbate boca abajo sobre un banco inclinado a 30-45°, pecho apoyado.', 'Deja los brazos colgando con una mancuerna en cada mano.', 'Tira de los codos hacia las caderas juntando las escápulas.', 'Baja despacio hasta estirar la espalda.'],
+    ['El apoyo elimina el impulso: usa menos peso y más control.', 'Ideal cuando las piernas están cargadas por el combate.'],
+    { aliases: ['chest supported row', 'remo apoyado', 'remo con apoyo', 'remo en banco inclinado', 'seal row'], ratio: 0.25, step: 2 }),
+  E('step-ups', 'Step-ups', 'Cuádriceps', ['Glúteos', 'Isquiotibiales', 'Core'], ['Cajón', 'Mancuernas'], 'stepup',
+    ['Apoya todo un pie sobre un cajón o banco a la altura de la rodilla.', 'Sube empujando con la pierna de arriba, sin impulsarte con la de abajo.', 'Baja controlado y repite por pierna antes de cambiar.'],
+    ['Torso erguido y rodilla alineada con el pie.', 'Excelente trabajo unilateral para estabilidad en combate.'],
+    { aliases: ['step up', 'subidas al cajon', 'subidas al banco', 'step-up'], ratio: 0.15, step: 2 }),
+  E('press-landmine', 'Press landmine', 'Hombros', ['Pecho', 'Tríceps', 'Core'], ['Barra', 'Landmine'], 'landmine',
+    ['Fija un extremo de la barra en el suelo o un soporte y sujeta el otro a la altura del hombro.', 'Empuja hacia arriba y adelante hasta extender el brazo.', 'Vuelve controlado sin rotar el torso.'],
+    ['Trayectoria diagonal, amable con el hombro y cercana a un golpe.', 'Apriétate glúteos y abdomen para transmitir fuerza desde el suelo.'],
+    { aliases: ['landmine press', 'press con landmine', 'press landmine a una mano'], ratio: 0.2, step: 2.5 }),
+  E('farmer-walk', 'Farmer walks', 'Antebrazos', ['Trapecio', 'Core', 'Glúteos'], ['Mancuernas', 'Kettlebell'], 'carry',
+    ['Levanta una mancuerna pesada en cada mano con la espalda neutra.', 'Camina 30-40 m con pasos cortos, hombros atrás y abdomen firme.', 'Deja las pesas con control y descansa antes del siguiente recorrido.'],
+    ['El agarre manda: no sueltes ni te inclines hacia un lado.', 'Úsalo como acondicionamiento integrado en el gimnasio.'],
+    { aliases: ['farmer walk', 'farmers walk', 'paseo del granjero', 'paseo del granjero con mancuernas', 'farmer carry', 'farmer walks'], ratio: 0.4, step: 2 }),
+  E('pallof-press', 'Pallof press', 'Core', ['Hombros', 'Glúteos'], ['Polea', 'Bandas elásticas'], 'pallof',
+    ['De pie y de lado a la polea a la altura del pecho, manos pegadas al esternón.', 'Estira los brazos al frente resistiendo que la polea te gire.', 'Mantén 1-2 s y vuelve al pecho sin rotar.'],
+    ['Es anti-rotación: lo difícil es no moverse.', 'Repite por ambos lados con la misma carga.'],
+    { aliases: ['pallof', 'press pallof', 'anti rotacion con polea'], ratio: 0.1, step: 2.5 }),
 
   // CORE
   E('plancha', 'Plancha', 'Core', ['Hombros', 'Glúteos'], ['Peso corporal'], 'plank',
@@ -215,12 +235,16 @@ export const EXERCISES: Exercise[] = [
     { aliases: ['hanging leg raise', 'elevaciones de piernas', 'elevacion de piernas', 'leg raise', 'elevacion de rodillas colgado'], step: 0 }),
 ]
 
-export const exerciseById = (id?: string) => (id ? EXERCISES.find((e) => e.id === id) : undefined)
+// ───────── Ejercicios personalizados (importados o creados por el usuario) ─────────
+let CUSTOM: Exercise[] = []
+let index: { e: Exercise; names: string[] }[] = []
+const rebuild = () => { index = [...EXERCISES, ...CUSTOM].map((e) => ({ e, names: [e.name, ...e.aliases].map(normalize) })) }
+rebuild()
 
-const index = EXERCISES.map((e) => ({
-  e,
-  names: [e.name, ...e.aliases].map(normalize),
-}))
+export const setCustomExercises = (list: Exercise[]) => { CUSTOM = list; rebuild() }
+export const customExercises = () => CUSTOM
+export const allExercises = () => [...EXERCISES, ...CUSTOM]
+export const exerciseById = (id?: string) => (id ? allExercises().find((e) => e.id === id) : undefined)
 
 /** Busca un ejercicio de la biblioteca por nombre (con alias y coincidencia difusa). */
 export function matchExercise(name: string): Exercise | undefined {
@@ -244,7 +268,7 @@ export function matchExercise(name: string): Exercise | undefined {
 
 export function searchExercises(q: string, muscle?: string): Exercise[] {
   const n = normalize(q)
-  return EXERCISES.filter((e) => {
+  return allExercises().filter((e) => {
     if (muscle && e.primary !== muscle && !e.secondary.includes(muscle)) return false
     if (!n) return true
     return [e.name, e.primary, ...e.aliases, ...e.equipment].some((s) => normalize(s).includes(n))

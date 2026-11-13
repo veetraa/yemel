@@ -135,10 +135,25 @@ export interface Profile {
   availableDays: number[]
   sessionMinutes?: number
   equipment: string[]
-  /** Jiu-Jitsu */
-  bjjDays: number[]
-  bjjMinutes?: number
+  /** Duración habitual de una sesión de combate (min) */
+  combatMinutes?: number
   goals: Goal[]
+  // ── Configuración de atleta híbrido ──
+  athleteType?: string
+  primaryDiscipline?: string
+  /** Sesiones de combate/contacto por semana */
+  contactSessionsPerWeek?: number
+  /** Días de recuperación o descanso por semana */
+  recoveryDaysPerWeek?: number
+  /** La preparación física va integrada en las sesiones de gimnasio */
+  conditioningIntegrated?: boolean
+  /** Cada cuántas semanas se sugiere una descarga (4-6) */
+  deloadEveryWeeks?: number
+  /** Semana de descarga en curso */
+  deload?: { startedAt: number; endsAt: number }
+  lastDeloadEndedAt?: number
+  /** La sugerencia de descarga no se muestra hasta esta fecha */
+  deloadSnoozeUntil?: number
 }
 
 export interface BodyEntry {
@@ -167,19 +182,71 @@ export interface Wellness {
   note?: string
 }
 
-/** Actividad fuera de la app de gimnasio (Jiu-Jitsu, carrera…) */
+export type CombatDiscipline =
+  | 'Striking' | 'Boxeo' | 'Kickboxing' | 'Wrestling' | 'Brazilian Jiu-Jitsu' | 'Grappling' | 'Transiciones' | 'Defensa y escapes'
+export type Intensity = 'light' | 'moderate' | 'hard'
+
+/**
+ * Historial de entrenamiento fuera del gimnasio (combate, movilidad, otros).
+ * Es la única fuente de verdad: las sesiones de gimnasio viven en `Session`.
+ */
 export interface Activity {
   id: string
   ts: number
   sport: string
   minutes: number
   rpe: number
+  /** Observaciones personales */
   note?: string
+  kind?: 'combat' | 'recovery' | 'other'
+  disciplines?: CombatDiscipline[]
+  techniques?: string[]
+  intensity?: Intensity
+  sparring?: boolean
+  sparringRounds?: number
+  skills?: string[]
+}
+
+// ── Planificación semanal ──
+export type SlotType = 'gym' | 'combat' | 'recovery' | 'rest'
+export interface CombatTemplate {
+  disciplines: CombatDiscipline[]
+  techniques?: string[]
+  minutes?: number
+  sparring?: boolean
+}
+export interface PlanSlot {
+  /** 0 = lunes … 6 = domingo */
+  day: number
+  type: SlotType
+  label: string
+  focus?: string
+  /** Gimnasio: día de la rutina enlazado */
+  routineDayId?: string
+  intensity?: Intensity
+  combat?: CombatTemplate
+}
+export interface WeekPlan {
+  name: string
+  routineId?: string
+  slots: PlanSlot[]
+  updatedAt: number
+}
+
+/** Contexto que consumen los servicios de análisis */
+export interface EngineCtx {
+  profile: Profile
+  sessions: Session[]
+  activities: Activity[]
+  wellness: Wellness[]
+  plan?: WeekPlan
+  routine?: Routine
+  now?: Date
 }
 
 export interface BackupFile {
   app: 'forma'
-  version: 1 | 2
+  version: 1 | 2 | 3
   exportedAt: string
   settings: Settings
   profile?: Profile
@@ -188,4 +255,6 @@ export interface BackupFile {
   body?: BodyEntry[]
   wellness?: Wellness[]
   activities?: Activity[]
+  plan?: WeekPlan
+  customExercises?: unknown[]
 }

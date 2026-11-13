@@ -6,10 +6,11 @@ import { ExercisePicker } from '../components/RoutineForm'
 import { Button, Header, Label, Sheet, Toggle } from '../components/ui'
 import { exerciseById, matchExercise } from '../data/exercises'
 import { beep, unlockAudio } from '../lib/audio'
-import { readiness } from '../lib/coach'
-import { activeRoutine, estimateMinutes, getPlan } from '../lib/plan'
-import { history, recommendWeight } from '../lib/recommend'
-import { isPR } from '../lib/stats'
+import { readiness } from '../services/recoveryService'
+import { estimateMinutes } from '../services/workoutService'
+import { todayPlan } from '../services/planningService'
+import { history, recommendWeight } from '../services/progressionService'
+import { isPR } from '../services/workoutService'
 import { clamp, formatClock, formatNumber, fromDisplay, haptic, toDisplay, uid } from '../lib/utils'
 import { useNav } from '../nav'
 import { useStore } from '../store'
@@ -35,11 +36,11 @@ export function TrainScreen() {
 
 // ───────────────────────── Selector ─────────────────────────
 function Picker() {
-  const { routines, sessions, settings, profile, adjustment, startWorkout } = useStore()
+  const { settings, profile, adjustment, startWorkout, planRoutine, ctx } = useStore()
   const [adapt, setAdapt] = useState(settings.adaptToRecovery)
   const { push } = useNav()
-  const routine = activeRoutine(routines, settings)
-  const plan = getPlan(routine, sessions)
+  const routine = planRoutine
+  const plan = todayPlan(ctx)
 
   return (
     <div className="scroll h-full pb-8">
@@ -59,7 +60,7 @@ function Picker() {
             )}
             <div className="mt-2">
               {routine.days.map((d) => {
-                const rec = plan.today?.id === d.id
+                const rec = plan.routineDay?.id === d.id
                 const est = estimateMinutes(d)
                 const limit = profile.sessionMinutes
                 const long = !!limit && est > limit
@@ -70,7 +71,7 @@ function Picker() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="text-[18px] font-bold tracking-tight truncate">{d.name}</span>
-                          {rec && <span className="text-[10.5px] font-bold bg-accent text-black rounded-full px-2 py-0.5">{plan.todayDone ? 'HECHO HOY' : plan.rotation ? 'TOCA' : 'HOY'}</span>}
+                          {rec && <span className="text-[10.5px] font-bold bg-accent text-black rounded-full px-2 py-0.5">{plan.done ? 'HECHO HOY' : 'HOY'}</span>}
                         </div>
                         <div className="text-[13px] text-mute mt-1">{d.exercises.length} ejercicios · ~{est} min{long ? ` · tu límite: ${limit} min` : ''}</div>
                       </div>

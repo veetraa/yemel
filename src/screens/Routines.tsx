@@ -1,13 +1,15 @@
 import { Icon } from '../components/Icon'
 import { Button, Chip, Empty, Header, Label } from '../components/ui'
-import { activeRoutine } from '../lib/plan'
+import { activeRoutine } from '../services/workoutService'
 import { WEEKDAYS_SHORT, formatDateShort, uid } from '../lib/utils'
 import { useNav } from '../nav'
 import { useStore } from '../store'
 import type { Routine } from '../types'
+import { SLOT_SHORT, validatePlan, errorsOf } from '../services/planningService'
 
 export function RoutinesScreen() {
-  const { routines, settings, saveRoutine } = useStore()
+  const { routines, settings, saveRoutine, plan, profile, planRoutine } = useStore()
+  const planIssues = validatePlan(plan, profile, planRoutine).filter((i) => i.level !== 'info')
   const { push } = useNav()
   const act = activeRoutine(routines, settings)
 
@@ -27,6 +29,20 @@ export function RoutinesScreen() {
       </div>
 
       <div className="px-6 mt-8">
+        <button onClick={() => push({ name: 'plan' })} className="w-full text-left bg-s1 rounded-2xl p-4 active:bg-s2">
+          <div className="flex items-center"><div className="flex-1"><div className="font-bold">Mi semana</div><div className="text-[12.5px] text-mute mt-0.5">{planIssues.length ? `${errorsOf(planIssues).length ? 'Reglas rotas' : 'Avisos'}: ${planIssues.length}` : 'Equilibrada · gimnasio, combate y recuperación'}</div></div><Icon name="chev" size={18} className="text-dim" /></div>
+          <div className="flex justify-between mt-3">
+            {plan.slots.map((s) => (
+              <div key={s.day} className="flex flex-col items-center gap-1.5">
+                <span className={`w-8 h-8 rounded-full grid place-items-center text-[11px] font-bold ${s.type === 'gym' ? 'bg-white text-black' : s.type === 'combat' ? 'bg-accent text-black' : s.type === 'recovery' ? 'bg-s3 text-white' : 'bg-s2 text-dim'}`}>{SLOT_SHORT[s.type]}</span>
+                <span className="text-[10.5px] font-semibold text-dim">{WEEKDAYS_SHORT[s.day]}</span>
+              </div>
+            ))}
+          </div>
+        </button>
+      </div>
+
+      <div className="px-6 mt-4">
         <button onClick={() => push({ name: 'library' })} className="w-full flex items-center gap-3 py-3 text-left">
           <div className="w-11 h-11 rounded-2xl bg-s2 grid place-items-center text-accent"><Icon name="play" size={20} /></div>
           <div className="flex-1">

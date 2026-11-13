@@ -1,12 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { EXERCISES, MUSCLES, matchExercise, searchExercises } from '../data/exercises'
+import { MUSCLES, exerciseById, matchExercise, searchExercises } from '../data/exercises'
 import type { Routine, RoutineDay, RoutineExercise } from '../types'
 import { WEEKDAYS_SHORT, uid } from '../lib/utils'
 import { ExerciseFigure } from './ExerciseFigure'
 import { Icon } from './Icon'
 import { Button, Label, Sheet } from './ui'
 import { useStore } from '../store'
+import { combatDays } from '../services/planningService'
 
 function NumField({ value, onChange, step = 1, min = 0, max = 9999, decimal = false, suffix, label }: { value: number | undefined; onChange: (n: number | undefined) => void; step?: number; min?: number; max?: number; decimal?: boolean; suffix?: string; label: string }) {
   const [raw, setRaw] = useState<string | null>(null)
@@ -38,7 +39,7 @@ const inputCls = 'w-full bg-s2 rounded-xl h-11 px-3 font-semibold placeholder:te
 
 function ExerciseEditor({ ex, onChange, onDelete, onMove, first, last }: { ex: RoutineExercise; onChange: (e: RoutineExercise) => void; onDelete: () => void; onMove: (d: -1 | 1) => void; first: boolean; last: boolean }) {
   const [open, setOpen] = useState(false)
-  const lib = EXERCISES.find((l) => l.id === ex.exerciseId)
+  const lib = exerciseById(ex.exerciseId)
   const set = (p: Partial<RoutineExercise>) => onChange({ ...ex, ...p })
   return (
     <div className="border-b border-line/70 last:border-0">
@@ -124,7 +125,8 @@ export function ExercisePicker({ open, onClose, onPick }: { open: boolean; onClo
 }
 
 export function RoutineForm({ routine, onChange }: { routine: Routine; onChange: (r: Routine) => void }) {
-  const { profile } = useStore()
+  const { profile, plan } = useStore()
+  const combat = combatDays(plan)
   const [picker, setPicker] = useState<string | null>(null)
   const setDay = (id: string, p: Partial<RoutineDay>) => onChange({ ...routine, days: routine.days.map((d) => (d.id === id ? { ...d, ...p } : d)) })
 
@@ -148,7 +150,7 @@ export function RoutineForm({ routine, onChange }: { routine: Routine; onChange:
               const on = d.weekdays.includes(i)
               return (
                 <button key={i} onClick={() => setDay(d.id, { weekdays: on ? d.weekdays.filter((x) => x !== i) : [...d.weekdays, i].sort() })}
-                  className={`relative w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : profile.availableDays.length && !profile.availableDays.includes(i) ? 'bg-s1 text-dim' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}{profile.bjjDays.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-accent bg-bg rounded px-0.5">JJ</span>}</button>
+                  className={`relative w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : profile.availableDays.length && !profile.availableDays.includes(i) ? 'bg-s1 text-dim' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}{combat.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-accent bg-bg rounded px-0.5">JJ</span>}</button>
               )
             })}
           </div>

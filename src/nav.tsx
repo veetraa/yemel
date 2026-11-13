@@ -9,6 +9,8 @@ export type Screen =
   | { name: 'exercise'; id: string }
   | { name: 'session'; id: string }
   | { name: 'summary'; id: string }
+  | { name: 'plan' }
+  | { name: 'mobility' }
 
 interface Nav {
   tab: Tab
