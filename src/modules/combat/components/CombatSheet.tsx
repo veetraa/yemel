@@ -54,7 +54,6 @@ export function CombatSheet({ open, onClose, preset }: { open: boolean; onClose:
 
   return (
     <Sheet open={open} onClose={() => { onClose() }} title="Registrar sesión de combate">
-      <p className="text-[13.5px] text-mute leading-relaxed">Suma a tu carga semanal. Registra lo que realmente hiciste: una sesión técnica no es un sparring.</p>
       <div className="mt-5 space-y-5">
         <div><SubLabel>Disciplina</SubLabel><MultiChips single options={COMBAT_SECTIONS.map(String)} value={[chosen]} onChange={(v) => { setSport((v[0] as CombatSport) ?? chosen); setTechniques(undefined) }} /></div>
         {chosen === 'MMA' && <div><SubLabel>Áreas trabajadas</SubLabel><MultiChips options={DISCIPLINES} value={ar} onChange={(v) => setAreas(v as CombatDiscipline[])} /></div>}

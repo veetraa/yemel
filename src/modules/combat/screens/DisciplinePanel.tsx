@@ -23,7 +23,6 @@ export function DisciplinePanel({ sport }: { sport: CombatSport }) {
     <div className="scroll h-full pb-8">
       <div className="px-6 pt-4">
         <h2 className="text-[24px] font-bold tracking-tight leading-tight">{sport}</h2>
-        <p className="text-mute text-[14.5px] mt-1 leading-snug">{lib.tagline}</p>
         <div className="flex p-1 bg-s2 rounded-xl mt-4 overflow-x-auto scroll" role="tablist">
           {INNER.map(([k, l]) => (
             <button key={k} role="tab" aria-selected={inner === k} onClick={() => setInner(k)} className={`flex-1 shrink-0 h-9 px-3 rounded-lg text-[13px] font-semibold whitespace-nowrap ${inner === k ? 'bg-s3 text-white' : 'text-mute'}`}>{l}</button>
@@ -32,7 +31,6 @@ export function DisciplinePanel({ sport }: { sport: CombatSport }) {
 
         {inner === 'tech' && (
           <div className="mt-4">
-            <p className="text-[13.5px] text-mute leading-relaxed">{lib.description}</p>
             <div className="flex gap-2 overflow-x-auto scroll mt-4 -mx-6 px-6 pb-1">
               <Chip active={!cat} onClick={() => setCat(undefined)}>Todas</Chip>
               {categoriesOf(sport).map((c) => <Chip key={c} active={cat === c} onClick={() => setCat(cat === c ? undefined : c)}>{c}</Chip>)}

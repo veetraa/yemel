@@ -37,7 +37,7 @@ export function CombatOverview() {
           </>
         ) : <div className="mt-2 text-[22px] font-bold">Sin sesiones planificadas</div>}
         <Button className="w-full mt-5 tracking-[0.06em]" onClick={() => setLog(true)}><Icon name="plus" size={20} stroke={2.4} /> REGISTRAR SESIÓN</Button>
-        {recovery.length > 0 && <p className="mt-4 text-[13px] text-[#ffb340] leading-snug flex gap-2"><Icon name="info" size={16} className="shrink-0 mt-0.5" />Tu indicador de recuperación pide moderar la intensidad hoy: elige técnica y ritmo suave.</p>}
+        {recovery.length > 0 && <p className="mt-4 text-[13px] text-[#ffb340] leading-snug flex gap-2"><Icon name="info" size={16} className="shrink-0 mt-0.5" />Recuperación baja: modera la intensidad hoy.</p>}
       </div>
 
       <div className="px-6 mt-9">
@@ -57,7 +57,6 @@ export function CombatOverview() {
             )
           })}
         </div>
-        <p className="text-[12px] text-dim mt-3 leading-snug">Cada cambio se comprueba contra tus reglas de recuperación globales (días de descanso, días seguidos, piernas antes de combate).</p>
       </div>
 
       <div className="px-6 mt-9">

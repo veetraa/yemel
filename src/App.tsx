@@ -20,7 +20,6 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'gym', label: 'Gym', icon: 'gym' },
   { id: 'combat', label: 'Combat', icon: 'glove' },
   { id: 'philosophy', label: 'Filosofía', icon: 'column' },
-  { id: 'progress', label: 'Progreso', icon: 'chart' },
   { id: 'profile', label: 'Perfil', icon: 'user' },
 ]
 
@@ -32,6 +31,7 @@ function renderScreen(s: Screen) {
   switch (s.name) {
     case 'shared.week': return <WeekOverview />
     case 'shared.mobility': return <MobilityScreen />
+    case 'profile.progress': return <ProgressScreen />
     case 'profile.hybridImport': return <ImportScreen scope="hybrid" />
   }
   return null
@@ -65,7 +65,6 @@ export default function App() {
             {tab === 'gym' && <GymRoot />}
             {tab === 'combat' && <CombatRoot />}
             {tab === 'philosophy' && <PhilosophyRoot />}
-            {tab === 'progress' && <ProgressScreen />}
             {tab === 'profile' && <ProfileScreen />}
           </motion.div>
         </AnimatePresence>

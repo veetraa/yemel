@@ -19,7 +19,7 @@ export function CombatProgress() {
   const all = combatSummary(activities, 30)
   const loads = useMemo(() => weeklyLoads(sessions, activities, 8), [sessions, activities])
   if (!all.sessions && !activities.some((a) => a.kind === 'combat')) return (
-    <div className="scroll h-full"><div className="text-center px-6 py-16"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="glove" size={26} /></div><div className="text-lg font-bold mt-4">Aún no hay datos de combate</div><p className="text-mute text-[15px] leading-relaxed mt-2">Registra tu primera sesión en Combat y aquí verás tu volumen, intensidad y evolución por disciplina.</p><button onClick={() => go('combat', 'overview')} className="mt-5 h-12 px-6 rounded-2xl bg-accent text-black font-bold">Ir a Combat</button></div></div>
+    <div className="scroll h-full"><div className="text-center px-6 py-16"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="glove" size={26} /></div><div className="text-lg font-bold mt-4">Aún no hay datos de combate</div><p className="text-mute text-[15px] leading-relaxed mt-2">Registra tu primera sesión.</p><button onClick={() => go('combat', 'overview')} className="mt-5 h-12 px-6 rounded-2xl bg-accent text-black font-bold">Ir a Combat</button></div></div>
   )
   return (
     <div className="scroll h-full pb-10"><div className="px-6 pt-5">
@@ -28,7 +28,6 @@ export function CombatProgress() {
       </div>
       <Label className="mt-10">Carga de combate semanal</Label>
       <div className="mt-3"><BarChart unit="UA" data={loads.map((w, i) => ({ label: i === loads.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, value: Math.round(w.combat), highlight: i === loads.length - 1 }))} /></div>
-      <p className="text-[12px] text-dim mt-1 leading-snug">Carga interna de combate = minutos × RPE de tus sesiones.</p>
 
       <Label className="mt-10">Por disciplina · 30 días</Label>
       <div className="mt-2">

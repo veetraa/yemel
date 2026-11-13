@@ -25,7 +25,7 @@ export function RecoverySection() {
 
   return (
     <>
-      <p className="text-[13.5px] text-mute leading-relaxed">Registro voluntario de cómo te sientes hoy. Se usa para adaptar tus entrenamientos; no es un diagnóstico médico. Deja en blanco lo que no quieras indicar.</p>
+      <p className="text-[13.5px] text-mute leading-relaxed">Opcional. No es un diagnóstico médico.</p>
       <NumInput label="Horas de sueño (anoche)" unit="h" decimal max={16} value={w.sleepHours} onChange={(n) => set({ sleepHours: n })} />
       <Rating label="Calidad del descanso" value={w.sleepQuality} onChange={(v) => set({ sleepQuality: v })} low="mala" high="excelente" />
       <Rating label="Nivel de energía" value={w.energy} onChange={(v) => set({ energy: v })} low="sin energía" high="mucha" />
@@ -53,7 +53,7 @@ export function RecoverySection() {
             </div>
           ))}
         </div>
-        <p className="text-[11.5px] text-dim mt-3">Verde: recuperación buena · ámbar: media · rojo: baja · gris: sin registro.</p>
+        <p className="text-[11.5px] text-dim mt-3">Verde buena · ámbar media · rojo baja · gris sin registro.</p>
       </div>
     </>
   )

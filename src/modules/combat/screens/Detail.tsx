@@ -58,7 +58,6 @@ export function TrainingDetail({ sport, id }: { sport: string; id: string }) {
           <div key={i} className="flex gap-4 py-4 border-b border-line/70 last:border-0"><span className="num w-12 shrink-0 text-glow font-bold">{b.minutes}′</span><div><div className="font-semibold">{b.name}</div><div className="text-[14px] text-mute leading-snug mt-0.5">{b.detail}</div></div></div>
         ))}</div>
         {names.length > 0 && <p className="text-[13.5px] text-mute mt-6 leading-relaxed"><span className="text-white font-semibold">Técnicas clave:</span> {names.join(' · ')}</p>}
-        <p className="text-[12px] text-dim mt-4 leading-snug">La intensidad es orientativa: al registrarla se guarda la que realmente tuvo.</p>
         <Button className="w-full mt-8" onClick={() => setLog(true)}>REGISTRAR ESTA SESIÓN</Button>
       </div>
       <CombatSheet open={log} onClose={() => setLog(false)} preset={{ sport, minutes: t.minutes, techniques: names }} />

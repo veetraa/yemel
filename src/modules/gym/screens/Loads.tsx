@@ -26,7 +26,7 @@ export function LoadsPanel() {
           <div className="text-center px-6 py-14">
             <div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="chart" size={26} /></div>
             <div className="text-lg font-bold mt-4">Aún no hay cargas</div>
-            <p className="text-mute text-[15px] leading-relaxed mt-2">Completa series en un entrenamiento de gimnasio y aquí verás lo que has levantado en cada ejercicio.</p>
+            <p className="text-mute text-[15px] leading-relaxed mt-2">Completa series para ver tus cargas.</p>
           </div>
         ) : (
           <>

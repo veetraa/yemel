@@ -32,8 +32,7 @@ function Form({ init, isNew, blocked, onSave, onDelete }: { init: CombatSlot; is
       <div><SubLabel>Disciplina</SubLabel><MultiChips single options={COMBAT_SECTIONS.map(String)} value={[d.sport]} onChange={(v) => { const s = (v[0] as CombatSport) ?? d.sport; set({ sport: s, label: d.label === d.sport ? s : d.label }) }} /></div>
       <TextInput label="Nombre" value={d.label} onChange={(v) => set({ label: v })} />
       <TextInput label="Enfoque" value={d.focus ?? ''} onChange={(v) => set({ focus: v || undefined })} placeholder="Opcional" />
-      <div><SubLabel>Intensidad prevista</SubLabel><Seg<Intensity> value={d.intensity} onChange={(v) => set({ intensity: v })} options={(['light', 'moderate', 'hard'] as Intensity[]).map((v) => ({ v, l: INTENSITY_LABEL[v] }))} />
-        <p className="text-[12px] text-dim mt-2">No todo el combate es intenso: una sesión técnica es ligera.</p></div>
+      <div><SubLabel>Intensidad prevista</SubLabel><Seg<Intensity> value={d.intensity} onChange={(v) => set({ intensity: v })} options={(['light', 'moderate', 'hard'] as Intensity[]).map((v) => ({ v, l: INTENSITY_LABEL[v] }))} /></div>
       {d.sport === 'MMA' && <div><SubLabel>Áreas</SubLabel><MultiChips options={DISCIPLINES} value={d.areas} onChange={(v) => set({ areas: v as CombatDiscipline[] })} /></div>}
       <div className="bg-s1 rounded-2xl p-4 flex items-center"><div className="flex-1"><div className="font-semibold">Sparring previsto</div><div className="text-[12.5px] text-mute">Modera las piernas del día anterior</div></div><Toggle on={d.sparring} onChange={(v) => set({ sparring: v })} /></div>
       <NumInput label="Duración habitual" unit="min" value={d.minutes} max={300} onChange={(n) => set({ minutes: n })} />

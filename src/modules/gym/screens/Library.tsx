@@ -59,7 +59,7 @@ export function ExerciseDetail({ id }: { id: string }) {
       <div className="scroll flex-1 pb-10">
         <div className="mx-6 rounded-3xl bg-s1 aspect-[4/3] grid place-items-center overflow-hidden relative">
           <ExerciseFigure anim={e.anim} primary={e.primary} className="w-[88%] h-[92%]" />
-          <span className="absolute left-4 bottom-3 text-[11px] font-semibold uppercase tracking-wider text-dim">Bucle de ejecución</span>
+          <span className="absolute left-4 bottom-3 text-[11px] font-semibold uppercase tracking-wider text-dim">Ejecución</span>
         </div>
         <div className="px-6 mt-6">
           <h1 className="display text-[44px]">{e.name}</h1>

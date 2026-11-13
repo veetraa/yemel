@@ -22,7 +22,7 @@ import type { SlotType } from '../../../types'
 
 const DAY = 86400000
 const DOT: Record<SlotType, string> = { gym: 'bg-white/90 text-black', combat: 'bg-accent/90 text-black', recovery: 'bg-s3 text-white', rest: 'bg-s2 text-dim' }
-const TODAY_LABEL: Record<SlotType, string> = { gym: 'Hoy toca gimnasio', combat: 'Hoy toca combate', recovery: 'Hoy toca recuperación activa', rest: 'Hoy es descanso completo' }
+const TODAY_LABEL: Record<SlotType, string> = { gym: 'Gimnasio', combat: 'Combate', recovery: 'Recuperación activa', rest: 'Descanso' }
 
 function Card({ icon, title, children, onClick, cta }: { icon: string; title: string; children: React.ReactNode; onClick: () => void; cta: string }) {
   return (
@@ -74,11 +74,11 @@ export function HomeScreen() {
       <div className="px-6 mt-7 space-y-3">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <Card icon="gym" title="Gym" cta={active ? 'Continuar' : 'Ir a Gym'} onClick={() => go('gym', 'today')}>
-            {active ? <><div className="display-b text-[28px]">{active.dayName}</div><div className="text-[13.5px] text-glow mt-1 font-semibold">Entrenamiento en curso</div></>
+            {active ? <><div className="display-b text-[28px]">{active.dayName}</div><div className="text-[13.5px] text-glow mt-1 font-semibold">En curso</div></>
               : gym ? <><div className="text-[12.5px] text-mute font-semibold">{gym.label === 'Hoy' ? 'Hoy' : `Próximo · ${gym.label}`}</div>
                 <div className="display-b text-[28px] mt-0.5">{gym.day.name}</div>
                 <div className="text-[13.5px] text-mute mt-1">{gym.day.exercises.length} ejercicios · ~{estimateMinutes(gym.day)} min</div></>
-              : <div className="text-[15px] text-mute">Sin días de gimnasio asignados.</div>}
+              : <div className="text-[15px] text-mute">Sin días asignados.</div>}
             {lastGym && <div className="text-[12px] text-dim mt-3">Último: {lastGym.dayName} · {ago(lastGym.endedAt)}</div>}
           </Card>
         </motion.div>
@@ -91,7 +91,7 @@ export function HomeScreen() {
                 {combat.slot.intensity && <span className="text-[11.5px] font-semibold bg-s2 rounded-full px-2.5 py-1">Intensidad {INTENSITY_LABEL[combat.slot.intensity].toLowerCase()}</span>}
                 {combat.slot.combat?.sparring && <span className="text-[11.5px] font-semibold text-glow border border-glow/50 rounded-full px-2.5 py-1">Sparring</span>}
               </div></>
-              : <div className="text-[15px] text-mute">Sin sesiones de combate planificadas.</div>}
+              : <div className="text-[15px] text-mute">Sin sesiones planificadas.</div>}
             {lastCombat && <div className="text-[12px] text-dim mt-3">Última: {lastCombat.sport} · {ago(lastCombat.ts)} · RPE {lastCombat.rpe}</div>}
           </Card>
         </motion.div>
@@ -109,32 +109,32 @@ export function HomeScreen() {
         <Label>Recuperación</Label>
         {t.slot?.type === 'recovery' && !t.done && (
           <button onClick={() => push({ name: 'shared.mobility' })} className="mt-3 w-full flex items-center gap-3 bg-s1 rounded-2xl px-4 py-3.5 text-left active:bg-s2">
-            <Icon name="clock" size={20} className="text-glow" /><div className="flex-1"><div className="font-semibold text-[15px]">Sesión de recuperación activa</div><div className="text-[12.5px] text-mute mt-0.5">Movilidad suave · RPE 2</div></div><Icon name="chev" size={16} className="text-dim" />
+            <Icon name="clock" size={20} className="text-glow" /><div className="flex-1"><div className="font-semibold text-[15px]">Recuperación activa</div><div className="text-[12.5px] text-mute mt-0.5">Movilidad</div></div><Icon name="chev" size={16} className="text-dim" />
           </button>
         )}
         {deload.state === 'active' && (
-          <div className="mt-3 bg-s1 rounded-2xl p-4"><div className="font-bold">Semana de descarga activa</div><p className="text-[13.5px] text-mute mt-1 leading-snug">Hasta el {formatDateShort(deload.endsAt!)}: menos series y menos carga, sin sparring duro.</p><Button variant="secondary" size="sm" className="mt-3" onClick={() => deloadAction('end')}>Terminar descarga</Button></div>
+          <div className="mt-3 bg-s1 rounded-2xl p-4"><div className="font-bold">Descarga activa</div><p className="text-[13.5px] text-mute mt-1 leading-snug">Hasta el {formatDateShort(deload.endsAt!)}</p><Button variant="secondary" size="sm" className="mt-3" onClick={() => deloadAction('end')}>Terminar descarga</Button></div>
         )}
         {(deload.state === 'suggested' || deload.state === 'due-fine') && (
           <div className="mt-3 bg-s1 rounded-2xl p-4">
-            <div className="font-bold">{deload.state === 'suggested' ? 'Te conviene una semana de descarga' : `Llevas ${deload.weeksSince} semanas sin descarga`}</div>
-            <p className="text-[13.5px] text-mute mt-1 leading-snug">{deload.state === 'suggested' ? `${deload.reasons.join('. ')}.` : 'Tu recuperación y tu carga van bien: puedes posponerla sin problema.'} Tú decides.</p>
+            <div className="font-bold">{deload.state === 'suggested' ? 'Descarga recomendada' : `Llevas ${deload.weeksSince} semanas sin descarga`}</div>
+            <p className="text-[13.5px] text-mute mt-1 leading-snug">{deload.state === 'suggested' ? `${deload.reasons.join('. ')}.` : 'Puedes posponerla.'}</p>
             <div className="flex gap-2 mt-3"><Button size="sm" onClick={() => deloadAction('start')}>Iniciar descarga</Button><Button variant="secondary" size="sm" onClick={() => deloadAction('snooze')}>Más adelante</Button></div>
           </div>
         )}
         {adjustment.notes.map((n, i) => <p key={i} className="mt-3 text-[14px] leading-snug text-[#d8d8dc] flex gap-2.5"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-glow" />{n}</p>)}
         {!todayLogged && (
           <button onClick={() => setCheckin(true)} className="mt-3 w-full flex items-center gap-3 bg-s1 rounded-2xl px-4 py-3.5 text-left active:bg-s2">
-            <div className="flex-1"><div className="font-semibold text-[15px]">¿Cómo has dormido y cómo te sientes?</div><div className="text-[12.5px] text-mute mt-0.5">{r.level === 'unknown' ? 'Opcional · adapta tus cargas a tu recuperación' : 'Actualiza el registro de hoy'}</div></div>
+            <div className="flex-1"><div className="font-semibold text-[15px]">Registro de hoy</div><div className="text-[12.5px] text-mute mt-0.5">{r.level === 'unknown' ? 'Sueño y estado' : 'Actualizar'}</div></div>
             <Icon name="chev" size={16} className="text-dim" />
           </button>
         )}
-        {todayLogged && !adjustment.notes.length && deload.state === 'not-due' && <p className="mt-2 text-[14px] text-mute">Recuperación {r.level === 'good' ? 'buena' : r.level === 'moderate' ? 'media' : r.level === 'low' ? 'baja' : 'registrada'}. Sin ajustes necesarios hoy.</p>}
+        {todayLogged && !adjustment.notes.length && deload.state === 'not-due' && <p className="mt-2 text-[14px] text-mute">Recuperación {r.level === 'good' ? 'buena' : r.level === 'moderate' ? 'media' : r.level === 'low' ? 'baja' : 'registrada'}</p>}
       </section>
 
       {/* Progreso: resumen */}
       <section className="px-6 mt-11">
-        <div className="flex items-end justify-between"><Label>Esta semana</Label><button onClick={() => go('progress')} className="text-[12px] font-semibold text-glow">Ver progreso</button></div>
+        <div className="flex items-end justify-between"><Label>Esta semana</Label><button onClick={() => push({ name: 'profile.progress' })} className="text-[12px] font-semibold text-glow">Ver progreso</button></div>
         <div className="mt-4 flex items-center gap-5">
           <Ring value={week.completed / Math.max(1, planned)} size={84} stroke={7}><div className="num text-2xl font-bold leading-none">{week.completed}<span className="text-mute text-base">/{planned}</span></div></Ring>
           <div className="flex-1 flex justify-between">

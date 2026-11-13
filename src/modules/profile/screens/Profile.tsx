@@ -76,8 +76,10 @@ export function ProfileScreen() {
         </div>
         {p.sports.length > 0 && <div className="flex flex-wrap gap-2 mt-5">{p.sports.map((s) => <span key={s} className="text-[12px] font-semibold text-mute bg-s2 rounded-full px-3 py-1">{s}</span>)}</div>}
 
+        <Button variant="secondary" size="md" className="w-full mt-6" onClick={() => push({ name: 'profile.progress' })}><Icon name="chart" size={18} /> Progreso</Button>
+
         {/* Secciones */}
-        <div className="mt-7 border-t border-line/70">
+        <div className="mt-5 border-t border-line/70">
           <Accordion icon="user" title="Datos personales" open={open === 'personal'} onToggle={() => toggle('personal')}
             summary={[age !== undefined && `${age} años`, p.heightCm && `${p.heightCm} cm`, weight !== undefined && `${formatNumber(weight)} kg`].filter(Boolean).join(' · ')}><PersonalSection /></Accordion>
           <Accordion icon="bolt" title="Perfil deportivo" open={open === 'sport'} onToggle={() => toggle('sport')}
@@ -89,7 +91,7 @@ export function ProfileScreen() {
           <Accordion icon="clock" title="Recuperación y fatiga" open={open === 'recovery'} onToggle={() => toggle('recovery')}
             summary={r.level === 'unknown' ? 'Sueño, energía, fatiga, dolor' : `Hoy: recuperación ${r.level === 'good' ? 'buena' : r.level === 'moderate' ? 'media' : 'baja'}`}><RecoverySection /></Accordion>
           <Accordion icon="star" title="Entrenador" open={open === 'coach'} onToggle={() => toggle('coach')}
-            summary={store.adjustment.active ? 'Hay ajustes activos para hoy' : l.level === 'unknown' ? 'Cómo usa tu perfil para adaptar el plan' : 'Sin ajustes necesarios'}><CoachSection /></Accordion>
+            summary={store.adjustment.active ? 'Hay ajustes activos para hoy' : l.level === 'unknown' ? 'Estado' : 'Sin ajustes'}><CoachSection /></Accordion>
           <Accordion icon="file" title="Privacidad y datos" open={open === 'data'} onToggle={() => toggle('data')} summary={`${routines.length} rutinas · ${sessions.length} sesiones · solo en este dispositivo`}>
             <div className="bg-s1 rounded-2xl p-4 text-[13.5px] text-mute leading-relaxed space-y-2">
               <p><b className="text-white">Tu expediente es solo tuyo.</b> No hay cuentas, ni servidores, ni análisis. Todo (incluidas fotos) vive en el almacenamiento de este iPhone y nunca se envía a nadie.</p>
@@ -100,7 +102,7 @@ export function ProfileScreen() {
               <Button variant="secondary" size="md" onClick={() => file.current?.click()}><Icon name="upload" size={17} /> Importar</Button>
             </div>
             <input ref={file} type="file" accept=".json,application/json" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) setPending(await readFileText(f)) }} />
-            <p className="text-[12px] text-dim leading-snug">La copia incluye perfil, fotos e historial. Guárdala en un lugar privado (p. ej. iCloud Drive); quien tenga el archivo puede leerlo.</p>
+            <p className="text-[12px] text-dim leading-snug">La copia incluye tus datos y fotos. Guárdala en un lugar privado.</p>
             <Button variant="danger" size="md" className="w-full" onClick={() => setReset(true)}><Icon name="trash" size={17} /> Eliminar todos mis datos</Button>
           </Accordion>
           <Accordion icon="list" title="Ajustes de la app" open={open === 'app'} onToggle={() => toggle('app')} summary={`${settings.unit === 'kg' ? 'Kilogramos' : 'Libras'} · sonido ${settings.sound ? 'sí' : 'no'}`}>
@@ -111,7 +113,7 @@ export function ProfileScreen() {
                 <Button variant="secondary" size="md" className="flex-1" onClick={() => bg.current?.click()}>{settings.bgPhoto ? 'Cambiar foto' : 'Usar mi foto'}</Button>
                 {settings.bgPhoto && <Button variant="ghost" size="md" onClick={() => updateSettings({ bgPhoto: undefined })}>Automático</Button>}
               </div>
-              <p className="text-[12px] text-dim mt-2 leading-snug">Tu foto se desenfoca y se oscurece para que todo se lea. Solo se guarda en este dispositivo.</p>
+              <p className="text-[12px] text-dim mt-2 leading-snug">Se guarda solo en este dispositivo.</p>
             </div>
             <Seg<Settings['unit']> value={settings.unit} onChange={(v) => updateSettings({ unit: v })} options={[{ v: 'kg', l: 'Kilogramos' }, { v: 'lb', l: 'Libras' }]} />
             <div>
@@ -124,7 +126,7 @@ export function ProfileScreen() {
             </div>
           </Accordion>
         </div>
-        <p className="text-center text-[12px] text-dim mt-8">Forma · gratis, sin cuentas ni suscripción</p>
+        <p className="text-center text-[12px] text-dim mt-8">Forma</p>
       </div>
 
       <Sheet open={pending !== null} onClose={() => setPending(null)} title="Importar copia de seguridad">
@@ -136,7 +138,7 @@ export function ProfileScreen() {
         </div>
       </Sheet>
       <Sheet open={reset} onClose={() => setReset(false)} title="¿Eliminar todos tus datos?">
-        <p className="text-mute leading-relaxed">Se borrarán perfil, fotos, rutinas, historial, medidas y registros de recuperación de este dispositivo. No se puede deshacer; exporta antes una copia si quieres conservarlos.</p>
+        <p className="text-mute leading-relaxed">Se borrarán todos tus datos de este dispositivo. No se puede deshacer.</p>
         <div className="mt-5 flex gap-2"><Button variant="secondary" className="flex-1" onClick={() => setReset(false)}>Cancelar</Button><Button variant="danger" className="flex-1" onClick={async () => { await resetAll(); setReset(false); showToast('Datos eliminados') }}>Eliminar</Button></div>
       </Sheet>
       <Sheet open={install} onClose={() => setInstall(false)} title="Instalar en el iPhone">
@@ -146,7 +148,7 @@ export function ProfileScreen() {
           <li><b>3.</b> Elige <b>«Añadir a pantalla de inicio»</b> y confirma.</li>
           <li><b>4.</b> Ábrela desde el icono: funciona a pantalla completa y <b>sin conexión</b>.</li>
         </ol>
-        <p className="text-[13px] text-mute mt-5 leading-relaxed">Instalada en la pantalla de inicio, iOS no borra tus datos por inactividad. Aun así, exporta copias de vez en cuando.</p>
+        <p className="text-[13px] text-mute mt-5 leading-relaxed">Exporta copias de vez en cuando.</p>
       </Sheet>
     </div>
   )

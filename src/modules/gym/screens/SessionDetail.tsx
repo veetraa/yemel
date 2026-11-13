@@ -96,7 +96,7 @@ export function SummaryScreen({ id }: { id: string }) {
               <button key={n} aria-label={`RPE ${n}`} aria-pressed={s.rpe === n} onClick={() => updateSession(s.id, { rpe: s.rpe === n ? undefined : n })} className={`h-11 rounded-lg num text-[14px] font-bold ${s.rpe === n ? 'bg-accent text-black' : s.rpe && n < s.rpe ? 'bg-s3 text-white' : 'bg-s2 text-mute'}`}>{n}</button>
             ))}
           </div>
-          <p className="text-[11.5px] text-dim mt-2 leading-snug">Ayuda al entrenador a medir tu carga semanal (1 = muy suave · 10 = máximo).</p>
+          <p className="text-[11.5px] text-dim mt-2 leading-snug">1 = muy suave · 10 = máximo.</p>
         </div>
         <div className="mt-10">
           <Label>Resumen</Label>

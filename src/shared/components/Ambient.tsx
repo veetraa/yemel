@@ -13,7 +13,6 @@ const PAL: Record<Key, Pal> = {
   gym: { top: '#9db9d1', mid: '#2c4a66', bottom: '#09121b', bloom: 'rgba(255,186,120,.55)', at: '24% 38%' },
   combat: { top: '#b98a7e', mid: '#52303a', bottom: '#0d0a10', bloom: 'rgba(255,128,84,.58)', at: '20% 44%' },
   philosophy: { top: '#d1c2a6', mid: '#625c54', bottom: '#0e0f12', bloom: 'rgba(255,226,166,.55)', at: '70% 30%' },
-  progress: { top: '#a9c1da', mid: '#34567a', bottom: '#0a121c', bloom: 'rgba(160,210,255,.45)', at: '78% 34%' },
   profile: { top: '#9aa9bb', mid: '#323d4e', bottom: '#0a0d12', bloom: 'rgba(210,225,255,.38)', at: '30% 36%' },
   welcome: { top: '#cfdcea', mid: '#4a6a8c', bottom: '#070c12', bloom: 'rgba(255,200,146,.75)', at: '16% 50%' },
 }

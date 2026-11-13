@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
 
-export type Tab = 'home' | 'gym' | 'combat' | 'philosophy' | 'progress' | 'profile'
+export type Tab = 'home' | 'gym' | 'combat' | 'philosophy' | 'profile'
 
 /** Rutas con prefijo de módulo: cada módulo solo renderiza las suyas (ver App.tsx). */
 export type Screen =
@@ -25,6 +25,7 @@ export type Screen =
   | { name: 'shared.week' }
   | { name: 'shared.mobility' }
   | { name: 'profile.hybridImport' }
+  | { name: 'profile.progress' }
 
 interface Nav {
   tab: Tab

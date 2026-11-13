@@ -25,7 +25,7 @@ export function MobilityScreen() {
     <div className="h-full flex flex-col">
       <Header title="Recuperación activa" onBack={pop} />
       <div className="scroll flex-1 px-6 pb-8">
-        <p className="text-mute text-[15px] leading-relaxed">Movilidad suave y respiración, sin buscar fatiga. Marca lo que vayas haciendo; si hoy no te apetece todo, no pasa nada.</p>
+        <p className="text-mute text-[15px] leading-relaxed">Movilidad suave. Marca lo que hagas.</p>
         <Label className="mt-8">Ejercicios · {MOBILITY_ROUTINE.length}</Label>
         <div className="mt-1">
           {MOBILITY_ROUTINE.map((d, i) => (

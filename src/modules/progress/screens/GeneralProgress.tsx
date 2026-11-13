@@ -24,7 +24,7 @@ export function GeneralProgress() {
   const shown = items.filter((i) => f === 'all' || i.area === f).slice(0, 40)
   const AREA = { gym: 'GYM', combat: 'CMB', recovery: 'REC' }
   const hasLoad = loads.some((w) => w.total > 0)
-  if (!items.length) return <div className="scroll h-full"><Empty icon="chart" title="Aún no hay datos" text="Cuando registres entrenamientos de gimnasio, combate o recuperación aparecerán aquí." /></div>
+  if (!items.length) return <div className="scroll h-full"><Empty icon="chart" title="Aún no hay datos" text="Registra un entrenamiento." /></div>
   return (
     <div className="scroll h-full pb-10"><div className="px-6 pt-5">
       {hasLoad && (
@@ -32,7 +32,7 @@ export function GeneralProgress() {
           <Label>Carga semanal total</Label>
           <div className="mt-3"><StackedBars data={loads.map((w, i) => ({ label: i === loads.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, a: w.gym, b: w.combat + w.other, highlight: i === loads.length - 1 }))} /></div>
           <div className="flex gap-4 text-[12px] text-mute mt-1"><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-white/40 inline-block" />Gimnasio</span><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-glow inline-block" />Combate y otras</span></div>
-          <p className="text-[12px] text-dim mt-1.5 leading-snug">Carga interna = minutos × RPE de todas tus disciplinas. Sin RPE en gimnasio se asume 6.</p>
+          <p className="text-[12px] text-dim mt-1.5 leading-snug">Carga = minutos × RPE.</p>
         </>
       )}
       <Label className="mt-10">Historial general</Label>
@@ -49,7 +49,7 @@ export function GeneralProgress() {
         ))}
         {!shown.length && <p className="text-mute text-center py-10">Nada en esta categoría.</p>}
       </div>
-      <p className="text-[12px] text-dim mt-4">{formatNumber(items.length, 0)} registros en total.</p>
+      <p className="text-[12px] text-dim mt-4">{formatNumber(items.length, 0)} registros.</p>
     </div></div>
   )
 }
