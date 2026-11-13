@@ -31,7 +31,7 @@ export function CombatOverview() {
             <div className="text-mute mt-1 text-[15px] leading-snug">{next.label}{next.offset > 1 ? '' : ''}{next.slot.focus ? ` · ${next.slot.focus}` : ''}</div>
             <div className="flex flex-wrap gap-2 mt-3">
               {next.slot.intensity && <span className="text-[12px] font-semibold bg-s2 rounded-full px-3 py-1">Intensidad prevista: {INTENSITY_LABEL[next.slot.intensity].toLowerCase()}</span>}
-              {next.slot.combat?.sparring && <span className="text-[12px] font-semibold text-accent border border-accent/50 rounded-full px-3 py-1">Sparring según nivel</span>}
+              {next.slot.combat?.sparring && <span className="text-[12px] font-semibold text-glow border border-glow/50 rounded-full px-3 py-1">Sparring según nivel</span>}
               {next.slot.combat?.disciplines.map((d) => <span key={d} className="text-[12px] text-mute bg-s2 rounded-full px-3 py-1">{d}</span>)}
             </div>
           </>
@@ -41,7 +41,7 @@ export function CombatOverview() {
       </div>
 
       <div className="px-6 mt-9">
-        <div className="flex items-end justify-between"><Label>Mi semana de combate</Label><button onClick={() => push({ name: 'combat.import' })} className="text-[12px] font-semibold text-accent">Importar</button></div>
+        <div className="flex items-end justify-between"><Label>Mi semana de combate</Label><button onClick={() => push({ name: 'combat.import' })} className="text-[12px] font-semibold text-glow">Importar</button></div>
         <div className="mt-2">
           {WEEKDAYS.map((name, day) => {
             const s = combatPlan.sessions.find((x) => x.day === day)
@@ -49,7 +49,7 @@ export function CombatOverview() {
               <button key={day} onClick={() => setEditDay(day)} className="w-full flex items-center gap-4 py-3.5 border-b border-line/70 last:border-0 text-left active:bg-s1">
                 <div className="w-12 text-[12px] font-semibold uppercase tracking-wider text-mute">{name.slice(0, 3)}</div>
                 {s ? (
-                  <div className="flex-1 min-w-0"><div className="flex items-center gap-2"><span className="font-bold truncate">{s.label}</span>{s.sparring && <span className="text-[10px] font-bold text-accent border border-accent/50 rounded px-1.5 py-0.5">SPARRING</span>}</div>
+                  <div className="flex-1 min-w-0"><div className="flex items-center gap-2"><span className="font-bold truncate">{s.label}</span>{s.sparring && <span className="text-[10px] font-bold text-glow border border-glow/50 rounded px-1.5 py-0.5">SPARRING</span>}</div>
                     <div className="text-[12.5px] text-mute mt-0.5">{s.sport} · {INTENSITY_LABEL[s.intensity].toLowerCase()}{s.minutes ? ` · ${s.minutes} min` : ''}</div></div>
                 ) : <div className="flex-1 text-[14px] text-dim">Libre</div>}
                 <Icon name={s ? 'chev' : 'plus'} size={16} className="text-dim" />

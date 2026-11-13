@@ -68,7 +68,7 @@ export function GymProgress() {
                 <div className="flex items-baseline gap-2">
                   <span className="num text-[34px] font-bold leading-none">{formatNumber(toDisplay(series[series.length - 1].e1rm, unit))}</span>
                   <span className="text-mute text-sm font-semibold">{unit} · 1RM estimado</span>
-                  <span className={`ml-auto text-sm font-bold ${delta >= 0 ? 'text-accent' : 'text-danger'}`}>{delta >= 0 ? '+' : ''}{formatNumber(toDisplay(delta, unit))} {unit}</span>
+                  <span className={`ml-auto text-sm font-bold ${delta >= 0 ? 'text-glow' : 'text-danger'}`}>{delta >= 0 ? '+' : ''}{formatNumber(toDisplay(delta, unit))} {unit}</span>
                 </div>
                 <div className="mt-3"><LineChart unit={unit} points={series.map((p) => ({ ts: p.ts, v: toDisplay(p.e1rm, unit) }))} /></div>
               </div>

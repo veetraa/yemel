@@ -61,7 +61,7 @@ export function LoadsDetail({ keyId }: { keyId: string }) {
       <Header onBack={pop} />
       <div className="scroll flex-1 px-6 pb-10">
         <Label>{sum.muscle}</Label>
-        <h1 className="text-[28px] font-bold tracking-tight leading-tight mt-1.5">{sum.name}</h1>
+        <h1 className="display text-[44px] mt-1.5">{sum.name}</h1>
         <div className="grid grid-cols-3 gap-4 mt-7">
           <Stat label="Último" value={`${formatNumber(toDisplay(sum.last.weight, u))}×${sum.last.reps}`} />
           <Stat label="Mejor 1RM" value={formatNumber(toDisplay(sum.best.e1rm, u), 0)} unit={u} />

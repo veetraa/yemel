@@ -66,7 +66,7 @@ export function WeekOverview() {
 
         <Label className="mt-10">Comprobación de la semana</Label>
         {issues.length === 0 ? (
-          <div className="mt-2 flex items-center gap-2 text-accent font-semibold"><Icon name="check" size={18} stroke={2.6} /> Semana equilibrada</div>
+          <div className="mt-2 flex items-center gap-2 text-glow font-semibold"><Icon name="check" size={18} stroke={2.6} /> Semana equilibrada</div>
         ) : (
           <ul className="mt-2 space-y-2">
             {[...issues].sort((a, b) => ['error', 'warning', 'info'].indexOf(a.level) - ['error', 'warning', 'info'].indexOf(b.level)).map((i, n) => (

@@ -122,7 +122,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
         ) : (
           <label className="mt-4 block border border-dashed border-line rounded-2xl py-12 text-center active:bg-s1">
             <input type="file" accept=".json,.txt,.md,application/json,text/plain" className="hidden" onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = '' }} />
-            <div className="mx-auto w-12 h-12 rounded-full bg-s2 grid place-items-center text-accent"><Icon name="file" size={22} /></div>
+            <div className="mx-auto w-12 h-12 rounded-full bg-s2 grid place-items-center text-glow"><Icon name="file" size={22} /></div>
             <div className="font-semibold mt-3">Elegir archivo .json{cfg.text ? ' o .txt' : ''}</div>
             <div className="text-[13px] text-mute mt-1">Desde Archivos, iCloud Drive o descargas</div>
           </label>
@@ -134,7 +134,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
         {bundle && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
             <Label>Resultado del análisis</Label>
-            {anything && !parseErrors.length && !blocked && <div className="mt-2 flex items-center gap-2 text-accent font-semibold"><Icon name="check" size={18} stroke={2.6} /> Listo para importar</div>}
+            {anything && !parseErrors.length && !blocked && <div className="mt-2 flex items-center gap-2 text-glow font-semibold"><Icon name="check" size={18} stroke={2.6} /> Listo para importar</div>}
             {blocked && <div className="mt-2 rounded-xl bg-danger/10 px-3.5 py-3 text-[14px] leading-snug" role="alert"><b className="text-danger">{scope === 'gym' ? 'Esos días rompen' : 'La semana propuesta rompe'} las reglas de recuperación.</b> Puedes importar el resto sin {weekWord}, o corregir el JSON y volver a analizar.</div>}
 
             {anything && (

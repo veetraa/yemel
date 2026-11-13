@@ -72,7 +72,7 @@ export function Picker() {
                       </div>
                       <div className="w-11 h-11 rounded-full bg-accent text-black grid place-items-center"><Icon name="play" size={18} /></div>
                     </button>
-                    {long && <button onClick={() => startWorkout(routine, d, { adapt, fitMinutes: limit })} className="mb-3 -mt-1 text-[13px] font-semibold text-accent">Empezar acortado a {limit} min →</button>}
+                    {long && <button onClick={() => startWorkout(routine, d, { adapt, fitMinutes: limit })} className="mb-3 -mt-1 text-[13px] font-semibold text-glow">Empezar acortado a {limit} min →</button>}
                   </div>
                 )
               })}
@@ -208,14 +208,14 @@ export function Workout() {
           {active.exercises.map((e, i) => {
             const d = e.sets.every((s) => s.done)
             const part = e.sets.some((s) => s.done)
-            return <button key={e.id} aria-label={`Ejercicio ${i + 1}`} onClick={() => goto(i)} className="flex-1 py-2 -my-2"><div className={`h-1 rounded-full ${d ? 'bg-accent' : part ? 'bg-accent/45' : i === active.index ? 'bg-white' : 'bg-s3'}`} /></button>
+            return <button key={e.id} aria-label={`Ejercicio ${i + 1}`} onClick={() => goto(i)} className="flex-1 py-2 -my-2"><div className={`h-1 rounded-full ${d ? 'bg-glow' : part ? 'bg-glow/45' : i === active.index ? 'bg-white' : 'bg-s3'}`} /></button>
           })}
         </div>
       </div>
 
       {active.adjustNotes && (
         <button onClick={() => setNotesOpen(!notesOpen)} className="mx-6 mb-2 text-left bg-s1 rounded-xl px-3.5 py-2.5 text-[12.5px] text-mute leading-snug">
-          <span className="text-accent font-semibold">Ajustado por tu entrenador</span>{notesOpen ? '' : ' · toca para ver'}
+          <span className="text-glow font-semibold">Ajustado por tu entrenador</span>{notesOpen ? '' : ' · toca para ver'}
           {notesOpen && <ul className="mt-1.5 space-y-1">{active.adjustNotes.map((n, i) => <li key={i}>{n}</li>)}</ul>}
         </button>
       )}
@@ -237,7 +237,7 @@ export function Workout() {
 
             {rec && (rec.kind !== 'none' || rec.weight === null) ? (
               <div className="mt-4 flex gap-3 items-start text-[13.5px] leading-snug">
-                <div className="mt-0.5 w-6 h-6 rounded-full bg-accent/15 text-accent grid place-items-center shrink-0"><Icon name="star" size={13} stroke={2.4} /></div>
+                <div className="mt-0.5 w-6 h-6 rounded-full bg-glow/15 text-glow grid place-items-center shrink-0"><Icon name="star" size={13} stroke={2.4} /></div>
                 <div className="text-mute"><span className="text-white font-semibold">{rec!.weight !== null && rec!.weight > 0 ? `Sugerido ${formatNumber(toDisplay(rec!.weight, unit))} ${unit}` : 'Sin referencia'}{rec!.reps ? ` × ${rec!.reps}` : ''}.</span> {rec!.reason}</div>
               </div>
             ) : null}
@@ -287,7 +287,7 @@ export function Workout() {
                 {exDone && next ? <>Luego:<br /><span className="text-white font-semibold">{next.name}</span></> : <>Serie {Math.min(ex.sets.length, ex.sets.filter((s) => s.done).length + 1)} de {ex.sets.length}</>}
               </div>
             </div>
-            <div className="h-1 bg-s3 rounded-full mt-4 overflow-hidden"><div className="h-full bg-accent rounded-full transition-[width] duration-200" style={{ width: `${restPct * 100}%` }} /></div>
+            <div className="h-1 bg-s3 rounded-full mt-4 overflow-hidden"><div className="h-full bg-glow rounded-full transition-[width] duration-200" style={{ width: `${restPct * 100}%` }} /></div>
             <div className="grid grid-cols-3 gap-2 mt-4">
               <Button variant="secondary" size="md" onClick={() => updateActive((a) => ({ ...a, restEnd: (a.restEnd ?? Date.now()) - 15000 }))}>−15s</Button>
               <Button variant="secondary" size="md" onClick={() => updateActive((a) => ({ ...a, restEnd: (a.restEnd ?? Date.now()) + 15000, restTotal: (a.restTotal ?? 0) + 15 }))}>+15s</Button>
@@ -303,7 +303,7 @@ export function Workout() {
             <div className="rounded-3xl bg-bg aspect-[4/3] grid place-items-center"><ExerciseFigure anim={lib.anim} primary={lib.primary} className="w-[88%] h-[92%]" /></div>
             <h3 className="text-xl font-bold mt-4">{lib.name}</h3>
             <div className="text-mute text-sm mt-1">{lib.primary}{lib.secondary.length ? ` · ${lib.secondary.join(', ')}` : ''} · {lib.equipment.join(', ')}</div>
-            <ol className="mt-4 space-y-3">{lib.steps.map((s, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed"><span className="text-accent font-bold num">{i + 1}</span><span className="text-[#d8d8dc]">{s}</span></li>)}</ol>
+            <ol className="mt-4 space-y-3">{lib.steps.map((s, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed"><span className="text-glow font-bold num">{i + 1}</span><span className="text-[#d8d8dc]">{s}</span></li>)}</ol>
             <p className="text-mute text-[14px] mt-4 leading-relaxed">{lib.tips[0]}</p>
           </>
         )}

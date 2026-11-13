@@ -50,7 +50,7 @@ export function VideosPanel({ sport, techniqueId }: { sport: CombatSport; techni
           {list.map((v) => (
             <div key={v.id} className="flex items-center gap-3 py-3.5 border-b border-line/70 last:border-0">
               <button onClick={() => (v.kind === 'link' ? window.open(v.url, '_blank', 'noopener') : setPlay(v))} className="flex-1 flex items-center gap-3 text-left min-w-0">
-                <span className="w-12 h-12 rounded-xl bg-s2 grid place-items-center text-accent shrink-0"><Icon name={v.kind === 'file' ? 'play' : 'video'} size={20} /></span>
+                <span className="w-12 h-12 rounded-xl bg-s2 grid place-items-center text-glow shrink-0"><Icon name={v.kind === 'file' ? 'play' : 'video'} size={20} /></span>
                 <span className="min-w-0"><span className="block font-semibold truncate">{v.title}</span><span className="block text-[12.5px] text-mute">{v.kind === 'file' ? `Archivo · ${v.blob ? Math.round(v.blob.size / 1048576) : '?'} MB` : 'Enlace externo'} · {formatDateShort(v.createdAt)}</span></span>
               </button>
               <button aria-label={`Eliminar ${v.title}`} onClick={() => removeVideo(v.id)} className="w-9 h-9 grid place-items-center text-dim"><Icon name="trash" size={17} /></button>

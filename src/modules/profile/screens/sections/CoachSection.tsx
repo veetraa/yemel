@@ -41,7 +41,7 @@ export function CoachSection() {
   return (
     <>
       <div className="bg-s1 rounded-2xl p-4 space-y-4">
-        <div className="flex items-center justify-between"><Label>Recuperación</Label><span className={`text-[13px] font-bold ${r.level === 'low' ? 'text-danger' : r.level === 'moderate' ? 'text-[#ffb340]' : r.level === 'good' ? 'text-accent' : 'text-mute'}`}>{READY_TXT[r.level]}</span></div>
+        <div className="flex items-center justify-between"><Label>Recuperación</Label><span className={`text-[13px] font-bold ${r.level === 'low' ? 'text-danger' : r.level === 'moderate' ? 'text-[#ffb340]' : r.level === 'good' ? 'text-glow' : 'text-mute'}`}>{READY_TXT[r.level]}</span></div>
         {r.reasons.length > 0 && <p className="text-[13.5px] text-mute leading-snug">{r.reasons.join(' · ')}</p>}
         <div className="h-px bg-line" />
         <div className="flex items-center justify-between"><Label>Carga interna semanal</Label>{l.ratio !== undefined && <span className="num text-[13px] font-bold">×{formatNumber(l.ratio, 2)}</span>}</div>
@@ -63,11 +63,11 @@ export function CoachSection() {
       <div>
         <Label>Ajuste actual del entrenamiento</Label>
         {adjustment.active || adjustment.notes.length ? (
-          <ul className="mt-2 space-y-2.5">{adjustment.notes.map((n, i) => <li key={i} className="flex gap-2.5 text-[14px] leading-snug"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-accent" />{n}</li>)}</ul>
+          <ul className="mt-2 space-y-2.5">{adjustment.notes.map((n, i) => <li key={i} className="flex gap-2.5 text-[14px] leading-snug"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-glow" />{n}</li>)}</ul>
         ) : <p className="text-[14px] text-mute mt-2 leading-relaxed">Sin ajustes: tus datos no indican motivo para modificar el plan.</p>}
         {adjustment.codes.length > 0 && (
           <>
-            <button onClick={() => setWhy(!why)} className="text-[12.5px] font-semibold text-accent mt-3">{why ? 'Ocultar' : '¿Por qué?'}</button>
+            <button onClick={() => setWhy(!why)} className="text-[12.5px] font-semibold text-glow mt-3">{why ? 'Ocultar' : '¿Por qué?'}</button>
             {why && <ul className="mt-2 space-y-2">{[...new Set(adjustment.codes.map((c) => principleFor(c).id))].map((id) => { const p = PRINCIPLES.find((x) => x.id === id)!; return <li key={id} className="text-[13px] leading-snug text-mute"><b className="text-white">{p.title}.</b> {p.text}</li> })}</ul>}
           </>
         )}
@@ -83,7 +83,7 @@ export function CoachSection() {
       </div>
 
       <div>
-        <div className="flex items-center justify-between"><Label>Combate · 30 días (solo lectura)</Label><button onClick={() => go('combat', 'overview')} className="text-[13px] font-semibold text-accent">Ir a Combat</button></div>
+        <div className="flex items-center justify-between"><Label>Combate · 30 días (solo lectura)</Label><button onClick={() => go('combat', 'overview')} className="text-[13px] font-semibold text-glow">Ir a Combat</button></div>
         {cs.sessions ? <p className="text-[13.5px] text-mute mt-2">{cs.sessions} sesiones · {cs.minutes} min · RPE medio {formatNumber(cs.avgRpe ?? 0)} · {cs.sparringSessions} con sparring</p> : <p className="text-[14px] text-mute mt-2">Sin sesiones de combate registradas.</p>}
         <p className="text-[11.5px] text-dim mt-1.5 leading-snug">Las sesiones se registran y se borran en Combat; aquí solo se usan para calcular tu carga global.</p>
       </div>

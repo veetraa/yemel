@@ -2,6 +2,10 @@
 
 PWA de fuerza e hipertrofia, **gratis, local-first, sin cuentas ni suscripciones**. React + TypeScript + Vite + Tailwind + Framer Motion + IndexedDB. Funciona sin conexión una vez instalada.
 
+## Diseño
+
+Lenguaje visual propio, de estilo deportivo premium: **fondos atmosféricos con desenfoque de movimiento** en tonos azul acero (una paleta por sección: acero en Gym, ámbar/ascua en Combat, piedra cálida en Filosofía…), **titulares condensados en cursiva** (Barlow Condensed, empaquetada: funciona sin conexión), **tarjetas de cristal esmerilado**, botones en **píldora blanca**, chips redondeados y barra inferior flotante de cristal. Todo el fondo es CSS/SVG local (sin imágenes externas); en Perfil → Ajustes puedes poner **tu propia foto de fondo**, que se desenfoca y oscurece y se guarda solo en tu iPhone. La primera ejecución muestra una pantalla de bienvenida (sin cuentas).
+
 ## Navegación: seis apartados independientes
 
 `Inicio · Gym · Combat · Filosofía · Progreso · Perfil` (barra inferior con iconos minimalistas, etiquetas cortas y safe areas de iPhone). Cada apartado tiene su propia pantalla, rutas y subnavegación.

@@ -19,7 +19,7 @@ export function QuoteCard({ q, big = false }: { q: Quote; big?: boolean }) {
   const fav = favorites.quotes.includes(q.id)
   return (
     <figure className="m-0">
-      <blockquote className={`m-0 font-semibold tracking-tight text-white ${big ? 'text-[26px] leading-[1.25]' : 'text-[17px] leading-snug'}`}>«{q.text}»</blockquote>
+      <blockquote className={`m-0 text-white ${big ? 'display-q text-[40px]' : 'text-[17px] font-semibold leading-snug tracking-tight'}`}>«{q.text}»</blockquote>
       <figcaption className="mt-3 text-[13.5px] text-mute">{q.author}{q.work ? <span className="text-dim"> · {q.work}</span> : null}</figcaption>
       <div className="flex gap-2 mt-3">
         <button onClick={() => toggleFav('quotes', q.id)} aria-pressed={fav} aria-label={fav ? 'Quitar de favoritos' : 'Guardar en favoritos'} className={`h-9 px-3.5 rounded-full text-[13px] font-semibold flex items-center gap-1.5 ${fav ? 'bg-accent text-black' : 'bg-s2 text-mute'}`}><Icon name="heart" size={15} stroke={2.2} />{fav ? 'Favorita' : 'Guardar'}</button>
@@ -45,7 +45,7 @@ export function TodayPanel() {
       <div className="px-6 pt-5">
         <Label>Frase del día</Label>
         <div className="mt-3"><QuoteCard q={q} big /></div>
-        <button onClick={() => setOffset(offset + 1)} className="mt-4 text-[13px] font-semibold text-accent">Otra frase</button>
+        <button onClick={() => setOffset(offset + 1)} className="mt-4 text-[13px] font-semibold text-glow">Otra frase</button>
 
         <div className="mt-9 bg-s1 rounded-2xl p-4">
           <Label>Reflexión sugerida · {refl.when.toLowerCase()}</Label>
@@ -55,8 +55,8 @@ export function TodayPanel() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 mt-3">
-          <button onClick={() => push({ name: 'philo.entry', id: `new:q:${q.id}` })} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="book" size={20} className="text-accent" /><div className="font-bold mt-2.5">Escribir en el diario</div><div className="text-[12.5px] text-mute mt-0.5">{streak > 0 ? `${streak} día${streak > 1 ? 's' : ''} seguido${streak > 1 ? 's' : ''}` : 'Empieza hoy'}</div></button>
-          <button onClick={() => setSub('philosophy', 'pillars')} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="column" size={20} className="text-accent" /><div className="font-bold mt-2.5">Pilares</div><div className="text-[12.5px] text-mute mt-0.5">Disciplina · Autocontrol · Resiliencia</div></button>
+          <button onClick={() => push({ name: 'philo.entry', id: `new:q:${q.id}` })} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="book" size={20} className="text-glow" /><div className="font-bold mt-2.5">Escribir en el diario</div><div className="text-[12.5px] text-mute mt-0.5">{streak > 0 ? `${streak} día${streak > 1 ? 's' : ''} seguido${streak > 1 ? 's' : ''}` : 'Empieza hoy'}</div></button>
+          <button onClick={() => setSub('philosophy', 'pillars')} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="column" size={20} className="text-glow" /><div className="font-bold mt-2.5">Pilares</div><div className="text-[12.5px] text-mute mt-0.5">Disciplina · Autocontrol · Resiliencia</div></button>
         </div>
         <p className="text-[12px] text-dim mt-6 leading-snug">Tema de hoy: {THEMES.find((t) => t.key === theme)?.label}. Las frases son adaptaciones al español, no traducciones literales.</p>
       </div>
@@ -86,7 +86,7 @@ export function PhilosophersPanel() {
     <div className="scroll h-full pb-8"><div className="px-6 pt-3">
       {PHILOSOPHERS.map((p) => (
         <button key={p.id} onClick={() => push({ name: 'philo.philosopher', id: p.id })} className="w-full flex items-center gap-4 py-4 border-b border-line/70 last:border-0 text-left active:bg-s1">
-          <div className="w-12 h-12 rounded-full bg-s2 grid place-items-center text-[18px] font-bold text-accent shrink-0">{p.name[0]}</div>
+          <div className="w-12 h-12 rounded-full bg-s2 grid place-items-center text-[18px] font-bold text-glow shrink-0">{p.name[0]}</div>
           <div className="flex-1 min-w-0"><div className="font-bold text-[17px]">{p.name}</div><div className="text-[12.5px] text-mute mt-0.5">{p.role} · {p.years}</div></div>
           <Icon name="chev" size={16} className="text-dim" />
         </button>

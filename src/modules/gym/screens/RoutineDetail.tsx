@@ -33,7 +33,7 @@ export function RoutineDetail({ id }: { id: string }) {
         <button onClick={() => push({ name: 'gym.editRoutine', id: r.id })} className="h-10 px-4 rounded-full bg-s2 text-sm font-semibold flex items-center gap-1.5 active:bg-s3"><Icon name="edit" size={16} /> Editar</button>
       } />
       <div className="scroll flex-1 px-6 pb-10">
-        <h1 className="text-[30px] font-bold tracking-tight leading-tight">{r.name}</h1>
+        <h1 className="display text-[44px]">{r.name}</h1>
         <div className="flex flex-wrap gap-2 mt-3">
           {r.goal && <Chip>{r.goal}</Chip>}
           <Chip>{r.days.length} días</Chip>

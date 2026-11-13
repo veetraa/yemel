@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect } from 'react'
+import { Ambient } from './shared/components/Ambient'
 import { Icon } from './shared/components/Icon'
+import { Welcome } from './shared/screens/Welcome'
 import { useNav, type Screen, type Tab } from './nav'
 import { useStore } from './store'
 import { HomeScreen } from './modules/home/screens/Home'
@@ -36,7 +38,7 @@ function renderScreen(s: Screen) {
 }
 
 export default function App() {
-  const { ready, active, toast } = useStore()
+  const { ready, active, toast, settings } = useStore()
   const { tab, setTab, stack } = useNav()
   const top = stack[stack.length - 1]
 
@@ -50,10 +52,12 @@ export default function App() {
     return () => document.removeEventListener('touchmove', prevent)
   }, [])
 
-  if (!ready) return <div className="fixed inset-0 bg-bg" />
+  if (!ready) return <div className="fixed inset-0 bg-[#05080c]" />
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-bg overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden">
+      <Ambient tab={tab} photo={settings.bgPhoto} />
+      <div className="relative z-10 h-full flex flex-col">
       <main className="flex-1 min-h-0 relative">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.16 }} className="absolute inset-0">
@@ -69,35 +73,39 @@ export default function App() {
         <AnimatePresence>
           {top && (
             <motion.div key={stack.length + top.name + ('id' in top ? top.id : '')} initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 34, stiffness: 340 }} className="absolute inset-0 z-30 bg-bg shadow-[-20px_0_40px_rgba(0,0,0,.5)]">
-              {renderScreen(top)}
+              transition={{ type: 'spring', damping: 34, stiffness: 340 }} className="absolute inset-0 z-30 overflow-hidden bg-[#05080c] shadow-[-20px_0_40px_rgba(0,0,0,.45)]">
+              <Ambient tab={tab} photo={settings.bgPhoto} />
+              <div className="relative h-full">{renderScreen(top)}</div>
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <nav aria-label="Navegación principal" className="shrink-0 z-40 bg-bg/95 backdrop-blur border-t border-line/70 pb-safe pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-        <div className="flex h-[54px]">
+      <nav aria-label="Navegación principal" className="shrink-0 z-40 px-3 pt-1 pb-[max(env(safe-area-inset-bottom),8px)] pl-[max(env(safe-area-inset-left),12px)] pr-[max(env(safe-area-inset-right),12px)]">
+        <div className="glass-strong rounded-[30px] flex h-[58px] px-1">
           {TABS.map((t) => {
             const on = tab === t.id
             return (
-              <button key={t.id} onClick={() => setTab(t.id)} aria-label={t.label} aria-current={on ? 'page' : undefined} className={`relative flex-1 min-w-0 flex flex-col items-center justify-center gap-[3px] transition-colors ${on ? 'text-white' : 'text-dim'}`}>
+              <button key={t.id} onClick={() => setTab(t.id)} aria-label={t.label} aria-current={on ? 'page' : undefined} className={`relative flex-1 min-w-0 flex flex-col items-center justify-center gap-[3px] rounded-full transition-colors ${on ? 'text-white' : 'text-white/45'}`}>
+                {on && <motion.span layoutId="tabpill" transition={{ type: 'spring', stiffness: 500, damping: 38 }} className="absolute inset-y-1 inset-x-0.5 rounded-full bg-white/15 ring-1 ring-inset ring-white/15" />}
                 <span className="relative">
-                  <Icon name={t.icon} size={22} stroke={on ? 2.1 : 1.7} />
-                  {t.id === 'gym' && active && <span className="absolute -top-0.5 -right-1.5 w-2 h-2 rounded-full bg-accent animate-pulse" />}
+                  <Icon name={t.icon} size={21} stroke={on ? 2.1 : 1.7} />
+                  {t.id === 'gym' && active && <span className="absolute -top-0.5 -right-1.5 w-2 h-2 rounded-full bg-glow animate-pulse" />}
                 </span>
-                <span className="text-[9.5px] font-semibold tracking-wide leading-none">{t.label}</span>
-                {on && <motion.span layoutId="tabdot" className="absolute top-0 h-[2px] w-7 bg-accent rounded-full" />}
+                <span className="relative text-[9.5px] font-semibold tracking-wide leading-none">{t.label}</span>
               </button>
             )
           })}
         </div>
       </nav>
+      </div>
+
+      <AnimatePresence>{settings.welcomed === false && <Welcome key="welcome" />}</AnimatePresence>
 
       <AnimatePresence>
         {toast && (
           <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
-            className="fixed left-1/2 -translate-x-1/2 bottom-[96px] z-[60] bg-white text-black text-sm font-semibold px-4 py-2.5 rounded-full shadow-xl max-w-[88vw] text-center">
+            className="fixed left-1/2 -translate-x-1/2 bottom-[104px] z-[80] bg-white text-black text-sm font-semibold px-4 py-2.5 rounded-full shadow-xl max-w-[88vw] text-center">
             {toast}
           </motion.div>
         )}

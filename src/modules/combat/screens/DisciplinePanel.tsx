@@ -65,7 +65,7 @@ export function DisciplinePanel({ sport }: { sport: CombatSport }) {
         {inner === 'hist' && <div className="mt-5"><SportHistory sport={sport} /></div>}
         {inner === 'tips' && (
           <div className="mt-5"><Label>Consejos de {sport}</Label>
-            <ul className="mt-3 space-y-4">{lib.tips.map((t, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed"><Icon name="info" size={18} className="shrink-0 mt-0.5 text-accent" />{t}</li>)}</ul>
+            <ul className="mt-3 space-y-4">{lib.tips.map((t, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed"><Icon name="info" size={18} className="shrink-0 mt-0.5 text-glow" />{t}</li>)}</ul>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@ import { dateKey } from '../lib/utils'
 import { useStore } from '../../store'
 import type { Wellness } from '../../types'
 
-const LEVEL = { good: ['Buena', 'bg-accent'], moderate: ['Media', 'bg-[#ffb340]'], low: ['Baja', 'bg-danger'], unknown: ['Sin datos', 'bg-s3'] } as const
+const LEVEL = { good: ['Buena', 'bg-glow'], moderate: ['Media', 'bg-[#ffb340]'], low: ['Baja', 'bg-danger'], unknown: ['Sin datos', 'bg-s3'] } as const
 
 export function RecoverySection() {
   const { wellness, saveWellness, deleteWellness, showToast } = useStore()

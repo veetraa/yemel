@@ -20,7 +20,7 @@ export function SessionDetail({ id }: { id: string }) {
       <Header onBack={pop} />
       <div className="scroll flex-1 px-6 pb-10">
         <Label className="first-letter:uppercase">{new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(s.endedAt)}</Label>
-        <h1 className="text-[28px] font-bold tracking-tight leading-tight mt-1.5">{s.dayName}</h1>
+        <h1 className="display text-[44px] mt-1.5">{s.dayName}</h1>
         <div className="text-mute mt-1">{s.routineName}</div>
         <div className="grid grid-cols-3 gap-4 mt-7">
           <Stat label="Duración" value={formatDuration(sessionDuration(s)).replace(' min', '')} unit="min" />
@@ -76,7 +76,7 @@ export function SummaryScreen({ id }: { id: string }) {
         <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }} className="w-16 h-16 rounded-full bg-accent text-black grid place-items-center mt-10">
           <Icon name="check" size={34} stroke={3} />
         </motion.div>
-        <h1 className="text-[34px] font-bold tracking-tight leading-tight mt-6">Entrenamiento<br />completado</h1>
+        <h1 className="display text-[44px] mt-6">Entrenamiento<br />completado</h1>
         <div className="text-mute mt-2">{s.dayName}</div>
         <div className="grid grid-cols-3 gap-4 mt-9">
           <Stat label="Duración" value={formatDuration(sessionDuration(s)).replace(' min', '')} unit="min" />
@@ -85,8 +85,8 @@ export function SummaryScreen({ id }: { id: string }) {
         </div>
         {prs.length > 0 && (
           <div className="mt-10">
-            <Label className="flex items-center gap-1.5 text-accent"><Icon name="trophy" size={14} /> Nuevos récords</Label>
-            {prs.map((p) => <div key={p.name} className="flex justify-between py-3 border-b border-line/60 last:border-0"><span className="font-semibold">{p.name}</span><span className="num font-bold text-accent">+{formatNumber(toDisplay(p.gain, u))} {u}</span></div>)}
+            <Label className="flex items-center gap-1.5 text-glow"><Icon name="trophy" size={14} /> Nuevos récords</Label>
+            {prs.map((p) => <div key={p.name} className="flex justify-between py-3 border-b border-line/60 last:border-0"><span className="font-semibold">{p.name}</span><span className="num font-bold text-glow">+{formatNumber(toDisplay(p.gain, u))} {u}</span></div>)}
           </div>
         )}
         <div className="mt-10">
