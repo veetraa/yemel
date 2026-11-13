@@ -11,9 +11,9 @@ export function BarChart({ data, unit }: { data: { label: string; value: number;
         const x = pad / 2 + i * bw + bw * 0.18
         return (
           <g key={i}>
-            <rect x={x} y={H - h} width={bw * 0.64} height={h} rx={5} fill={d.highlight ? '#d7ff3a' : d.value ? '#3a3a41' : '#1b1b1f'} />
-            {d.value > 0 && <text x={x + bw * 0.32} y={H - h - 6} textAnchor="middle" fontSize="10" fontWeight="600" fill={d.highlight ? '#d7ff3a' : '#8d8d96'}>{d.value >= 1000 ? `${formatNumber(d.value / 1000, 1)}t` : Math.round(d.value)}</text>}
-            <text x={x + bw * 0.32} y={H + 16} textAnchor="middle" fontSize="10" fill={d.highlight ? '#fff' : '#5c5c65'} fontWeight="600">{d.label}</text>
+            <rect x={x} y={H - h} width={bw * 0.64} height={h} rx={5} fill={d.highlight ? '#9fd0ff' : d.value ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.09)'} />
+            {d.value > 0 && <text x={x + bw * 0.32} y={H - h - 6} textAnchor="middle" fontSize="10" fontWeight="600" fill={d.highlight ? '#9fd0ff' : 'rgba(255,255,255,.72)'}>{d.value >= 1000 ? `${formatNumber(d.value / 1000, 1)}t` : Math.round(d.value)}</text>}
+            <text x={x + bw * 0.32} y={H + 16} textAnchor="middle" fontSize="10" fill={d.highlight ? '#fff' : 'rgba(255,255,255,.5)'} fontWeight="600">{d.label}</text>
           </g>
         )
       })}
@@ -32,11 +32,11 @@ export function LineChart({ points, unit }: { points: { ts: number; v: number }[
   const last = points[points.length - 1]
   return (
     <svg viewBox={`0 0 ${W} ${H + 18}`} className="w-full" role="img" aria-label={`Evolución del 1RM estimado en ${unit}`}>
-      {[0, 0.5, 1].map((t) => <line key={t} x1={px} x2={W - px} y1={py + t * (H - 2 * py)} y2={py + t * (H - 2 * py)} stroke="#1f1f24" strokeWidth="1" />)}
-      <path d={d} fill="none" stroke="#d7ff3a" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-      {points.map((p, i) => <circle key={i} cx={x(i)} cy={y(p.v)} r={i === points.length - 1 ? 5 : 3} fill={i === points.length - 1 ? '#d7ff3a' : '#0a0a0b'} stroke="#d7ff3a" strokeWidth="2" />)}
-      <text x={px} y={H + 14} fontSize="10" fill="#5c5c65" fontWeight="600">{formatDateShort(points[0].ts)}</text>
-      <text x={W - px} y={H + 14} textAnchor="end" fontSize="10" fill="#5c5c65" fontWeight="600">{formatDateShort(last.ts)}</text>
+      {[0, 0.5, 1].map((t) => <line key={t} x1={px} x2={W - px} y1={py + t * (H - 2 * py)} y2={py + t * (H - 2 * py)} stroke="rgba(255,255,255,.1)" strokeWidth="1" />)}
+      <path d={d} fill="none" stroke="#9fd0ff" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      {points.map((p, i) => <circle key={i} cx={x(i)} cy={y(p.v)} r={i === points.length - 1 ? 5 : 3} fill={i === points.length - 1 ? '#9fd0ff' : '#0a0a0b'} stroke="#9fd0ff" strokeWidth="2" />)}
+      <text x={px} y={H + 14} fontSize="10" fill="rgba(255,255,255,.5)" fontWeight="600">{formatDateShort(points[0].ts)}</text>
+      <text x={W - px} y={H + 14} textAnchor="end" fontSize="10" fill="rgba(255,255,255,.5)" fontWeight="600">{formatDateShort(last.ts)}</text>
       <text x={Math.min(W - 30, x(points.length - 1))} y={y(last.v) - 11} textAnchor="end" fontSize="11" fontWeight="700" fill="#fff">{formatNumber(last.v)}</text>
     </svg>
   )
@@ -55,10 +55,10 @@ export function StackedBars({ data }: { data: { label: string; a: number; b: num
         const hb = (d.b / max) * (H - 8)
         return (
           <g key={i}>
-            {hb > 0 && <rect x={x} y={H - ha - hb} width={w} height={hb} rx={4} fill="#d7ff3a" opacity={d.highlight ? 1 : 0.55} />}
-            {ha > 0 && <rect x={x} y={H - ha} width={w} height={Math.max(ha, 3)} rx={4} fill={d.highlight ? '#f5f5f7' : '#4b4b53'} />}
+            {hb > 0 && <rect x={x} y={H - ha - hb} width={w} height={hb} rx={4} fill="#9fd0ff" opacity={d.highlight ? 1 : 0.55} />}
+            {ha > 0 && <rect x={x} y={H - ha} width={w} height={Math.max(ha, 3)} rx={4} fill={d.highlight ? '#ffffff' : 'rgba(255,255,255,.42)'} />}
             {ha + hb === 0 && <rect x={x} y={H - 2} width={w} height={2} rx={1} fill="#1b1b1f" />}
-            <text x={x + w / 2} y={H + 16} textAnchor="middle" fontSize="10" fontWeight="600" fill={d.highlight ? '#fff' : '#5c5c65'}>{d.label}</text>
+            <text x={x + w / 2} y={H + 16} textAnchor="middle" fontSize="10" fontWeight="600" fill={d.highlight ? '#fff' : 'rgba(255,255,255,.5)'}>{d.label}</text>
           </g>
         )
       })}

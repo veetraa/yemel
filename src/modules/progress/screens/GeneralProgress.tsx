@@ -31,7 +31,7 @@ export function GeneralProgress() {
         <>
           <Label>Carga semanal total</Label>
           <div className="mt-3"><StackedBars data={loads.map((w, i) => ({ label: i === loads.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, a: w.gym, b: w.combat + w.other, highlight: i === loads.length - 1 }))} /></div>
-          <div className="flex gap-4 text-[12px] text-mute mt-1"><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-[#4b4b53] inline-block" />Gimnasio</span><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-accent inline-block" />Combate y otras</span></div>
+          <div className="flex gap-4 text-[12px] text-mute mt-1"><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-white/40 inline-block" />Gimnasio</span><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-glow inline-block" />Combate y otras</span></div>
           <p className="text-[12px] text-dim mt-1.5 leading-snug">Carga interna = minutos × RPE de todas tus disciplinas. Sin RPE en gimnasio se asume 6.</p>
         </>
       )}

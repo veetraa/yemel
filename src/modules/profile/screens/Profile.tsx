@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
-import { Accordion, Seg } from '../../../shared/components/fields'
+import { Accordion, Seg, SubLabel } from '../../../shared/components/fields'
 import { Icon } from '../../../shared/components/Icon'
 import { Button, Header, Label, Row, Sheet, Toggle } from '../../../shared/components/ui'
 import { copyText, readFileText, saveTextFile } from '../../../shared/lib/files'
 import { loadStatus } from '../../../shared/services/fatigueService'
 import { readiness } from '../../../shared/services/recoveryService'
-import { GOAL_KIND_LABEL, ageOf, goalProgress } from '../../../shared/services/profileService'
+import { GOAL_KIND_LABEL, ageOf, goalProgress, resizeImage } from '../../../shared/services/profileService'
 import { chatGptPrompt } from '../../../shared/services/hybridImportService'
 import { personalRecords, streakWeeks } from '../../gym/services/workoutService'
 import { formatNumber, WEEKDAYS_SHORT } from '../../../shared/lib/utils'
@@ -30,6 +30,7 @@ export function ProfileScreen() {
   const [install, setInstall] = useState(false)
   const file = useRef<HTMLInputElement>(null)
   const photo = useRef<HTMLInputElement>(null)
+  const bg = useRef<HTMLInputElement>(null)
   const toggle = (k: string) => setOpen(open === k ? null : k)
 
   const age = ageOf(p)
@@ -64,7 +65,7 @@ export function ProfileScreen() {
           <div className="min-w-0">
             <div className="text-[26px] font-bold tracking-tight leading-tight truncate">{p.name.trim() || 'Atleta'}</div>
             <div className="num text-[14px] text-mute mt-1 tracking-normal">{[age !== undefined && `${age} años`, p.heightCm && `${p.heightCm} cm`, weight !== undefined && `${formatNumber(weight)} kg${p.targetWeightKg !== undefined ? ` → ${formatNumber(p.targetWeightKg)}` : ''}`].filter(Boolean).join(' · ') || 'Completa tu ficha'}</div>
-            {p.mainGoal && <div className="mt-2 inline-block text-[11.5px] font-bold uppercase tracking-wider bg-accent text-black rounded-full px-2.5 py-1">{p.mainGoal}</div>}
+            {p.mainGoal && <div className="mt-2 inline-block max-w-full text-[11.5px] font-semibold leading-snug bg-white/12 text-white ring-1 ring-inset ring-white/20 backdrop-blur-xl rounded-2xl px-3 py-1.5 line-clamp-2">{p.mainGoal}</div>}
           </div>
         </div>
 
@@ -103,6 +104,15 @@ export function ProfileScreen() {
             <Button variant="danger" size="md" className="w-full" onClick={() => setReset(true)}><Icon name="trash" size={17} /> Eliminar todos mis datos</Button>
           </Accordion>
           <Accordion icon="list" title="Ajustes de la app" open={open === 'app'} onToggle={() => toggle('app')} summary={`${settings.unit === 'kg' ? 'Kilogramos' : 'Libras'} · sonido ${settings.sound ? 'sí' : 'no'}`}>
+            <div>
+              <SubLabel>Fondo de la app</SubLabel>
+              <input ref={bg} type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; try { updateSettings({ bgPhoto: await resizeImage(f, 1100, 0.8) }); showToast('Fondo guardado solo en este iPhone') } catch { showToast('No se pudo leer la imagen') } }} />
+              <div className="flex gap-2">
+                <Button variant="secondary" size="md" className="flex-1" onClick={() => bg.current?.click()}>{settings.bgPhoto ? 'Cambiar foto' : 'Usar mi foto'}</Button>
+                {settings.bgPhoto && <Button variant="ghost" size="md" onClick={() => updateSettings({ bgPhoto: undefined })}>Automático</Button>}
+              </div>
+              <p className="text-[12px] text-dim mt-2 leading-snug">Tu foto se desenfoca y se oscurece para que todo se lea. Solo se guarda en este dispositivo.</p>
+            </div>
             <Seg<Settings['unit']> value={settings.unit} onChange={(v) => updateSettings({ unit: v })} options={[{ v: 'kg', l: 'Kilogramos' }, { v: 'lb', l: 'Libras' }]} />
             <div>
               <Row><div className="flex-1"><div className="font-semibold">Sonido al terminar el descanso</div></div><Toggle on={settings.sound} onChange={(v) => updateSettings({ sound: v })} /></Row>

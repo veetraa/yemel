@@ -20,8 +20,8 @@ const HIGHLIGHT: Record<string, ('torsoTop' | 'torsoLow' | 'upperArm' | 'forearm
 
 const TIMES = [0, 0.42, 0.5, 0.92, 1]
 const BODY = '#e8e8ec'
-const FAR = '#4b4b53'
-const ACCENT = '#d7ff3a'
+const FAR = 'rgba(255,255,255,.28)'
+const ACCENT = '#9fd0ff'
 
 
 interface Ctx { A: Pose; B: Pose; animated: boolean; tr: object }
@@ -62,12 +62,12 @@ export function StickFigure({ template: t, primary, animated = true, className =
 
   return (
     <svg viewBox="0 -16 240 196" className={className} role="img" aria-label="Animación del ejercicio" preserveAspectRatio="xMidYMid meet">
-      {t.floor !== false && <line x1="10" y1="168" x2="230" y2="168" stroke="#2c2c32" strokeWidth="2" strokeLinecap="round" />}
+      {t.floor !== false && <line x1="10" y1="168" x2="230" y2="168" stroke="rgba(255,255,255,.16)" strokeWidth="2" strokeLinecap="round" />}
       {t.scene?.map((s, i) =>
         s.t === 'rect' ? (
-          <rect key={i} x={s.x} y={s.y} width={s.w} height={s.h} rx="3" fill="#26262b" />
+          <rect key={i} x={s.x} y={s.y} width={s.w} height={s.h} rx="3" fill="rgba(255,255,255,.14)" />
         ) : (
-          <line key={i} x1={s.a[0]} y1={s.a[1]} x2={s.b[0]} y2={s.b[1]} stroke="#3a3a41" strokeWidth={s.w ?? 4} strokeLinecap="round" />
+          <line key={i} x1={s.a[0]} y1={s.a[1]} x2={s.b[0]} y2={s.b[1]} stroke="rgba(255,255,255,.22)" strokeWidth={s.w ?? 4} strokeLinecap="round" />
         ),
       )}
       {t.prop === 'cable' && t.anchor && (

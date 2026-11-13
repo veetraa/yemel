@@ -86,7 +86,7 @@ export function WeekdayChips({ value, onChange, mark }: { value: number[]; onCha
           <button key={i} onClick={() => onChange(on ? value.filter((x) => x !== i) : [...value, i].sort())} aria-pressed={on} aria-label={`Día ${l}`}
             className={`relative w-10 h-10 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : 'bg-s2 text-mute'}`}>
             {l}
-            {mark?.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-accent bg-bg rounded px-1">JJ</span>}
+            {mark?.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-glow bg-bg rounded px-1">JJ</span>}
           </button>
         )
       })}

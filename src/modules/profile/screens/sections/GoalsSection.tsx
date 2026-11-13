@@ -13,7 +13,7 @@ const KINDS = Object.keys(GOAL_KIND_LABEL) as GoalKind[]
 const STRENGTH_EX = EXERCISES.filter((e) => ['press-banca', 'sentadilla', 'peso-muerto', 'press-militar', 'dominadas', 'remo-barra', 'hip-thrust', 'prensa', 'jalon-pecho', 'curl-barra'].includes(e.id))
 
 function Bar({ pct, done }: { pct: number; done?: boolean }) {
-  return <div className="h-1.5 bg-s3 rounded-full overflow-hidden mt-2.5"><div className={`h-full rounded-full transition-all duration-700 ${done ? 'bg-accent' : 'bg-white'}`} style={{ width: `${Math.max(2, pct * 100)}%` }} /></div>
+  return <div className="h-1.5 bg-s3 rounded-full overflow-hidden mt-2.5"><div className={`h-full rounded-full transition-all duration-700 ${done ? 'bg-glow' : 'bg-white'}`} style={{ width: `${Math.max(2, pct * 100)}%` }} /></div>
 }
 
 export function GoalsSection() {

@@ -64,7 +64,7 @@ export function BodySection() {
             {photos.slice(0, 8).map((b) => <button key={b.id} onClick={() => setPhoto(b.photo!)} className="aspect-[3/4] rounded-xl overflow-hidden bg-s2 relative"><img src={b.photo} alt={`Foto del ${formatDateShort(b.ts)}`} className="w-full h-full object-cover" /><span className="absolute bottom-0 inset-x-0 text-[10px] font-semibold bg-black/60 py-0.5 text-center">{formatDateShort(b.ts)}</span></button>)}
           </div>
           {photos.length > 1 && (
-            <button onClick={() => setPhoto('compare')} className="mt-3 text-[13px] font-semibold text-accent">Comparar primera y última</button>
+            <button onClick={() => setPhoto('compare')} className="mt-3 text-[13px] font-semibold text-glow">Comparar primera y última</button>
           )}
         </div>
       )}

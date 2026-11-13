@@ -27,10 +27,10 @@ export function PhilosopherDetail({ id }: { id: string }) {
       <Header onBack={pop} right={<FavButton kind="philosophers" id={p.id} />} />
       <div className="scroll flex-1 px-6 pb-10">
         <Label>{p.role} · {p.years}</Label>
-        <h1 className="text-[30px] font-bold tracking-tight leading-tight mt-1.5">{p.name}</h1>
+        <h1 className="display text-[44px] mt-1.5">{p.name}</h1>
         <p className="text-[15.5px] leading-relaxed text-[#d8d8dc] mt-4">{p.bio}</p>
         <Label className="mt-9">Ideas clave</Label>
-        <ul className="mt-3 space-y-2.5">{p.ideas.map((x, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed text-mute"><Icon name="check" size={18} className="shrink-0 mt-0.5 text-accent" />{x}</li>)}</ul>
+        <ul className="mt-3 space-y-2.5">{p.ideas.map((x, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed text-mute"><Icon name="check" size={18} className="shrink-0 mt-0.5 text-glow" />{x}</li>)}</ul>
         <Label className="mt-9">Por dónde empezar</Label>
         <p className="text-[15px] text-mute leading-relaxed mt-2">{p.startWith}</p>
         <Label className="mt-9">Frases</Label>
@@ -49,10 +49,10 @@ export function ReflectionDetail({ id }: { id: string }) {
       <Header onBack={pop} right={<FavButton kind="reflections" id={r.id} />} />
       <div className="scroll flex-1 px-6 pb-10">
         <Label>{r.when} · {r.minutes} min</Label>
-        <h1 className="text-[28px] font-bold tracking-tight leading-tight mt-1.5">{r.title}</h1>
+        <h1 className="display text-[44px] mt-1.5">{r.title}</h1>
         <p className="text-[15.5px] leading-relaxed text-[#d8d8dc] mt-3">{r.intro}</p>
         <Label className="mt-9">Preguntas</Label>
-        <ol className="mt-3 space-y-4">{r.prompts.map((p, i) => <li key={i} className="flex gap-4"><span className="num w-6 shrink-0 text-accent font-bold text-lg leading-snug">{i + 1}</span><span className="text-[16px] leading-relaxed">{p}</span></li>)}</ol>
+        <ol className="mt-3 space-y-4">{r.prompts.map((p, i) => <li key={i} className="flex gap-4"><span className="num w-6 shrink-0 text-glow font-bold text-lg leading-snug">{i + 1}</span><span className="text-[16px] leading-relaxed">{p}</span></li>)}</ol>
         <Button className="w-full mt-10" onClick={() => replace({ name: 'philo.entry', id: `new:r:${r.id}` })}>EMPEZAR Y ESCRIBIR</Button>
         <p className="text-[12px] text-dim mt-3 text-center">Se guardará en tu diario, privado en este dispositivo.</p>
       </div>
@@ -70,12 +70,12 @@ export function PillarDetail({ id }: { id: string }) {
       <Header onBack={pop} />
       <div className="scroll flex-1 px-6 pb-10">
         <Label>Pilar</Label>
-        <h1 className="text-[32px] font-bold tracking-tight leading-tight mt-1.5">{p.title}</h1>
+        <h1 className="display text-[44px] mt-1.5">{p.title}</h1>
         <p className="text-[15.5px] leading-relaxed text-[#d8d8dc] mt-3">{p.definition}</p>
         <Label className="mt-9">Principios</Label>
-        <ul className="mt-3 space-y-2.5">{p.principles.map((x, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed text-mute"><Icon name="check" size={18} className="shrink-0 mt-0.5 text-accent" />{x}</li>)}</ul>
+        <ul className="mt-3 space-y-2.5">{p.principles.map((x, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed text-mute"><Icon name="check" size={18} className="shrink-0 mt-0.5 text-glow" />{x}</li>)}</ul>
         <Label className="mt-9">Prácticas</Label>
-        <ol className="mt-3 space-y-3">{p.practices.map((x, i) => <li key={i} className="flex gap-4"><span className="num w-6 shrink-0 text-accent font-bold text-lg leading-snug">{i + 1}</span><span className="text-[15.5px] leading-relaxed">{x}</span></li>)}</ol>
+        <ol className="mt-3 space-y-3">{p.practices.map((x, i) => <li key={i} className="flex gap-4"><span className="num w-6 shrink-0 text-glow font-bold text-lg leading-snug">{i + 1}</span><span className="text-[15.5px] leading-relaxed">{x}</span></li>)}</ol>
         <Label className="mt-9">Reflexiones relacionadas</Label>
         <div className="mt-1">{p.reflectionIds.map(reflectionById).map((r) => r && <button key={r.id} onClick={() => push({ name: 'philo.reflection', id: r.id })} className="w-full flex items-center py-3.5 border-b border-line/70 last:border-0 text-left font-semibold">{r.title}<Icon name="chev" size={16} className="text-dim ml-auto" /></button>)}</div>
         <Label className="mt-9">Frases</Label>

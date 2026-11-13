@@ -11,6 +11,10 @@ export interface Settings {
   vibrate: boolean
   /** Adapta cargas/series a la recuperación y la carga semanal */
   adaptToRecovery: boolean
+  /** false solo en la primera ejecución: muestra la bienvenida */
+  welcomed?: boolean
+  /** Fondo personalizado (foto propia, solo en este dispositivo) */
+  bgPhoto?: string
   activeRoutineId?: string
 }
 

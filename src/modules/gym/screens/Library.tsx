@@ -62,7 +62,7 @@ export function ExerciseDetail({ id }: { id: string }) {
           <span className="absolute left-4 bottom-3 text-[11px] font-semibold uppercase tracking-wider text-dim">Bucle de ejecución</span>
         </div>
         <div className="px-6 mt-6">
-          <h1 className="text-[28px] font-bold tracking-tight leading-tight">{e.name}</h1>
+          <h1 className="display text-[44px]">{e.name}</h1>
 
           <div className="mt-6 grid grid-cols-1 gap-5">
             <div>
@@ -98,7 +98,7 @@ export function ExerciseDetail({ id }: { id: string }) {
           <ol className="mt-3 space-y-4">
             {e.steps.map((s, i) => (
               <li key={i} className="flex gap-4">
-                <span className="num w-6 shrink-0 text-accent font-bold text-lg leading-snug">{i + 1}</span>
+                <span className="num w-6 shrink-0 text-glow font-bold text-lg leading-snug">{i + 1}</span>
                 <span className="text-[15.5px] leading-relaxed text-[#d8d8dc]">{s}</span>
               </li>
             ))}

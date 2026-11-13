@@ -30,7 +30,7 @@ export function SportHistory({ sport, limit = 12 }: { sport: CombatSport; limit?
         <div className="mt-6"><Label>Técnicas más trabajadas</Label>
           <div className="mt-3 space-y-2.5">{cs.topTechniques.map((t) => (
             <div key={t.technique} className="flex items-center gap-3"><div className="w-36 text-[13.5px] font-semibold truncate">{t.technique}</div>
-              <div className="flex-1 h-2 bg-s2 rounded-full overflow-hidden"><div className="h-full bg-accent/80 rounded-full" style={{ width: `${(t.count / max) * 100}%` }} /></div>
+              <div className="flex-1 h-2 bg-s2 rounded-full overflow-hidden"><div className="h-full bg-glow/80 rounded-full" style={{ width: `${(t.count / max) * 100}%` }} /></div>
               <div className="num w-6 text-right text-[13.5px] font-bold">{t.count}</div></div>
           ))}</div></div>
       )}

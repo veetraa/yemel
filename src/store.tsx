@@ -113,7 +113,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ])
       setCustomExercises(cx ?? [])
       setCustoms(cx ?? [])
-      let st = { ...DEFAULT_SETTINGS, ...(s as Partial<Settings>) }
+      const fresh = !s && !p
+      let st: Settings = { ...DEFAULT_SETTINGS, ...(s as Partial<Settings>), welcomed: fresh ? false : (s as Partial<Settings> | undefined)?.welcomed ?? true }
       let prof: Profile
       if (p) {
         prof = migrateProfile({ ...DEFAULT_PROFILE, ...p } as Profile)

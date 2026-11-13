@@ -6,6 +6,7 @@
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { Icon } from '../../../shared/components/Icon'
+import { Logo } from '../../../shared/components/Logo'
 import { Button, Label, Ring, Sheet } from '../../../shared/components/ui'
 import { RecoverySection } from '../../../shared/components/RecoverySection'
 import { dateKey, formatDateLong, formatDateShort, formatNumber, formatDuration, greeting, startOfWeek, weekdayIndex, WEEKDAYS_SHORT } from '../../../shared/lib/utils'
@@ -25,8 +26,8 @@ const TODAY_LABEL: Record<SlotType, string> = { gym: 'Hoy toca gimnasio', combat
 
 function Card({ icon, title, children, onClick, cta }: { icon: string; title: string; children: React.ReactNode; onClick: () => void; cta: string }) {
   return (
-    <button onClick={onClick} className="w-full text-left bg-s1 rounded-3xl p-5 active:bg-s2 transition">
-      <div className="flex items-center gap-2.5"><span className="w-8 h-8 rounded-full bg-s2 grid place-items-center text-accent"><Icon name={icon} size={17} /></span><Label>{title}</Label><span className="ml-auto text-[12px] font-semibold text-accent flex items-center gap-0.5">{cta}<Icon name="chev" size={14} /></span></div>
+    <button onClick={onClick} className="w-full text-left bg-s1 rounded-[28px] p-5 active:bg-s2 transition">
+      <div className="flex items-center gap-2.5"><span className="w-8 h-8 rounded-full bg-s2 grid place-items-center text-glow"><Icon name={icon} size={17} /></span><Label>{title}</Label><span className="ml-auto text-[12px] font-semibold text-glow flex items-center gap-0.5">{cta}<Icon name="chev" size={14} /></span></div>
       <div className="mt-3.5">{children}</div>
     </button>
   )
@@ -62,20 +63,20 @@ export function HomeScreen() {
 
   return (
     <div className="scroll h-full pb-8">
-      <div className="pt-safe px-6 pt-4">
-        <Label className="first-letter:uppercase">{formatDateLong()}</Label>
-        <h1 className="text-[34px] leading-[1.1] font-bold tracking-tight mt-1.5">
-          {greeting()}{profile.name.trim() ? <>,<br /><span className="text-mute">{profile.name.trim()}</span></> : null}
+      <div className="pt-safe px-6 pt-3">
+        <div className="flex items-center justify-between"><Logo size={20} /><Label className="first-letter:uppercase !text-white/70">{formatDateLong()}</Label></div>
+        <h1 className="display text-[56px] mt-8 text-shadow-soft">
+          {greeting()}{profile.name.trim() ? <>,<br /><span className="text-white/70">{profile.name.trim()}</span></> : null}
         </h1>
-        {t.slot && <p className="text-mute mt-3 text-[15px]">{TODAY_LABEL[t.slot.type]}{t.slot.label && t.slot.type !== 'rest' && t.slot.type !== 'recovery' ? ` · ${t.slot.label}` : ''}</p>}
+        {t.slot && <p className="text-white/80 mt-3 text-[16px]">{TODAY_LABEL[t.slot.type]}{t.slot.label && t.slot.type !== 'rest' && t.slot.type !== 'recovery' ? ` · ${t.slot.label}` : ''}</p>}
       </div>
 
       <div className="px-6 mt-7 space-y-3">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <Card icon="gym" title="Gym" cta={active ? 'Continuar' : 'Ir a Gym'} onClick={() => go('gym', 'today')}>
-            {active ? <><div className="text-[20px] font-bold tracking-tight">{active.dayName}</div><div className="text-[13.5px] text-accent mt-1 font-semibold">Entrenamiento en curso</div></>
+            {active ? <><div className="display-b text-[28px]">{active.dayName}</div><div className="text-[13.5px] text-glow mt-1 font-semibold">Entrenamiento en curso</div></>
               : gym ? <><div className="text-[12.5px] text-mute font-semibold">{gym.label === 'Hoy' ? 'Hoy' : `Próximo · ${gym.label}`}</div>
-                <div className="text-[20px] font-bold tracking-tight mt-0.5">{gym.day.name}</div>
+                <div className="display-b text-[28px] mt-0.5">{gym.day.name}</div>
                 <div className="text-[13.5px] text-mute mt-1">{gym.day.exercises.length} ejercicios · ~{estimateMinutes(gym.day)} min</div></>
               : <div className="text-[15px] text-mute">Sin días de gimnasio asignados.</div>}
             {lastGym && <div className="text-[12px] text-dim mt-3">Último: {lastGym.dayName} · {ago(lastGym.endedAt)}</div>}
@@ -85,10 +86,10 @@ export function HomeScreen() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <Card icon="glove" title="Combat" cta="Ir a Combat" onClick={() => go('combat', 'overview')}>
             {combat ? <><div className="text-[12.5px] text-mute font-semibold">{combat.label === 'Hoy' ? 'Hoy' : `Próxima · ${combat.label}`}</div>
-              <div className="text-[20px] font-bold tracking-tight mt-0.5">{combat.slot.label}</div>
+              <div className="display-b text-[28px] mt-0.5">{combat.slot.label}</div>
               <div className="flex flex-wrap gap-1.5 mt-2.5">
                 {combat.slot.intensity && <span className="text-[11.5px] font-semibold bg-s2 rounded-full px-2.5 py-1">Intensidad {INTENSITY_LABEL[combat.slot.intensity].toLowerCase()}</span>}
-                {combat.slot.combat?.sparring && <span className="text-[11.5px] font-semibold text-accent border border-accent/50 rounded-full px-2.5 py-1">Sparring</span>}
+                {combat.slot.combat?.sparring && <span className="text-[11.5px] font-semibold text-glow border border-glow/50 rounded-full px-2.5 py-1">Sparring</span>}
               </div></>
               : <div className="text-[15px] text-mute">Sin sesiones de combate planificadas.</div>}
             {lastCombat && <div className="text-[12px] text-dim mt-3">Última: {lastCombat.sport} · {ago(lastCombat.ts)} · RPE {lastCombat.rpe}</div>}
@@ -108,7 +109,7 @@ export function HomeScreen() {
         <Label>Recuperación</Label>
         {t.slot?.type === 'recovery' && !t.done && (
           <button onClick={() => push({ name: 'shared.mobility' })} className="mt-3 w-full flex items-center gap-3 bg-s1 rounded-2xl px-4 py-3.5 text-left active:bg-s2">
-            <Icon name="clock" size={20} className="text-accent" /><div className="flex-1"><div className="font-semibold text-[15px]">Sesión de recuperación activa</div><div className="text-[12.5px] text-mute mt-0.5">Movilidad suave · RPE 2</div></div><Icon name="chev" size={16} className="text-dim" />
+            <Icon name="clock" size={20} className="text-glow" /><div className="flex-1"><div className="font-semibold text-[15px]">Sesión de recuperación activa</div><div className="text-[12.5px] text-mute mt-0.5">Movilidad suave · RPE 2</div></div><Icon name="chev" size={16} className="text-dim" />
           </button>
         )}
         {deload.state === 'active' && (
@@ -121,7 +122,7 @@ export function HomeScreen() {
             <div className="flex gap-2 mt-3"><Button size="sm" onClick={() => deloadAction('start')}>Iniciar descarga</Button><Button variant="secondary" size="sm" onClick={() => deloadAction('snooze')}>Más adelante</Button></div>
           </div>
         )}
-        {adjustment.notes.map((n, i) => <p key={i} className="mt-3 text-[14px] leading-snug text-[#d8d8dc] flex gap-2.5"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-accent" />{n}</p>)}
+        {adjustment.notes.map((n, i) => <p key={i} className="mt-3 text-[14px] leading-snug text-[#d8d8dc] flex gap-2.5"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-glow" />{n}</p>)}
         {!todayLogged && (
           <button onClick={() => setCheckin(true)} className="mt-3 w-full flex items-center gap-3 bg-s1 rounded-2xl px-4 py-3.5 text-left active:bg-s2">
             <div className="flex-1"><div className="font-semibold text-[15px]">¿Cómo has dormido y cómo te sientes?</div><div className="text-[12.5px] text-mute mt-0.5">{r.level === 'unknown' ? 'Opcional · adapta tus cargas a tu recuperación' : 'Actualiza el registro de hoy'}</div></div>
@@ -133,7 +134,7 @@ export function HomeScreen() {
 
       {/* Progreso: resumen */}
       <section className="px-6 mt-11">
-        <div className="flex items-end justify-between"><Label>Esta semana</Label><button onClick={() => go('progress')} className="text-[12px] font-semibold text-accent">Ver progreso</button></div>
+        <div className="flex items-end justify-between"><Label>Esta semana</Label><button onClick={() => go('progress')} className="text-[12px] font-semibold text-glow">Ver progreso</button></div>
         <div className="mt-4 flex items-center gap-5">
           <Ring value={week.completed / Math.max(1, planned)} size={84} stroke={7}><div className="num text-2xl font-bold leading-none">{week.completed}<span className="text-mute text-base">/{planned}</span></div></Ring>
           <div className="flex-1 flex justify-between">
@@ -150,7 +151,7 @@ export function HomeScreen() {
             })}
           </div>
         </div>
-        <div className="grid grid-cols-3 mt-7 divide-x divide-line">
+        <div className="grid grid-cols-3 gap-3 mt-7">
           <MiniStat label="Días" value={`${week.days.filter(Boolean).length}`} />
           <MiniStat label="Tiempo" value={week.minutes ? formatDuration(week.minutes * 60000) : '0 min'} />
           <MiniStat label="Carga (UA)" value={formatNumber(Math.round(week.load), 0)} />
@@ -164,9 +165,9 @@ export function HomeScreen() {
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="px-3 first:pl-0 last:pr-0">
-      <div className="num text-xl font-bold leading-none whitespace-nowrap">{value}</div>
-      <Label className="mt-1.5">{label}</Label>
+    <div className="bg-s1 rounded-3xl px-4 pt-4 pb-3.5">
+      <Label className="!text-[10px]">{label}</Label>
+      <div className="num display-b text-[34px] leading-none mt-5 whitespace-nowrap">{value}</div>
     </div>
   )
 }

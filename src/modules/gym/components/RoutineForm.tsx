@@ -111,7 +111,7 @@ export function ExercisePicker({ open, onClose, onPick }: { open: boolean; onClo
         ))}
       </div>
       {q.trim() && !list.some((e) => e.name.toLowerCase() === q.trim().toLowerCase()) && (
-        <button onClick={() => add(q.trim())} className="w-full text-left py-3 text-accent font-semibold border-b border-line/70">+ Usar «{q.trim()}» como ejercicio propio</button>
+        <button onClick={() => add(q.trim())} className="w-full text-left py-3 text-glow font-semibold border-b border-line/70">+ Usar «{q.trim()}» como ejercicio propio</button>
       )}
       {list.map((e) => (
         <button key={e.id} onClick={() => add(e.name, e.id, e.primary, e.primary === 'Core' || e.step === 0 ? 60 : 90)} className="w-full flex items-center gap-3 py-2.5 text-left border-b border-line/70 last:border-0 active:bg-s2">
@@ -150,7 +150,7 @@ export function RoutineForm({ routine, onChange }: { routine: Routine; onChange:
               const on = d.weekdays.includes(i)
               return (
                 <button key={i} onClick={() => setDay(d.id, { weekdays: on ? d.weekdays.filter((x) => x !== i) : [...d.weekdays, i].sort() })}
-                  className={`relative w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : profile.availableDays.length && !profile.availableDays.includes(i) ? 'bg-s1 text-dim' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}{combat.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-accent bg-bg rounded px-0.5">JJ</span>}</button>
+                  className={`relative w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : profile.availableDays.length && !profile.availableDays.includes(i) ? 'bg-s1 text-dim' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}{combat.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-glow bg-bg rounded px-0.5">JJ</span>}</button>
               )
             })}
           </div>
