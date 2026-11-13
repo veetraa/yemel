@@ -65,6 +65,8 @@ export interface Session {
   startedAt: number
   endedAt: number
   exercises: ExerciseLog[]
+  /** Esfuerzo percibido 1-10 (opcional) */
+  rpe?: number
 }
 
 export interface ActiveWorkout {
@@ -75,27 +77,115 @@ export interface ActiveWorkout {
   startedAt: number
   exercises: ExerciseLog[]
   index: number
+  /** Ajustes aplicados por el entrenador al iniciar */
+  adjustNotes?: string[]
   /** Marca de tiempo (ms) en que termina el descanso en curso */
   restEnd?: number
   restTotal?: number
 }
 
 export interface Settings {
-  name: string
   unit: Unit
-  weeklyGoal: number
-  bodyWeight?: number
-  experience: 'beginner' | 'intermediate' | 'advanced'
   sound: boolean
   vibrate: boolean
+  /** Adapta cargas/series a la recuperación y la carga semanal */
+  adaptToRecovery: boolean
   activeRoutineId?: string
+}
+
+export type Experience = 'beginner' | 'intermediate' | 'advanced'
+export type GoalKind = 'muscle' | 'strength' | 'endurance' | 'mobility' | 'fitness' | 'weight'
+export type BodyMetric = 'weight' | 'waist' | 'chest' | 'arm' | 'thigh' | 'hip'
+
+export interface Goal {
+  id: string
+  kind: GoalKind
+  title: string
+  /** Fuente del progreso: medida corporal, 1RM estimado de un ejercicio o valor manual */
+  metric: BodyMetric | 'e1rm' | 'manual'
+  exerciseId?: string
+  unit: string
+  start: number
+  target: number
+  /** Solo para metric = manual */
+  current?: number
+  createdAt: number
+  deadline?: string
+}
+
+/** Único perfil de la aplicación (siempre local y privado) */
+export interface Profile {
+  name: string
+  /** YYYY-MM-DD */
+  birthDate?: string
+  /** Edad introducida a mano; se ignora cuando hay fecha de nacimiento */
+  ageManual?: number
+  heightCm?: number
+  weightKg?: number
+  targetWeightKg?: number
+  /** Foto de perfil (data URL, nunca sale del dispositivo) */
+  photo?: string
+  mainGoal?: string
+  secondaryGoals: string[]
+  experience?: Experience
+  /** Meses entrenando */
+  trainingMonths?: number
+  sports: string[]
+  weeklyGoal: number
+  availableDays: number[]
+  sessionMinutes?: number
+  equipment: string[]
+  /** Jiu-Jitsu */
+  bjjDays: number[]
+  bjjMinutes?: number
+  goals: Goal[]
+}
+
+export interface BodyEntry {
+  id: string
+  ts: number
+  weight?: number
+  waist?: number
+  chest?: number
+  arm?: number
+  thigh?: number
+  hip?: number
+  photo?: string
+  note?: string
+}
+
+/** Registro voluntario de recuperación, uno por día (id = YYYY-MM-DD) */
+export interface Wellness {
+  id: string
+  sleepHours?: number
+  sleepQuality?: number
+  energy?: number
+  fatigue?: number
+  soreness?: number
+  recovery?: number
+  soreAreas?: string[]
+  note?: string
+}
+
+/** Actividad fuera de la app de gimnasio (Jiu-Jitsu, carrera…) */
+export interface Activity {
+  id: string
+  ts: number
+  sport: string
+  minutes: number
+  rpe: number
+  note?: string
 }
 
 export interface BackupFile {
   app: 'forma'
-  version: 1
+  version: 1 | 2
   exportedAt: string
   settings: Settings
+  profile?: Profile
   routines: Routine[]
   sessions: Session[]
+  body?: BodyEntry[]
+  wellness?: Wellness[]
+  activities?: Activity[]
 }

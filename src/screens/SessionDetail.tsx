@@ -25,7 +25,7 @@ export function SessionDetail({ id }: { id: string }) {
         <div className="grid grid-cols-3 gap-4 mt-7">
           <Stat label="Duración" value={formatDuration(sessionDuration(s)).replace(' min', '')} unit="min" />
           <Stat label="Volumen" value={formatVolume(sessionVolume(s)).split(' ')[0]} unit={formatVolume(sessionVolume(s)).split(' ')[1]} />
-          <Stat label="Series" value={sessionSets(s)} />
+          <Stat label={s.rpe ? 'Series · RPE ' + s.rpe : 'Series'} value={sessionSets(s)} />
         </div>
         {s.exercises.map((e) => (
           <div key={e.id} className="mt-9">
@@ -54,7 +54,7 @@ export function SessionDetail({ id }: { id: string }) {
 }
 
 export function SummaryScreen({ id }: { id: string }) {
-  const { sessions, settings } = useStore()
+  const { sessions, settings, updateSession } = useStore()
   const { pop } = useNav()
   const s = sessions.find((x) => x.id === id)
   const prs = useMemo(() => {
@@ -89,6 +89,15 @@ export function SummaryScreen({ id }: { id: string }) {
             {prs.map((p) => <div key={p.name} className="flex justify-between py-3 border-b border-line/60 last:border-0"><span className="font-semibold">{p.name}</span><span className="num font-bold text-accent">+{formatNumber(toDisplay(p.gain, u))} {u}</span></div>)}
           </div>
         )}
+        <div className="mt-10">
+          <Label>¿Qué tan duro fue? (opcional)</Label>
+          <div className="grid grid-cols-10 gap-1 mt-2">
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+              <button key={n} aria-label={`RPE ${n}`} aria-pressed={s.rpe === n} onClick={() => updateSession(s.id, { rpe: s.rpe === n ? undefined : n })} className={`h-11 rounded-lg num text-[14px] font-bold ${s.rpe === n ? 'bg-accent text-black' : s.rpe && n < s.rpe ? 'bg-s3 text-white' : 'bg-s2 text-mute'}`}>{n}</button>
+            ))}
+          </div>
+          <p className="text-[11.5px] text-dim mt-2 leading-snug">Ayuda al entrenador a medir tu carga semanal (1 = muy suave · 10 = máximo).</p>
+        </div>
         <div className="mt-10">
           <Label>Resumen</Label>
           {s.exercises.map((e) => (

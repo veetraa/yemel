@@ -10,6 +10,8 @@ import { SCHEMA_EXAMPLE, chatGptPrompt } from '../lib/prompt'
 import { useNav } from '../nav'
 import { useStore } from '../store'
 import type { Routine } from '../types'
+import { suggestWeekdays } from '../lib/profile'
+import { scheduleNotes } from '../lib/coach'
 
 type Mode = 'json' | 'text' | 'file'
 const LEVEL = {
@@ -27,7 +29,7 @@ Día 2 - Tirón
 - Remo con barra 3x10 - 90s`
 
 export function ImportScreen() {
-  const { saveRoutine, showToast } = useStore()
+  const { saveRoutine, showToast, profile } = useStore()
   const { pop, replace } = useNav()
   const [mode, setMode] = useState<Mode>('json')
   const [input, setInput] = useState('')
@@ -128,7 +130,15 @@ export function ImportScreen() {
             {draft && (
               <div className="mt-10">
                 <Label>{errors ? 'Vista previa parcial' : 'Vista previa · editable'}</Label>
-                <div className="mt-4"><RoutineForm routine={draft} onChange={setDraft} /></div>
+                <div className="mt-4 space-y-4">
+                  <Button variant="secondary" size="md" className="w-full" onClick={() => {
+                    const picks = suggestWeekdays(draft.days.length, profile)
+                    setDraft({ ...draft, days: draft.days.map((d, i) => ({ ...d, weekdays: picks[i] !== undefined ? [picks[i]] : [] })) })
+                    showToast('Días asignados según tu disponibilidad')
+                  }}>Asignar días según mi perfil</Button>
+                  {scheduleNotes(profile, draft.days).map((n, i) => <p key={i} className="text-[13px] text-[#ffb340] leading-snug">⚠ {n}</p>)}
+                  <RoutineForm routine={draft} onChange={setDraft} />
+                </div>
                 <div className="mt-8 space-y-2">
                   {errors ? (
                     <>

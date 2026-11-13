@@ -41,3 +41,27 @@ export function LineChart({ points, unit }: { points: { ts: number; v: number }[
     </svg>
   )
 }
+
+export function StackedBars({ data }: { data: { label: string; a: number; b: number; highlight?: boolean }[] }) {
+  const max = Math.max(1, ...data.map((d) => d.a + d.b))
+  const W = 320, H = 120, pad = 22
+  const bw = (W - pad) / data.length
+  return (
+    <svg viewBox={`0 0 ${W} ${H + 22}`} className="w-full" role="img" aria-label="Carga semanal: gimnasio y otras actividades">
+      {data.map((d, i) => {
+        const x = pad / 2 + i * bw + bw * 0.18
+        const w = bw * 0.64
+        const ha = (d.a / max) * (H - 8)
+        const hb = (d.b / max) * (H - 8)
+        return (
+          <g key={i}>
+            {hb > 0 && <rect x={x} y={H - ha - hb} width={w} height={hb} rx={4} fill="#d7ff3a" opacity={d.highlight ? 1 : 0.55} />}
+            {ha > 0 && <rect x={x} y={H - ha} width={w} height={Math.max(ha, 3)} rx={4} fill={d.highlight ? '#f5f5f7' : '#4b4b53'} />}
+            {ha + hb === 0 && <rect x={x} y={H - 2} width={w} height={2} rx={1} fill="#1b1b1f" />}
+            <text x={x + w / 2} y={H + 16} textAnchor="middle" fontSize="10" fontWeight="600" fill={d.highlight ? '#fff' : '#5c5c65'}>{d.label}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}

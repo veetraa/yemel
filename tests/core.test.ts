@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { parseJsonRoutine, parseTextRoutine, parseAuto, parseRest, hasErrors, routineToJson } from '../src/lib/importer'
 import { recommendWeight } from '../src/lib/recommend'
-import type { Session, Settings } from '../src/types'
+import type { Session } from '../src/types'
 
-const settings: Settings = { name: '', unit: 'kg', weeklyGoal: 4, experience: 'intermediate', sound: true, vibrate: true, bodyWeight: 80 }
+const settings = { experience: 'intermediate' as const, bodyWeight: 80 }
 
 describe('importer JSON', () => {
   it('importa el ejemplo del enunciado sin perder datos', () => {

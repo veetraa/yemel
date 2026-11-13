@@ -3,18 +3,18 @@
  * antiguo) cae a localStorage y, en último caso, a memoria.
  */
 const DB_NAME = 'forma-db'
-const STORES = ['routines', 'sessions', 'kv'] as const
+const STORES = ['routines', 'sessions', 'kv', 'body', 'wellness', 'activities'] as const
 type StoreName = (typeof STORES)[number]
 
 let dbPromise: Promise<IDBDatabase | null> | null = null
-const memory: Record<string, Map<string, unknown>> = { routines: new Map(), sessions: new Map(), kv: new Map() }
+const memory: Record<string, Map<string, unknown>> = Object.fromEntries(STORES.map((s) => [s, new Map()]))
 
 function open(): Promise<IDBDatabase | null> {
   if (dbPromise) return dbPromise
   dbPromise = new Promise((resolve) => {
     if (typeof indexedDB === 'undefined') return resolve(null)
     try {
-      const req = indexedDB.open(DB_NAME, 1)
+      const req = indexedDB.open(DB_NAME, 2)
       req.onupgradeneeded = () => {
         const db = req.result
         for (const s of STORES) if (!db.objectStoreNames.contains(s)) db.createObjectStore(s)
@@ -118,6 +118,8 @@ export async function dbAll<T>(store: StoreName): Promise<T[]> {
   }
   return out
 }
+
+export type { StoreName }
 
 export async function dbClearAll(): Promise<void> {
   for (const s of STORES) {

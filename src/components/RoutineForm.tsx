@@ -6,6 +6,7 @@ import { WEEKDAYS_SHORT, uid } from '../lib/utils'
 import { ExerciseFigure } from './ExerciseFigure'
 import { Icon } from './Icon'
 import { Button, Label, Sheet } from './ui'
+import { useStore } from '../store'
 
 function NumField({ value, onChange, step = 1, min = 0, max = 9999, decimal = false, suffix, label }: { value: number | undefined; onChange: (n: number | undefined) => void; step?: number; min?: number; max?: number; decimal?: boolean; suffix?: string; label: string }) {
   const [raw, setRaw] = useState<string | null>(null)
@@ -123,6 +124,7 @@ export function ExercisePicker({ open, onClose, onPick }: { open: boolean; onClo
 }
 
 export function RoutineForm({ routine, onChange }: { routine: Routine; onChange: (r: Routine) => void }) {
+  const { profile } = useStore()
   const [picker, setPicker] = useState<string | null>(null)
   const setDay = (id: string, p: Partial<RoutineDay>) => onChange({ ...routine, days: routine.days.map((d) => (d.id === id ? { ...d, ...p } : d)) })
 
@@ -146,7 +148,7 @@ export function RoutineForm({ routine, onChange }: { routine: Routine; onChange:
               const on = d.weekdays.includes(i)
               return (
                 <button key={i} onClick={() => setDay(d.id, { weekdays: on ? d.weekdays.filter((x) => x !== i) : [...d.weekdays, i].sort() })}
-                  className={`w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}</button>
+                  className={`relative w-9 h-9 rounded-full text-[13px] font-bold ${on ? 'bg-accent text-black' : profile.availableDays.length && !profile.availableDays.includes(i) ? 'bg-s1 text-dim' : 'bg-s2 text-mute'}`} aria-label={`Día de la semana ${l}`} aria-pressed={on}>{l}{profile.bjjDays.includes(i) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-bold text-accent bg-bg rounded px-0.5">JJ</span>}</button>
               )
             })}
           </div>

@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { ActivitySheet } from '../components/ActivitySheet'
+import { RecoverySection } from './profile/RecoverySection'
+import { readiness } from '../lib/coach'
+import { dateKey } from '../lib/profile'
 import { Icon } from '../components/Icon'
-import { Button, Label, Ring, Row } from '../components/ui'
+import { Button, Label, Ring, Row, Sheet } from '../components/ui'
 import { activeRoutine, estimateMinutes, getPlan, greeting } from '../lib/plan'
 import { sessionDuration, sessionVolume, streakWeeks, weekSummary } from '../lib/stats'
 import { WEEKDAYS_SHORT, formatDateLong, formatDateShort, formatDuration, formatNumber, formatVolume, weekdayIndex } from '../lib/utils'
@@ -8,12 +13,14 @@ import { useNav } from '../nav'
 import { useStore } from '../store'
 
 export function HomeScreen() {
-  const { settings, routines, sessions, active, startWorkout } = useStore()
+  const { settings, profile, routines, sessions, wellness, active, startWorkout, adjustment } = useStore()
+  const [checkin, setCheckin] = useState(false)
+  const [act, setAct] = useState(false)
   const { setTab, push } = useNav()
   const routine = activeRoutine(routines, settings)
   const plan = getPlan(routine, sessions)
   const week = weekSummary(sessions)
-  const goal = Math.max(1, settings.weeklyGoal)
+  const goal = Math.max(1, profile.weeklyGoal)
   const today = weekdayIndex()
   const date = formatDateLong()
   const streak = streakWeeks(sessions, goal)
@@ -28,7 +35,7 @@ export function HomeScreen() {
       <div className="pt-safe px-6 pt-4">
         <Label className="first-letter:uppercase">{date}</Label>
         <h1 className="text-[34px] leading-[1.1] font-bold tracking-tight mt-1.5">
-          {greeting()}{settings.name ? <>,<br /><span className="text-mute">{settings.name}</span></> : null}
+          {greeting()}{profile.name.trim() ? <>,<br /><span className="text-mute">{profile.name.trim()}</span></> : null}
         </h1>
       </div>
 
@@ -71,6 +78,26 @@ export function HomeScreen() {
         )}
       </motion.section>
 
+      {/* Estado */}
+      {(() => {
+        const r = readiness(wellness)
+        const todayLogged = wellness.some((w) => w.id === dateKey())
+        const lines = adjustment.notes
+        if (!lines.length && todayLogged) return null
+        return (
+          <section className="px-6 mt-10">
+            <Label>Tu estado</Label>
+            {lines.map((n, i) => <p key={i} className="mt-2 text-[14px] leading-snug text-[#d8d8dc] flex gap-2.5"><Icon name="info" size={17} className="shrink-0 mt-0.5 text-accent" />{n}</p>)}
+            {!todayLogged && (
+              <button onClick={() => setCheckin(true)} className="mt-3 w-full flex items-center gap-3 bg-s1 rounded-2xl px-4 py-3.5 text-left active:bg-s2">
+                <div className="flex-1"><div className="font-semibold text-[15px]">¿Cómo has dormido y cómo te sientes?</div><div className="text-[12.5px] text-mute mt-0.5">{r.level === 'unknown' ? 'Opcional · adapta tus cargas a tu recuperación' : 'Actualiza el registro de hoy'}</div></div>
+                <Icon name="chev" size={16} className="text-dim" />
+              </button>
+            )}
+          </section>
+        )
+      })()}
+
       {/* Semana */}
       <section className="px-6 mt-11">
         <div className="flex items-end justify-between">
@@ -94,6 +121,7 @@ export function HomeScreen() {
                       {done ? <Icon name="check" size={15} stroke={3} /> : null}
                     </div>
                     <span className={`text-[11px] font-semibold ${isToday ? 'text-white' : 'text-dim'}`}>{l}</span>
+                    {profile.bjjDays.includes(i) && <span className="-mt-1.5 text-[8px] font-bold text-accent">JJ</span>}
                   </div>
                 )
               })}
@@ -129,6 +157,11 @@ export function HomeScreen() {
           <p className="mt-3 text-mute text-[15px] leading-relaxed">Aún no has registrado entrenamientos. Cuando termines el primero aparecerá aquí.</p>
         )}
       </section>
+      {profile.sports.some((x) => x !== 'Gimnasio') && (
+        <div className="px-6 mt-6"><Button variant="secondary" size="md" className="w-full" onClick={() => setAct(true)}>Registrar {profile.sports.includes('Jiu-Jitsu') ? 'Jiu-Jitsu' : 'actividad'}</Button></div>
+      )}
+      <Sheet open={checkin} onClose={() => setCheckin(false)} title="Cómo te sientes hoy"><div className="space-y-5 pb-4"><RecoverySection /></div></Sheet>
+      <ActivitySheet open={act} onClose={() => setAct(false)} />
     </div>
   )
 }

@@ -3,9 +3,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ExerciseFigure } from '../components/ExerciseFigure'
 import { Icon } from '../components/Icon'
 import { ExercisePicker } from '../components/RoutineForm'
-import { Button, Header, Label, Sheet } from '../components/ui'
+import { Button, Header, Label, Sheet, Toggle } from '../components/ui'
 import { exerciseById, matchExercise } from '../data/exercises'
 import { beep, unlockAudio } from '../lib/audio'
+import { readiness } from '../lib/coach'
 import { activeRoutine, estimateMinutes, getPlan } from '../lib/plan'
 import { history, recommendWeight } from '../lib/recommend'
 import { isPR } from '../lib/stats'
@@ -34,7 +35,8 @@ export function TrainScreen() {
 
 // ───────────────────────── Selector ─────────────────────────
 function Picker() {
-  const { routines, sessions, settings, startWorkout } = useStore()
+  const { routines, sessions, settings, profile, adjustment, startWorkout } = useStore()
+  const [adapt, setAdapt] = useState(settings.adaptToRecovery)
   const { push } = useNav()
   const routine = activeRoutine(routines, settings)
   const plan = getPlan(routine, sessions)
@@ -46,21 +48,36 @@ function Picker() {
         {routine ? (
           <>
             <Label className="mt-2">{routine.name}</Label>
+            {adjustment.active && (
+              <div className="mt-4 bg-s1 rounded-2xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1"><Label>Ajuste del entrenador</Label></div>
+                  <Toggle on={adapt} onChange={setAdapt} />
+                </div>
+                <ul className="mt-2 space-y-1.5">{adjustment.notes.map((n, i) => <li key={i} className="text-[13.5px] leading-snug text-mute">{n}</li>)}</ul>
+              </div>
+            )}
             <div className="mt-2">
               {routine.days.map((d) => {
                 const rec = plan.today?.id === d.id
+                const est = estimateMinutes(d)
+                const limit = profile.sessionMinutes
+                const long = !!limit && est > limit
                 return (
-                  <button key={d.id} onClick={() => startWorkout(routine, d)} disabled={!d.exercises.length}
-                    className="w-full text-left py-4 border-b border-line/70 flex items-center gap-4 active:bg-s1">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[18px] font-bold tracking-tight truncate">{d.name}</span>
-                        {rec && <span className="text-[10.5px] font-bold bg-accent text-black rounded-full px-2 py-0.5">{plan.todayDone ? 'HECHO HOY' : plan.rotation ? 'TOCA' : 'HOY'}</span>}
+                  <div key={d.id} className="border-b border-line/70">
+                    <button onClick={() => startWorkout(routine, d, { adapt })} disabled={!d.exercises.length}
+                      className="w-full text-left py-4 flex items-center gap-4 active:bg-s1">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[18px] font-bold tracking-tight truncate">{d.name}</span>
+                          {rec && <span className="text-[10.5px] font-bold bg-accent text-black rounded-full px-2 py-0.5">{plan.todayDone ? 'HECHO HOY' : plan.rotation ? 'TOCA' : 'HOY'}</span>}
+                        </div>
+                        <div className="text-[13px] text-mute mt-1">{d.exercises.length} ejercicios · ~{est} min{long ? ` · tu límite: ${limit} min` : ''}</div>
                       </div>
-                      <div className="text-[13px] text-mute mt-1">{d.exercises.length} ejercicios · ~{estimateMinutes(d)} min</div>
-                    </div>
-                    <div className="w-11 h-11 rounded-full bg-accent text-black grid place-items-center"><Icon name="play" size={18} /></div>
-                  </button>
+                      <div className="w-11 h-11 rounded-full bg-accent text-black grid place-items-center"><Icon name="play" size={18} /></div>
+                    </button>
+                    {long && <button onClick={() => startWorkout(routine, d, { adapt, fitMinutes: limit })} className="mb-3 -mt-1 text-[13px] font-semibold text-accent">Empezar acortado a {limit} min →</button>}
+                  </div>
                 )
               })}
             </div>
@@ -79,7 +96,8 @@ function Picker() {
 
 // ───────────────────────── Entrenamiento ─────────────────────────
 function Workout() {
-  const { active, updateActive, finishWorkout, cancelWorkout, sessions, settings, showToast } = useStore()
+  const { active, updateActive, finishWorkout, cancelWorkout, sessions, settings, profile, weight, wellness, adjustment, showToast } = useStore()
+  const [notesOpen, setNotesOpen] = useState(false)
   const { setTab, push } = useNav()
   const [info, setInfo] = useState(false)
   const [finish, setFinish] = useState(false)
@@ -113,7 +131,7 @@ function Workout() {
   const ex = active?.exercises[active.index]
   const lib = ex ? exerciseById(ex.exerciseId) ?? matchExercise(ex.name) : undefined
   const prev = useMemo(() => (ex ? history(sessions, { exerciseId: ex.exerciseId, name: ex.name, targetReps: ex.targetReps })[0]?.log : undefined), [sessions, ex?.name, ex?.exerciseId]) // eslint-disable-line react-hooks/exhaustive-deps
-  const rec = useMemo(() => (ex ? recommendWeight({ exerciseId: ex.exerciseId, name: ex.name, targetReps: ex.targetReps, recommendedWeight: ex.plannedWeight }, sessions, settings) : null), [sessions, settings, ex?.name, ex?.exerciseId, ex?.targetReps, ex?.plannedWeight]) // eslint-disable-line react-hooks/exhaustive-deps
+  const rec = useMemo(() => (ex ? recommendWeight({ exerciseId: ex.exerciseId, name: ex.name, targetReps: ex.targetReps, recommendedWeight: ex.plannedWeight }, sessions, { bodyWeight: weight, experience: profile.experience, holdProgress: readiness(wellness).level === 'low' || adjustment.setDelta < 0 }) : null), [sessions, weight, profile.experience, wellness, adjustment.setDelta, ex?.name, ex?.exerciseId, ex?.targetReps, ex?.plannedWeight]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!active) return null
   const total = active.exercises.reduce((a, e) => a + e.sets.length, 0)
@@ -199,6 +217,12 @@ function Workout() {
         </div>
       </div>
 
+      {active.adjustNotes && (
+        <button onClick={() => setNotesOpen(!notesOpen)} className="mx-6 mb-2 text-left bg-s1 rounded-xl px-3.5 py-2.5 text-[12.5px] text-mute leading-snug">
+          <span className="text-accent font-semibold">Ajustado por tu entrenador</span>{notesOpen ? '' : ' · toca para ver'}
+          {notesOpen && <ul className="mt-1.5 space-y-1">{active.adjustNotes.map((n, i) => <li key={i}>{n}</li>)}</ul>}
+        </button>
+      )}
       <div className="scroll flex-1 px-6" style={{ paddingBottom: hasRest ? 190 : 24 }}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={ex.id} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.18 }}>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { BarChart, LineChart } from '../components/Charts'
+import { BarChart, LineChart, StackedBars } from '../components/Charts'
+import { weeklyLoads } from '../lib/coach'
 import { Icon } from '../components/Icon'
 import { Chip, Empty, Header, Label, Row, Stat } from '../components/ui'
 import { exerciseSeries, personalRecords, sessionDuration, sessionVolume, setsByMuscle, weeklySeries } from '../lib/stats'
@@ -8,10 +9,11 @@ import { useNav } from '../nav'
 import { useStore } from '../store'
 
 export function ProgressScreen() {
-  const { sessions, settings } = useStore()
+  const { sessions, settings, activities } = useStore()
   const { push, setTab } = useNav()
   const unit = settings.unit
   const weeks = useMemo(() => weeklySeries(sessions, 8), [sessions])
+  const loads = useMemo(() => weeklyLoads(sessions, activities, 6), [sessions, activities])
   const prs = useMemo(() => personalRecords(sessions), [sessions])
   const muscles = useMemo(() => setsByMuscle(sessions, 30), [sessions])
   const exercises = useMemo(() => {
@@ -56,6 +58,15 @@ export function ProgressScreen() {
           <BarChart unit="kg" data={weeks.map((w, i) => ({ label: i === weeks.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, value: toDisplay(w.volume, unit), highlight: i === weeks.length - 1 }))} />
         </div>
         <p className="text-[12px] text-dim mt-1">Kilos totales movidos ({unit}) por semana: series completadas × peso × repeticiones.</p>
+
+        {loads.some((w) => w.total > 0) && (
+          <>
+            <Label className="mt-12">Carga semanal</Label>
+            <div className="mt-3"><StackedBars data={loads.map((w, i) => ({ label: i === loads.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, a: w.gym, b: w.other, highlight: i === loads.length - 1 }))} /></div>
+            <div className="flex gap-4 text-[12px] text-mute mt-1"><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-[#4b4b53] inline-block" />Gimnasio</span><span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-accent inline-block" />Jiu-Jitsu y otras</span></div>
+            <p className="text-[12px] text-dim mt-1.5 leading-snug">Minutos × esfuerzo (RPE). Si no indicas el RPE de una sesión de gimnasio se asume 6.</p>
+          </>
+        )}
 
         {current && (
           <>

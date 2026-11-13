@@ -1,5 +1,5 @@
 import { exerciseById, matchExercise } from '../data/exercises'
-import type { ExerciseLog, Session, Settings } from '../types'
+import type { Experience, ExerciseLog, Session } from '../types'
 import { normalize, parseRepRange } from './utils'
 
 export interface Recommendation {
@@ -7,6 +7,14 @@ export interface Recommendation {
   reps?: number
   reason: string
   kind: 'progress' | 'repeat' | 'deload' | 'plan' | 'estimate' | 'none'
+}
+
+/** Datos del perfil que influyen en la recomendación */
+export interface UserCtx {
+  bodyWeight?: number
+  experience?: Experience
+  /** Recuperación baja o carga alta: no subir de peso aunque se haya completado el rango */
+  holdProgress?: boolean
 }
 
 interface Target {
@@ -33,7 +41,7 @@ export function history(sessions: Session[], t: Target, limit = 3): { session: S
   return out
 }
 
-export function recommendWeight(t: Target, sessions: Session[], settings: Settings): Recommendation {
+export function recommendWeight(t: Target, sessions: Session[], user: UserCtx): Recommendation {
   const lib = exerciseById(t.exerciseId) ?? matchExercise(t.name)
   const step = lib?.step ?? 2.5
   const range = parseRepRange(t.targetReps)
@@ -54,6 +62,7 @@ export function recommendWeight(t: Target, sessions: Session[], settings: Settin
     if (range) {
       const allTop = last.atTop.every((s) => s.reps >= range.max)
       if (allTop && last.atTop.length >= Math.min(last.done.length, 2)) {
+        if (user.holdProgress) return { weight: last.top, reps: range.max, kind: 'repeat', reason: `Habrías subido de peso, pero tu recuperación o carga reciente aconsejan mantener ${last.top} kg hoy.` }
         const next = roundTo(last.top + step, 0.5)
         return { weight: next, reps: range.min, kind: 'progress', reason: `Llegaste a ${range.max} reps con ${last.top} kg: sube a ${next} kg.` }
       }
@@ -75,11 +84,11 @@ export function recommendWeight(t: Target, sessions: Session[], settings: Settin
   if (t.recommendedWeight !== undefined && t.recommendedWeight > 0)
     return { weight: t.recommendedWeight, kind: 'plan', reason: 'Peso sugerido por tu rutina. Ajústalo según cómo vaya la primera serie.' }
 
-  if (lib?.ratio && settings.bodyWeight) {
-    const mult = settings.experience === 'beginner' ? 0.6 : settings.experience === 'advanced' ? 1.3 : 1
-    const w = roundTo(lib.ratio * settings.bodyWeight * mult, lib.step >= 2.5 ? 2.5 : 1)
-    if (w > 0) return { weight: w, kind: 'estimate', reason: `Estimación según tu peso (${settings.bodyWeight} kg) y nivel. Empieza ligero y ajusta.` }
+  if (lib?.ratio && user.bodyWeight) {
+    const mult = user.experience === 'beginner' ? 0.6 : user.experience === 'advanced' ? 1.3 : 1
+    const w = roundTo(lib.ratio * user.bodyWeight * mult, lib.step >= 2.5 ? 2.5 : 1)
+    if (w > 0) return { weight: w, kind: 'estimate', reason: `Estimación según tu peso actual (${user.bodyWeight} kg)${user.experience ? ' y tu nivel' : ''}. Empieza ligero y ajusta.` }
   }
   if (lib && lib.step === 0) return { weight: 0, kind: 'none', reason: 'Ejercicio con peso corporal.' }
-  return { weight: null, kind: 'none', reason: `Sin datos aún: elige un peso con el que puedas hacer las reps con 2 en reserva.${settings.bodyWeight ? '' : ' Añade tu peso corporal en Perfil para obtener estimaciones.'}` }
+  return { weight: null, kind: 'none', reason: `Sin datos aún: elige un peso con el que puedas hacer las reps con 2 en reserva.${user.bodyWeight ? '' : ' Añade tu peso corporal en Perfil para obtener estimaciones.'}` }
 }
