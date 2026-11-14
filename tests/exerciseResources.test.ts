@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { EXERCISES } from '../src/modules/gym/data/exercises'
@@ -41,15 +41,19 @@ describe('recursos por ejercicio', () => {
   })
 })
 
-describe('animaciones con licencia de terceros', () => {
-  it('no se publica ningún archivo cuya licencia esté pendiente y los autorizados tienen su referencia', async () => {
-    const { ANIMATIONS } = await import('../src/modules/gym/resources/catalog')
+describe('animaciones de ejercicios', () => {
+  it('cada animación pertenece a un ejercicio de la app, existe, es un GIF 180×180 y no se reutiliza entre ejercicios', async () => {
+    const { ANIMATIONS, GYMVISUAL } = await import('../src/modules/gym/resources/catalog')
+    expect(new Set(Object.values(GYMVISUAL)).size, 'un recurso por ejercicio').toBe(Object.keys(GYMVISUAL).length)
     for (const [id, a] of Object.entries(ANIMATIONS)) {
       expect(EXERCISES.some((e) => e.id === id), `${id}: ejercicio existente`).toBe(true)
-      const there = existsSync(join(__dirname, '..', 'public', a.src))
-      if (a.license === 'pending') expect(there, `${id}: archivo protegido publicado sin licencia`).toBe(false)
-      else { expect(there, `${id}: falta el archivo`).toBe(true); expect(a.licenseRef?.length, `${id}: falta la referencia de la licencia`).toBeGreaterThan(3) }
-      expect(a.credit.length).toBeGreaterThan(5)
+      const f = join(__dirname, '..', 'public', a.src)
+      expect(existsSync(f), `${id}: falta ${a.src}`).toBe(true)
+      const b = readFileSync(f)
+      expect(b.subarray(0, 3).toString(), `${id}: no es un GIF`).toBe('GIF')
+      expect([b.readUInt16LE(6), b.readUInt16LE(8)], `${id}: resolución`).toEqual([a.width, a.height])
+      if (a.license === 'granted') expect(a.licenseRef?.length, `${id}: falta la referencia de la licencia`).toBeGreaterThan(3)
+      expect(a.credit).toContain('Gym visual')
     }
   })
 })

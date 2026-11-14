@@ -151,7 +151,7 @@ export function ProfileScreen() {
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://repdb.co" target="_blank" rel="noopener nofollow">Exercise data by RepDB (repdb.co)</a><br />Ilustraciones de inicio y final y datos anatómicos de los ejercicios vinculados. Licencia gratuita con atribución, para uso dentro de aplicaciones.</p>
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/kinetic-place/exercises-db" target="_blank" rel="noopener">Kinetic Exercises Database</a> · MIT<br />Nombres, músculos, equipamiento, dificultad y guías de ejecución en español.</p>
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">Free Exercise DB</a> · Unlicense<br />Fotos de referencia, cargadas bajo demanda.</p>
-          <p><a className="text-white font-semibold underline underline-offset-4" href="https://gymvisual.com/" target="_blank" rel="noopener nofollow">© Gym visual</a><br />Animación de las aperturas con mancuernas (prueba piloto), vía exercises-dataset. Los medios son propiedad de Gym visual.</p>
+          <p><a className="text-white font-semibold underline underline-offset-4" href="https://gymvisual.com/" target="_blank" rel="noopener nofollow">© Gym visual</a><br />Animaciones de los ejercicios, vía exercises-dataset (hasaneyldrm). Los medios son propiedad de Gym visual.</p>
           <p>Los vídeos de demostración no se incluyen: no se ha podido verificar el derecho de redistribución de los vídeos disponibles. Puedes añadir los tuyos en cada ejercicio.</p>
         </div>
       </Sheet>

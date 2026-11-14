@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Icon } from '../../../shared/components/Icon'
 import type { LicensedAnimation } from '../resources/catalog'
 
-/** Animación en bucle (GIF) de un ejercicio, sin deformarla: se escala manteniendo la proporción y se muestra la atribución. */
+/** Animación en bucle (GIF) de un ejercicio, sin deformarla: se escala manteniendo la proporción. La atribución está en Perfil → Créditos. */
 export function LoopAnimation({ anim, name }: { anim: LicensedAnimation; name: string }) {
   const [failed, setFailed] = useState(false)
   const base = import.meta.env.BASE_URL
@@ -14,7 +14,6 @@ export function LoopAnimation({ anim, name }: { anim: LicensedAnimation; name: s
         <img src={`${base}${anim.src}`} width={anim.width} height={anim.height} alt={`Demostración animada: ${name}`} decoding="async" onError={() => setFailed(true)}
           className="h-full w-auto max-w-full object-contain" style={{ aspectRatio: `${anim.width} / ${anim.height}` }} />
       )}
-      <span className="absolute left-3 bottom-2.5 text-[10.5px] font-semibold text-neutral-500 bg-white/85 rounded-full px-2 py-0.5">{anim.credit}</span>
     </div>
   )
 }
