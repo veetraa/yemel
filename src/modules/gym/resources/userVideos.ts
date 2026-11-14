@@ -6,8 +6,11 @@ export type UserVideo =
   | { exerciseId: string; kind: 'link'; url: string; createdAt: number }
 
 export const getUserVideo = (exerciseId: string) => dbGet<UserVideo>('gymvideos', exerciseId)
-export const saveUserVideo = (v: UserVideo) => dbPut('gymvideos', v.exerciseId, v)
-export const removeUserVideo = (exerciseId: string) => dbDelete('gymvideos', exerciseId)
+const changed = () => window.dispatchEvent(new Event('gym-own-media'))
+export const saveUserVideo = async (v: UserVideo) => { await dbPut('gymvideos', v.exerciseId, v); changed() }
+export const removeUserVideo = async (exerciseId: string) => { await dbDelete('gymvideos', exerciseId); changed() }
+/** ¿El archivo propio es una imagen animada (GIF) en vez de un vídeo? */
+export const isImageMedia = (v: UserVideo | undefined) => v?.kind === 'file' && v.blob.type.startsWith('image/')
 
 /** Solo enlaces http(s) a un archivo de vídeo reproducible en la app (mp4, mov, m4v, webm). */
 export function videoUrl(u: string): string | null {
