@@ -2,3 +2,4 @@ node_modules
 dist
 dev-dev-dist
 *.local
+.library-src/

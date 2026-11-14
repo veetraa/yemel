@@ -29,6 +29,7 @@ export function ProfileScreen() {
   const [pending, setPending] = useState<string | null>(null)
   const [reset, setReset] = useState(false)
   const [install, setInstall] = useState(false)
+  const [credits, setCredits] = useState(false)
   const file = useRef<HTMLInputElement>(null)
   const photo = useRef<HTMLInputElement>(null)
   const bg = useRef<HTMLInputElement>(null)
@@ -130,7 +131,7 @@ export function ProfileScreen() {
             </div>
           </Accordion>
         </div>
-        <p className="text-center text-[12px] text-dim mt-8">Forma</p>
+        <button onClick={() => setCredits(true)} className="block mx-auto text-center text-[12px] text-dim mt-8 active:text-white">Forma · Créditos y licencias</button>
       </div>
 
       <Sheet open={pending !== null} onClose={() => setPending(null)} title="Importar copia de seguridad">
@@ -145,6 +146,15 @@ export function ProfileScreen() {
         <p className="text-mute leading-relaxed">Se borrarán todos tus datos de este dispositivo. No se puede deshacer.</p>
         <div className="mt-5 flex gap-2"><Button variant="secondary" className="flex-1" onClick={() => setReset(false)}>Cancelar</Button><Button variant="danger" className="flex-1" onClick={async () => { await resetAll(); setReset(false); showToast('Datos eliminados') }}>Eliminar</Button></div>
       </Sheet>
+      <Sheet open={credits} onClose={() => setCredits(false)} title="Créditos y licencias">
+        <div className="space-y-4 text-[14px] leading-relaxed text-mute">
+          <p><a className="text-white font-semibold underline underline-offset-4" href="https://repdb.co" target="_blank" rel="noopener nofollow">Exercise data by RepDB (repdb.co)</a><br />Ilustraciones de inicio y final y datos anatómicos de los ejercicios vinculados. Licencia gratuita con atribución, para uso dentro de aplicaciones.</p>
+          <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/kinetic-place/exercises-db" target="_blank" rel="noopener">Kinetic Exercises Database</a> · MIT<br />Nombres, músculos, equipamiento, dificultad y guías de ejecución en español.</p>
+          <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">Free Exercise DB</a> · Unlicense<br />Fotos de referencia, cargadas bajo demanda.</p>
+          <p>Los vídeos de demostración no se incluyen: no se ha podido verificar el derecho de redistribución de los vídeos disponibles. Puedes añadir los tuyos en cada ejercicio.</p>
+        </div>
+      </Sheet>
+
       <Sheet open={install} onClose={() => setInstall(false)} title="Instalar en el iPhone">
         <ol className="space-y-4 text-[15.5px] leading-relaxed">
           <li><b>1.</b> Abre esta página en <b>Safari</b>.</li>
