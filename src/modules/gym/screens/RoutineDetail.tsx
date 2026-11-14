@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { ExerciseFigure } from '../components/ExerciseFigure'
 import { Icon } from '../../../shared/components/Icon'
 import { Button, Chip, Header, Label, Sheet } from '../../../shared/components/ui'
-import { exerciseById } from '../data/exercises'
+import { ExerciseThumb } from '../components/ExerciseThumb'
+import { matchExact } from '../library/library'
 import { saveTextFile } from '../../../shared/lib/files'
 import { routineToJson } from '../services/gymImportService'
 import { WeekdayChips } from '../../../shared/components/fields'
@@ -61,18 +61,18 @@ export function RoutineDetail({ id }: { id: string }) {
             ) : <p className="text-[12px] text-dim mt-2">Actívala para asignar días.</p>}
             <div className="mt-3">
               {d.exercises.map((e) => {
-                const lib = exerciseById(e.exerciseId)
+                const libId = e.exerciseId ?? matchExact(e.name)?.id
                 return (
-                  <button key={e.id} disabled={!lib} onClick={() => lib && push({ name: 'gym.exercise', id: lib.id })} className="w-full flex items-center gap-3 py-3 border-b border-line/70 last:border-0 text-left">
-                    <div className="w-12 h-12 rounded-xl bg-s1 grid place-items-center shrink-0">
-                      {lib ? <ExerciseFigure anim={lib.anim} primary={lib.primary} animated={false} className="w-11 h-11" /> : <Icon name="bolt" size={18} className="text-dim" />}
+                  <button key={e.id} disabled={!libId} onClick={() => libId && push({ name: 'gym.exercise', id: libId })} className="w-full flex items-center gap-3 py-3 border-b border-line/70 last:border-0 text-left">
+                    <div className="w-12 h-12 rounded-xl bg-s1 grid place-items-center shrink-0 overflow-hidden">
+                      <ExerciseThumb exerciseId={libId} name={e.name} className="w-11 h-11" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{e.name}</div>
                       <div className="text-[13px] text-mute num tracking-normal">{e.sets} × {e.reps} · descanso {e.rest}s{e.recommendedWeight ? ` · ${e.recommendedWeight} kg` : ''}</div>
                       {e.notes && <div className="text-[12.5px] text-dim mt-0.5 truncate">{e.notes}</div>}
                     </div>
-                    {lib && <Icon name="chev" size={16} className="text-dim" />}
+                    {libId && <Icon name="chev" size={16} className="text-dim" />}
                   </button>
                 )
               })}

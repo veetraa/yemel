@@ -47,6 +47,14 @@ export const VIDEOS: Record<string, VideoAsset> = {}
 
 export const MAX_VIDEO_MB = 60
 
+/**
+ * Modelos 3D aprobados (anatomía, esqueleto, animación y equipamiento verificados). Los modelos procedurales
+ * actuales presentan deformaciones anatómicas y están DESACTIVADOS: la ficha usa ilustraciones y fotos reales.
+ * El visor (`components/Exercise3D.tsx`) se conserva para integrar modelos profesionales (GLB con esqueleto y
+ * animaciones) cuando existan: basta con añadir aquí el id del ejercicio una vez validado.
+ */
+export const APPROVED_3D_MODELS: readonly string[] = []
+
 const build = (e: Exercise): ExerciseResource => ({
   id: e.id,
   name: e.name,

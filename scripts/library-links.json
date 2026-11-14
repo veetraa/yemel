@@ -1,0 +1,733 @@
+{
+ "note": "Vínculos verificados a mano entre los ejercicios propios de YEMEL GYM y las fuentes. null = no hay equivalente exacto.",
+ "core": [
+  {
+   "id": "press-banca",
+   "name": "Press banca",
+   "primary": "Pecho",
+   "secondary": [
+    "Tríceps",
+    "Hombros"
+   ],
+   "equipment": [
+    "Barra",
+    "Banco"
+   ],
+   "kinetic": "barbell-bench-press",
+   "repdb": "bench-press",
+   "yuhonas": "Barbell_Bench_Press_-_Medium_Grip"
+  },
+  {
+   "id": "press-banca-inclinado",
+   "name": "Press inclinado con barra",
+   "primary": "Pecho",
+   "secondary": [
+    "Hombros",
+    "Tríceps"
+   ],
+   "equipment": [
+    "Barra",
+    "Banco inclinado"
+   ],
+   "kinetic": "barbell-incline-bench-press",
+   "repdb": "incline-bench-press",
+   "yuhonas": "Barbell_Incline_Bench_Press_-_Medium_Grip"
+  },
+  {
+   "id": "press-inclinado-mancuernas",
+   "name": "Press inclinado con mancuernas",
+   "primary": "Pecho",
+   "secondary": [
+    "Hombros",
+    "Tríceps"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco inclinado"
+   ],
+   "kinetic": "incline-dumbbell-press",
+   "repdb": "incline-db-press",
+   "yuhonas": "Incline_Dumbbell_Press"
+  },
+  {
+   "id": "press-mancuernas",
+   "name": "Press con mancuernas",
+   "primary": "Pecho",
+   "secondary": [
+    "Tríceps",
+    "Hombros"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco"
+   ],
+   "kinetic": "dumbbell-bench-press",
+   "repdb": "db-bench-press",
+   "yuhonas": "Dumbbell_Bench_Press"
+  },
+  {
+   "id": "press-pecho-maquina",
+   "name": "Press de pecho en máquina",
+   "primary": "Pecho",
+   "secondary": [
+    "Tríceps",
+    "Hombros"
+   ],
+   "equipment": [
+    "Máquina"
+   ],
+   "kinetic": "machine-bench-press",
+   "repdb": "chest-press-machine",
+   "yuhonas": "Machine_Bench_Press"
+  },
+  {
+   "id": "aperturas-mancuernas",
+   "name": "Aperturas con mancuernas",
+   "primary": "Pecho",
+   "secondary": [
+    "Hombros"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco"
+   ],
+   "kinetic": "dumbbell-flyes",
+   "repdb": "db-fly",
+   "yuhonas": "Dumbbell_Flyes"
+  },
+  {
+   "id": "cruces-polea",
+   "name": "Cruces en polea",
+   "primary": "Pecho",
+   "secondary": [
+    "Hombros"
+   ],
+   "equipment": [
+    "Polea"
+   ],
+   "kinetic": "cable-crossover",
+   "repdb": null,
+   "yuhonas": "Cable_Crossover"
+  },
+  {
+   "id": "flexiones",
+   "name": "Flexiones",
+   "primary": "Pecho",
+   "secondary": [
+    "Tríceps",
+    "Hombros",
+    "Core"
+   ],
+   "equipment": [
+    "Peso corporal"
+   ],
+   "kinetic": "push-up",
+   "repdb": "push-up",
+   "yuhonas": "Pushups"
+  },
+  {
+   "id": "fondos",
+   "name": "Fondos en paralelas",
+   "primary": "Tríceps",
+   "secondary": [
+    "Pecho",
+    "Hombros"
+   ],
+   "equipment": [
+    "Peso corporal",
+    "Paralelas"
+   ],
+   "kinetic": "parallel-bar-dip",
+   "repdb": "dips",
+   "yuhonas": "Parallel_Bar_Dip"
+  },
+  {
+   "id": "dominadas",
+   "name": "Dominadas",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Peso corporal",
+    "Barra de dominadas"
+   ],
+   "kinetic": "pull-up",
+   "repdb": "pull-up",
+   "yuhonas": "Pullups"
+  },
+  {
+   "id": "jalon-pecho",
+   "name": "Jalón al pecho",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Polea",
+    "Máquina"
+   ],
+   "kinetic": "wide-grip-lat-pulldown",
+   "repdb": "lat-pulldown",
+   "yuhonas": "Wide-Grip_Lat_Pulldown"
+  },
+  {
+   "id": "remo-barra",
+   "name": "Remo con barra",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Trapecio",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Barra"
+   ],
+   "kinetic": "bent-over-barbell-row",
+   "repdb": "barbell-row",
+   "yuhonas": "Bent_Over_Barbell_Row"
+  },
+  {
+   "id": "remo-mancuerna",
+   "name": "Remo con mancuerna a una mano",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco"
+   ],
+   "kinetic": "one-arm-dumbbell-row",
+   "repdb": "single-arm-db-row",
+   "yuhonas": "One-Arm_Dumbbell_Row"
+  },
+  {
+   "id": "remo-polea",
+   "name": "Remo en polea baja",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Polea"
+   ],
+   "kinetic": "seated-cable-rows",
+   "repdb": "seated-cable-row",
+   "yuhonas": "Seated_Cable_Rows"
+  },
+  {
+   "id": "peso-muerto",
+   "name": "Peso muerto",
+   "primary": "Espalda",
+   "secondary": [
+    "Glúteos",
+    "Isquiotibiales",
+    "Antebrazos",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Barra"
+   ],
+   "kinetic": "barbell-deadlift",
+   "repdb": "deadlift",
+   "yuhonas": "Barbell_Deadlift"
+  },
+  {
+   "id": "face-pull",
+   "name": "Face pull",
+   "primary": "Hombros",
+   "secondary": [
+    "Espalda",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Polea",
+    "Cuerda"
+   ],
+   "kinetic": "face-pull",
+   "repdb": "face-pull",
+   "yuhonas": "Face_Pull"
+  },
+  {
+   "id": "press-militar",
+   "name": "Press militar con barra",
+   "primary": "Hombros",
+   "secondary": [
+    "Tríceps",
+    "Core",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Barra"
+   ],
+   "kinetic": "standing-military-press",
+   "repdb": "ohp",
+   "yuhonas": "Standing_Military_Press"
+  },
+  {
+   "id": "press-hombro-mancuernas",
+   "name": "Press de hombros con mancuernas",
+   "primary": "Hombros",
+   "secondary": [
+    "Tríceps",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "dumbbell-shoulder-press",
+   "repdb": "dumbbell-shoulder-press",
+   "yuhonas": "Dumbbell_Shoulder_Press"
+  },
+  {
+   "id": "elevaciones-laterales",
+   "name": "Elevaciones laterales",
+   "primary": "Hombros",
+   "secondary": [
+    "Trapecio"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "side-lateral-raise",
+   "repdb": "lateral-raise",
+   "yuhonas": "Side_Lateral_Raise"
+  },
+  {
+   "id": "elevaciones-frontales",
+   "name": "Elevaciones frontales",
+   "primary": "Hombros",
+   "secondary": [
+    "Pecho"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "front-dumbbell-raise",
+   "repdb": "dumbbell-front-raise",
+   "yuhonas": "Front_Dumbbell_Raise"
+  },
+  {
+   "id": "pajaros",
+   "name": "Pájaros (deltoides posterior)",
+   "primary": "Hombros",
+   "secondary": [
+    "Espalda",
+    "Trapecio"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "seated-bent-over-rear-delt-raise",
+   "repdb": "rear-delt-fly",
+   "yuhonas": "Seated_Bent-Over_Rear_Delt_Raise"
+  },
+  {
+   "id": "encogimientos",
+   "name": "Encogimientos de trapecio",
+   "primary": "Trapecio",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Barra"
+   ],
+   "kinetic": "dumbbell-shrug",
+   "repdb": "db-shrug",
+   "yuhonas": "Dumbbell_Shrug"
+  },
+  {
+   "id": "curl-barra",
+   "name": "Curl con barra",
+   "primary": "Bíceps",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Barra"
+   ],
+   "kinetic": "barbell-curl",
+   "repdb": "barbell-curl",
+   "yuhonas": "Barbell_Curl"
+  },
+  {
+   "id": "curl-mancuernas",
+   "name": "Curl con mancuernas",
+   "primary": "Bíceps",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "dumbbell-bicep-curl",
+   "repdb": "bicep-curl",
+   "yuhonas": "Dumbbell_Bicep_Curl"
+  },
+  {
+   "id": "curl-martillo",
+   "name": "Curl martillo",
+   "primary": "Bíceps",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Mancuernas"
+   ],
+   "kinetic": "hammer-curls",
+   "repdb": "hammer-curl",
+   "yuhonas": "Hammer_Curls"
+  },
+  {
+   "id": "curl-polea",
+   "name": "Curl en polea",
+   "primary": "Bíceps",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Polea"
+   ],
+   "kinetic": "standing-biceps-cable-curl",
+   "repdb": "cable-curl",
+   "yuhonas": "Standing_Biceps_Cable_Curl"
+  },
+  {
+   "id": "extension-triceps-polea",
+   "name": "Extensión de tríceps en polea",
+   "primary": "Tríceps",
+   "secondary": [],
+   "equipment": [
+    "Polea"
+   ],
+   "kinetic": "triceps-pushdown",
+   "repdb": "tricep-pushdown",
+   "yuhonas": "Triceps_Pushdown"
+  },
+  {
+   "id": "press-frances",
+   "name": "Press francés",
+   "primary": "Tríceps",
+   "secondary": [
+    "Hombros"
+   ],
+   "equipment": [
+    "Barra Z",
+    "Banco"
+   ],
+   "kinetic": "ez-bar-skullcrusher",
+   "repdb": "ez-bar-lying-tricep-extension",
+   "yuhonas": "EZ-Bar_Skullcrusher"
+  },
+  {
+   "id": "sentadilla",
+   "name": "Sentadilla con barra",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Isquiotibiales",
+    "Core"
+   ],
+   "equipment": [
+    "Barra",
+    "Rack"
+   ],
+   "kinetic": "barbell-squat",
+   "repdb": "squat",
+   "yuhonas": "Barbell_Squat"
+  },
+  {
+   "id": "sentadilla-goblet",
+   "name": "Sentadilla goblet",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Core"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Kettlebell"
+   ],
+   "kinetic": "goblet-squat",
+   "repdb": "goblet-squat",
+   "yuhonas": "Goblet_Squat"
+  },
+  {
+   "id": "prensa",
+   "name": "Prensa de piernas",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Isquiotibiales"
+   ],
+   "equipment": [
+    "Máquina"
+   ],
+   "kinetic": "leg-press",
+   "repdb": "leg-press",
+   "yuhonas": "Leg_Press"
+  },
+  {
+   "id": "zancadas",
+   "name": "Zancadas",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Isquiotibiales"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Peso corporal"
+   ],
+   "kinetic": "dumbbell-lunges",
+   "repdb": "db-lunge",
+   "yuhonas": "Dumbbell_Lunges"
+  },
+  {
+   "id": "sentadilla-bulgara",
+   "name": "Sentadilla búlgara",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Core"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco"
+   ],
+   "kinetic": "split-squat-with-dumbbells",
+   "repdb": "bulgarian-split-squat",
+   "yuhonas": "Split_Squat_with_Dumbbells"
+  },
+  {
+   "id": "extension-cuadriceps",
+   "name": "Extensión de cuádriceps",
+   "primary": "Cuádriceps",
+   "secondary": [],
+   "equipment": [
+    "Máquina"
+   ],
+   "kinetic": "leg-extensions",
+   "repdb": "leg-extension",
+   "yuhonas": "Leg_Extensions"
+  },
+  {
+   "id": "curl-femoral",
+   "name": "Curl femoral tumbado",
+   "primary": "Isquiotibiales",
+   "secondary": [
+    "Gemelos"
+   ],
+   "equipment": [
+    "Máquina"
+   ],
+   "kinetic": "lying-leg-curls",
+   "repdb": "leg-curl",
+   "yuhonas": "Lying_Leg_Curls"
+  },
+  {
+   "id": "peso-muerto-rumano",
+   "name": "Peso muerto rumano",
+   "primary": "Isquiotibiales",
+   "secondary": [
+    "Glúteos",
+    "Espalda",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Barra",
+    "Mancuernas"
+   ],
+   "kinetic": "romanian-deadlift",
+   "repdb": "romanian-deadlift",
+   "yuhonas": "Romanian_Deadlift"
+  },
+  {
+   "id": "hip-thrust",
+   "name": "Hip thrust",
+   "primary": "Glúteos",
+   "secondary": [
+    "Isquiotibiales",
+    "Core"
+   ],
+   "equipment": [
+    "Barra",
+    "Banco"
+   ],
+   "kinetic": "barbell-hip-thrust",
+   "repdb": "hip-thrust",
+   "yuhonas": "Barbell_Hip_Thrust"
+  },
+  {
+   "id": "puente-gluteos",
+   "name": "Puente de glúteos",
+   "primary": "Glúteos",
+   "secondary": [
+    "Isquiotibiales",
+    "Core"
+   ],
+   "equipment": [
+    "Peso corporal"
+   ],
+   "kinetic": "butt-lift-bridge",
+   "repdb": "glute-bridge",
+   "yuhonas": "Butt_Lift_Bridge"
+  },
+  {
+   "id": "gemelos-pie",
+   "name": "Elevación de gemelos de pie",
+   "primary": "Gemelos",
+   "secondary": [],
+   "equipment": [
+    "Máquina",
+    "Mancuernas"
+   ],
+   "kinetic": "standing-calf-raises",
+   "repdb": "standing-calf-raise",
+   "yuhonas": "Standing_Calf_Raises"
+  },
+  {
+   "id": "gemelos-sentado",
+   "name": "Elevación de gemelos sentado",
+   "primary": "Gemelos",
+   "secondary": [],
+   "equipment": [
+    "Máquina"
+   ],
+   "kinetic": "seated-calf-raise",
+   "repdb": "seated-calf-raise",
+   "yuhonas": "Seated_Calf_Raise"
+  },
+  {
+   "id": "remo-apoyado",
+   "name": "Remo con apoyo en pecho",
+   "primary": "Espalda",
+   "secondary": [
+    "Bíceps",
+    "Trapecio",
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Banco inclinado"
+   ],
+   "kinetic": "dumbbell-incline-row",
+   "repdb": "chest-supported-db-row",
+   "yuhonas": "Dumbbell_Incline_Row"
+  },
+  {
+   "id": "step-ups",
+   "name": "Step-ups",
+   "primary": "Cuádriceps",
+   "secondary": [
+    "Glúteos",
+    "Isquiotibiales",
+    "Core"
+   ],
+   "equipment": [
+    "Cajón",
+    "Mancuernas"
+   ],
+   "kinetic": "dumbbell-step-ups",
+   "repdb": null,
+   "yuhonas": "Dumbbell_Step_Ups"
+  },
+  {
+   "id": "press-landmine",
+   "name": "Press landmine",
+   "primary": "Hombros",
+   "secondary": [
+    "Pecho",
+    "Tríceps",
+    "Core"
+   ],
+   "equipment": [
+    "Barra",
+    "Landmine"
+   ],
+   "kinetic": null,
+   "repdb": "landmine-press",
+   "yuhonas": null
+  },
+  {
+   "id": "farmer-walk",
+   "name": "Farmer walks",
+   "primary": "Antebrazos",
+   "secondary": [
+    "Trapecio",
+    "Core",
+    "Glúteos"
+   ],
+   "equipment": [
+    "Mancuernas",
+    "Kettlebell"
+   ],
+   "kinetic": "farmer-s-walk",
+   "repdb": "dumbbell-farmers-walk",
+   "yuhonas": "Farmers_Walk"
+  },
+  {
+   "id": "pallof-press",
+   "name": "Pallof press",
+   "primary": "Core",
+   "secondary": [
+    "Hombros",
+    "Glúteos"
+   ],
+   "equipment": [
+    "Polea",
+    "Bandas elásticas"
+   ],
+   "kinetic": "pallof-press",
+   "repdb": "cable-pallof-press",
+   "yuhonas": "Pallof_Press"
+  },
+  {
+   "id": "plancha",
+   "name": "Plancha",
+   "primary": "Core",
+   "secondary": [
+    "Hombros",
+    "Glúteos"
+   ],
+   "equipment": [
+    "Peso corporal"
+   ],
+   "kinetic": "plank",
+   "repdb": "plank",
+   "yuhonas": "Plank"
+  },
+  {
+   "id": "crunch",
+   "name": "Crunch abdominal",
+   "primary": "Core",
+   "secondary": [],
+   "equipment": [
+    "Peso corporal"
+   ],
+   "kinetic": "crunches",
+   "repdb": null,
+   "yuhonas": "Crunches"
+  },
+  {
+   "id": "elevacion-piernas",
+   "name": "Elevación de piernas colgado",
+   "primary": "Core",
+   "secondary": [
+    "Antebrazos"
+   ],
+   "equipment": [
+    "Barra de dominadas"
+   ],
+   "kinetic": "hanging-leg-raise",
+   "repdb": "hanging-leg-raise",
+   "yuhonas": "Hanging_Leg_Raise"
+  }
+ ]
+}

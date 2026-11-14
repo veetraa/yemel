@@ -27,7 +27,16 @@ export default defineConfig({
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], navigateFallback: 'index.html' },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        navigateFallback: 'index.html',
+        // Biblioteca de ejercicios: no se precarga; se guarda en caché al consultarla (carga bajo demanda)
+        runtimeCaching: [
+          { urlPattern: /\/data\/library\/(index|ex\/[^/]+)\.json$/, handler: 'StaleWhileRevalidate', options: { cacheName: 'library-data', expiration: { maxEntries: 1000 } } },
+          { urlPattern: /\/data\/library\/img\/.+\.webp$/, handler: 'CacheFirst', options: { cacheName: 'library-img', expiration: { maxEntries: 150 } } },
+          { urlPattern: /^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\//, handler: 'CacheFirst', options: { cacheName: 'library-photos', expiration: { maxEntries: 80 }, cacheableResponse: { statuses: [0, 200] } } },
+        ],
+      },
     }),
   ],
 })

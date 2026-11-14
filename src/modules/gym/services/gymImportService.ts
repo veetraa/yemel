@@ -3,7 +3,8 @@
  * No conoce nada de Combat ni de Filosofía.
  */
 import { TEMPLATES } from '../data/poses'
-import { EXERCISES, MUSCLES, matchExercise, type Exercise } from '../data/exercises'
+import { EXERCISES, MUSCLES, type Exercise } from '../data/exercises'
+import { matchExact, suggestSimilar } from '../library/library'
 import type { Routine, RoutineDay, RoutineExercise } from '../types'
 import { normalize, uid } from '../../../shared/lib/utils'
 import { anyKey, isObj, list, parseWeekdays, pick, repairJson, slug, type ImportIssue, type Obj } from '../../../shared/lib/jsonImport'
@@ -57,12 +58,13 @@ function normalizeExercise(raw: unknown, path: string, issues: ImportIssue[]): R
     issues.push({ level: 'error', path: `${path}.name`, message: 'Falta el nombre del ejercicio.', fix: 'Añade "name": "Press banca".' })
     return null
   }
-  const lib = matchExercise(name)
+  const hit = matchExact(name)
+  const libGroup = hit?.core?.primary ?? hit?.item?.g
   const musV = pick(raw, KEYS.muscle)
   let muscle = typeof musV === 'string' ? musV.trim() : ''
   if (!muscle) {
-    muscle = lib?.primary ?? 'General'
-    if (!lib) issues.push({ level: 'info', path: `${path}.muscle`, message: `"${name}" no indica grupo muscular; se usará "General".`, fix: 'Añade "muscle": "Pecho" si quieres estadísticas por músculo.' })
+    muscle = libGroup ?? 'General'
+    if (!hit) issues.push({ level: 'info', path: `${path}.muscle`, message: `"${name}" no indica grupo muscular; se usará "General".`, fix: 'Añade "muscle": "Pecho" si quieres estadísticas por músculo.' })
   }
 
   let sets = 3
@@ -104,12 +106,15 @@ function normalizeExercise(raw: unknown, path: string, issues: ImportIssue[]): R
 
   const extra: Obj = {}
   for (const k of Object.keys(raw)) if (!isKnown(k)) extra[k] = raw[k]
-  if (lib && normalize(lib.name) !== normalize(name))
-    issues.push({ level: 'info', path: `${path}.name`, message: `"${name}" se ha vinculado con "${lib.name}" de la biblioteca (animación disponible).` })
-  if (!lib) issues.push({ level: 'info', path: `${path}.name`, message: `"${name}" no está en la biblioteca: se guarda igualmente, sin animación.` })
+  if (hit && normalize(hit.name) !== normalize(name))
+    issues.push({ level: 'info', path: `${path}.name`, message: `"${name}" coincide con "${hit.name}" de la biblioteca: se vincula su ficha (imagen e instrucciones).` })
+  if (!hit) {
+    const sug = suggestSimilar(name)
+    issues.push({ level: sug ? 'warning' : 'info', path: `${path}.name`, message: `"${name}" no está en la biblioteca: se conserva como ejercicio propio, sin imagen ni instrucciones.`, fix: sug ? `¿Es «${sug}»? Si lo es, escribe ese nombre en la vista previa para vincularlo. No se asigna automáticamente.` : undefined })
+  }
 
   return {
-    id: uid(), exerciseId: lib?.id, name, muscle, sets, reps, rest,
+    id: uid(), exerciseId: hit?.id, name, muscle, sets, reps, rest,
     recommendedWeight, notes, extra: Object.keys(extra).length ? extra : undefined,
   }
 }
@@ -257,10 +262,10 @@ function parseExerciseLine(line: string): RoutineExercise | null {
 
 function mk(name: string, sets: number, reps: string, rest?: number, notes?: string, weight?: number, notes2?: string): RoutineExercise | null {
   if (!name) return null
-  const lib = matchExercise(name)
+  const hit = matchExact(name)
   const n = [notes, notes2].filter(Boolean).join(' · ') || undefined
   return {
-    id: uid(), exerciseId: lib?.id, name, muscle: lib?.primary ?? 'General',
+    id: uid(), exerciseId: hit?.id, name, muscle: hit?.core?.primary ?? hit?.item?.g ?? 'General',
     sets, reps: String(reps), rest: rest ?? 90, recommendedWeight: weight, notes: n,
   }
 }
@@ -301,6 +306,10 @@ export function parseTextRoutine(input: string): ImportResult {
     issues.push({ level: 'warning', path: '', message: `No se pudo interpretar la línea: "${line.slice(0, 80)}"`, fix: 'Usa el formato "Nombre - 4x8-10 - descanso 90s". Si no, usa JSON.' })
   }
   const valid = days.filter((d) => d.exercises.length)
+  for (const d of days) for (const ex of d.exercises) if (!ex.exerciseId) {
+    const sug = suggestSimilar(ex.name)
+    issues.push({ level: sug ? 'warning' : 'info', path: '', message: `"${ex.name}" no está en la biblioteca: se conserva como ejercicio propio, sin imagen ni instrucciones.`, fix: sug ? `¿Es «${sug}»? Si lo es, escribe ese nombre en la vista previa para vincularlo. No se asigna automáticamente.` : undefined })
+  }
   days.filter((d) => !d.exercises.length).forEach((d) => issues.push({ level: 'warning', path: '', message: `"${d.name}" no tiene ejercicios reconocidos y se descarta.`, fix: 'Cada ejercicio debe tener series × repeticiones, por ejemplo "Sentadilla 4x8".' }))
   if (!valid.length) {
     issues.push({ level: 'error', path: '', message: 'No se reconoció ningún ejercicio.', fix: 'Formato esperado:\nDía 1 - Tren superior\n- Press banca 4x8-10 descanso 120s\n- Remo con barra 3x10 descanso 90s' })

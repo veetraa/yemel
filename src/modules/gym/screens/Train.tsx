@@ -1,11 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ExerciseFigure } from '../components/ExerciseFigure'
 import { Icon } from '../../../shared/components/Icon'
 import { Hint } from '../../../shared/components/Hint'
 import { ExercisePicker } from '../components/RoutineForm'
 import { Button, Header, Label, Sheet, Toggle } from '../../../shared/components/ui'
 import { exerciseById, matchExercise } from '../data/exercises'
+import { ExerciseInfoSheet } from '../components/ExerciseInfoSheet'
+import { ExerciseThumb } from '../components/ExerciseThumb'
+import { libraryIndex, matchExact } from '../library/library'
+import { useLibraryIndex } from '../library/hooks'
 import { beep, unlockAudio } from '../../../shared/lib/audio'
 import { readiness } from '../../../shared/services/recoveryService'
 import { estimateMinutes } from '../services/workoutService'
@@ -96,6 +99,7 @@ export function Picker() {
 export function Workout() {
   const { active, updateActive, finishWorkout, cancelWorkout, sessions, settings, profile, weight, wellness, adjustment, showToast } = useStore()
   const [notesOpen, setNotesOpen] = useState(false)
+  useLibraryIndex() // carga diferida de la biblioteca para las fichas de ayuda
   const { go, push } = useNav()
   const [info, setInfo] = useState(false)
   const [finish, setFinish] = useState(false)
@@ -128,6 +132,9 @@ export function Workout() {
 
   const ex = active?.exercises[active.index]
   const lib = ex ? exerciseById(ex.exerciseId) ?? matchExercise(ex.name) : undefined
+  // Ficha de ayuda: solo por id o nombre EXACTO (nunca un ejercicio parecido)
+  const infoId = ex ? (ex.exerciseId ?? matchExact(ex.name)?.id) : undefined
+  const hasInfo = !!infoId && (!!exerciseById(infoId) || !!libraryIndex()?.some((i) => i.id === infoId))
   const prev = useMemo(() => (ex ? history(sessions, { exerciseId: ex.exerciseId, name: ex.name, targetReps: ex.targetReps })[0]?.log : undefined), [sessions, ex?.name, ex?.exerciseId]) // eslint-disable-line react-hooks/exhaustive-deps
   const rec = useMemo(() => (ex ? recommendWeight({ exerciseId: ex.exerciseId, name: ex.name, targetReps: ex.targetReps, recommendedWeight: ex.plannedWeight }, sessions, { bodyWeight: weight, experience: profile.experience, holdProgress: readiness(wellness).level === 'low' || adjustment.setDelta < 0 }) : null), [sessions, weight, profile.experience, wellness, adjustment.setDelta, ex?.name, ex?.exerciseId, ex?.targetReps, ex?.plannedWeight]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -230,9 +237,9 @@ export function Workout() {
                 <h2 className="text-[27px] leading-[1.1] font-bold tracking-tight mt-1.5">{ex.name}</h2>
                 <div className="text-mute text-[14px] mt-1.5">{ex.muscle} · {ex.sets.filter((s) => s.done).length}/{ex.sets.length} series · {ex.targetReps} reps · {ex.rest}s descanso</div>
               </div>
-              {lib && (
+              {hasInfo && (
                 <button onClick={() => setInfo(true)} className="w-[92px] h-[92px] rounded-3xl bg-s1 grid place-items-center shrink-0 relative overflow-hidden active:bg-s2" aria-label="Ver técnica">
-                  <ExerciseFigure anim={lib.anim} primary={lib.primary} className="w-[84px] h-[84px]" />
+                  <ExerciseThumb exerciseId={infoId} name={ex.name} className="w-[84px] h-[84px]" />
                   <span className="absolute bottom-1.5 inset-x-0 text-center text-[10px] font-semibold uppercase tracking-wider text-dim">Técnica</span>
                 </button>
               )}
@@ -302,17 +309,7 @@ export function Workout() {
         )}
       </AnimatePresence>
 
-      <Sheet open={info} onClose={() => setInfo(false)}>
-        {lib && (
-          <>
-            <div className="rounded-3xl bg-bg aspect-[4/3] grid place-items-center"><ExerciseFigure anim={lib.anim} primary={lib.primary} className="w-[88%] h-[92%]" /></div>
-            <h3 className="text-xl font-bold mt-4">{lib.name}</h3>
-            <div className="text-mute text-sm mt-1">{lib.primary}{lib.secondary.length ? ` · ${lib.secondary.join(', ')}` : ''} · {lib.equipment.join(', ')}</div>
-            <ol className="mt-4 space-y-3">{lib.steps.map((s, i) => <li key={i} className="flex gap-3 text-[15px] leading-relaxed"><span className="text-glow font-bold num">{i + 1}</span><span className="text-[#d8d8dc]">{s}</span></li>)}</ol>
-            <p className="text-mute text-[14px] mt-4 leading-relaxed">{lib.tips[0]}</p>
-          </>
-        )}
-      </Sheet>
+      <ExerciseInfoSheet open={info} onClose={() => setInfo(false)} exerciseId={infoId} name={ex.name} />
 
       <Sheet open={finish} onClose={() => setFinish(false)} title="¿Terminar entrenamiento?">
         <p className="text-mute leading-relaxed">{doneCount === 0 ? 'Sin series completadas: no se guardará nada.' : `${doneCount} de ${total} series · ${formatClock(elapsed)}. Las series sin marcar no se guardan.`}</p>

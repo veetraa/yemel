@@ -1,6 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { MUSCLES, exerciseById, matchExercise, searchExercises } from '../data/exercises'
+import { MUSCLES, searchExercises } from '../data/exercises'
+import { ExerciseThumb } from './ExerciseThumb'
+import { useLibraryIndex } from '../library/hooks'
+import { matchExact } from '../library/library'
+import { normalize } from '../../../shared/lib/utils'
 import type { Routine, RoutineDay, RoutineExercise } from '../../../types'
 import { WEEKDAYS_SHORT, uid } from '../../../shared/lib/utils'
 import { ExerciseFigure } from './ExerciseFigure'
@@ -39,13 +43,12 @@ const inputCls = 'w-full bg-s2 rounded-xl h-11 px-3 font-semibold placeholder:te
 
 function ExerciseEditor({ ex, onChange, onDelete, onMove, first, last }: { ex: RoutineExercise; onChange: (e: RoutineExercise) => void; onDelete: () => void; onMove: (d: -1 | 1) => void; first: boolean; last: boolean }) {
   const [open, setOpen] = useState(false)
-  const lib = exerciseById(ex.exerciseId)
   const set = (p: Partial<RoutineExercise>) => onChange({ ...ex, ...p })
   return (
     <div className="border-b border-line/70 last:border-0">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 py-3 text-left">
         <div className="w-11 h-11 rounded-xl bg-s1 grid place-items-center shrink-0 overflow-hidden">
-          {lib ? <ExerciseFigure anim={lib.anim} primary={lib.primary} animated={false} className="w-10 h-10" /> : <Icon name="bolt" size={18} className="text-dim" />}
+          <ExerciseThumb exerciseId={ex.exerciseId} name={ex.name} className="w-10 h-10" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold truncate">{ex.name}</div>
@@ -61,7 +64,7 @@ function ExerciseEditor({ ex, onChange, onDelete, onMove, first, last }: { ex: R
             <div className="pb-4 grid grid-cols-2 gap-3">
               <label className="col-span-2 block">
                 <Label className="mb-1.5">Ejercicio</Label>
-                <input className={inputCls} value={ex.name} onChange={(e) => { const l = matchExercise(e.target.value); set({ name: e.target.value, exerciseId: l?.id }) }} />
+                <input className={inputCls} value={ex.name} onChange={(e) => { set({ name: e.target.value, exerciseId: matchExact(e.target.value)?.id }) }} />
               </label>
               <label className="col-span-2 block">
                 <Label className="mb-1.5">Músculo</Label>
@@ -97,6 +100,9 @@ export function ExercisePicker({ open, onClose, onPick }: { open: boolean; onClo
   const [q, setQ] = useState('')
   const [m, setM] = useState<string | undefined>()
   const list = searchExercises(q, m)
+  const index = useLibraryIndex()
+  const nq = normalize(q)
+  const lib = index && (nq || m) ? index.filter((i) => !i.core && (!m || i.g === m) && (!nq || normalize(`${i.n} ${i.en ?? ''}`).includes(nq))).slice(0, 40) : []
   const add = (name: string, id?: string, muscle = 'General', rest = 90) =>
     onPick({ id: uid(), exerciseId: id, name, muscle, sets: 3, reps: '8-12', rest })
   return (
@@ -117,6 +123,13 @@ export function ExercisePicker({ open, onClose, onPick }: { open: boolean; onClo
         <button key={e.id} onClick={() => add(e.name, e.id, e.primary, e.primary === 'Core' || e.step === 0 ? 60 : 90)} className="w-full flex items-center gap-3 py-2.5 text-left border-b border-line/70 last:border-0 active:bg-s2">
           <div className="w-11 h-11 rounded-xl bg-s2 grid place-items-center"><ExerciseFigure anim={e.anim} primary={e.primary} animated={false} className="w-10 h-10" /></div>
           <div className="flex-1"><div className="font-semibold">{e.name}</div><div className="text-[13px] text-mute">{e.primary} · {e.equipment.join(', ')}</div></div>
+          <Icon name="plus" size={18} className="text-mute" />
+        </button>
+      ))}
+      {lib.map((i) => (
+        <button key={i.id} onClick={() => add(i.n, i.id, i.g)} className="w-full flex items-center gap-3 py-2.5 text-left border-b border-line/70 last:border-0 active:bg-s2">
+          <div className="w-11 h-11 rounded-xl bg-s2 grid place-items-center overflow-hidden"><ExerciseThumb exerciseId={i.id} name={i.n} className="w-11 h-11" /></div>
+          <div className="flex-1"><div className="font-semibold">{i.n}</div><div className="text-[13px] text-mute">{i.g} · {i.e.join(', ') || 'Sin equipamiento'}</div></div>
           <Icon name="plus" size={18} className="text-mute" />
         </button>
       ))}

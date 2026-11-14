@@ -18,6 +18,7 @@ import { WEEKDAYS } from '../lib/utils'
 import { HYBRID_EXAMPLE, analyzeBundle, applyBundle, chatGptPrompt, parseBundle, type ImportBundle, type ImportScope } from '../services/hybridImportService'
 import { combatDays, suggestWeekdays } from '../services/planningService'
 import { useNav } from '../../nav'
+import { loadLibraryIndex } from '../../modules/gym/library/library'
 import { useStore } from '../../store'
 import type { CombatSport, Routine } from '../../types'
 
@@ -55,7 +56,8 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
   const preview = useRef<HTMLDivElement>(null)
   const defaultSport = (profile.primaryDiscipline && ['MMA', 'Brazilian Jiu-Jitsu', 'Boxeo', 'Kickboxing', 'Wrestling'].includes(profile.primaryDiscipline) ? profile.primaryDiscipline : 'MMA') as CombatSport
 
-  const analyze = (text = input) => {
+  const analyze = async (text = input) => {
+    await loadLibraryIndex() // la biblioteca debe estar cargada para vincular cada ejercicio por su nombre exacto
     const b = parseBundle(text, { routine: planRoutine, defaultSport }, scope)
     setBundle(b)
     setDraft(b.routine ?? null)
