@@ -152,6 +152,7 @@ export function ProfileScreen() {
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/kinetic-place/exercises-db" target="_blank" rel="noopener">Kinetic Exercises Database</a> · MIT<br />Nombres, músculos, equipamiento, dificultad y guías de ejecución en español.</p>
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">Free Exercise DB</a> · Unlicense<br />Fotos de referencia, cargadas bajo demanda.</p>
           <p><a className="text-white font-semibold underline underline-offset-4" href="https://gymvisual.com/" target="_blank" rel="noopener nofollow">© Gym visual</a><br />Animaciones de los ejercicios, vía exercises-dataset (hasaneyldrm). Los medios son propiedad de Gym visual.</p>
+          <p><a className="text-white font-semibold underline underline-offset-4" href="https://www.z-anatomy.com" target="_blank" rel="noopener">Z-Anatomy</a> · CC BY-SA 4.0<br />Modelo anatómico 3D de aperturas, curl y sentadilla. Obra derivada: malla simplificada, músculos agrupados y esqueleto añadido; se comparte con la misma licencia.</p>
           <p>Los vídeos de demostración no se incluyen: no se ha podido verificar el derecho de redistribución de los vídeos disponibles. Puedes añadir los tuyos en cada ejercicio.</p>
         </div>
       </Sheet>
