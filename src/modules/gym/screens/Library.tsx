@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ExerciseFigure } from '../components/ExerciseFigure'
 import { DemoPlayer } from '../components/DemoPlayer'
+import { LoopAnimation } from '../components/LoopAnimation'
 import { Exercise3D } from '../components/Exercise3D'
 import { ExerciseThumb } from '../components/ExerciseThumb'
 import { HowToSheet } from '../components/HowToSheet'
@@ -10,7 +11,7 @@ import { Button, Chip, Header, Label } from '../../../shared/components/ui'
 import { MUSCLES, allExercises, exerciseById } from '../data/exercises'
 import { useLibraryExercise, useLibraryIndex } from '../library/hooks'
 import { imagesOf } from '../library/library'
-import { APPROVED_3D_MODELS, VIDEOS } from '../resources/catalog'
+import { APPROVED_3D_MODELS, VIDEOS, activeAnimation } from '../resources/catalog'
 import { exerciseSeries } from '../services/workoutService'
 import { formatDateShort, formatNumber, normalize, toDisplay } from '../../../shared/lib/utils'
 import { useNav } from '../../../nav'
@@ -87,6 +88,8 @@ function Hero({ id, name }: { id: string; name: string }) {
   const [failed, setFailed] = useState(false)
   const demo = VIDEOS[id]
   if (demo) return <DemoPlayer video={demo} name={name} />
+  const loop = activeAnimation(id)
+  if (loop) return <LoopAnimation anim={loop} name={name} />
   if (core && APPROVED_3D_MODELS.includes(id)) return <Exercise3D anim={core.anim} primary={core.primary} secondary={core.secondary} />
   const src = img ? (end && img.end ? img.end : img.start ?? img.main) : undefined
   return (
