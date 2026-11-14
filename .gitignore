@@ -3,3 +3,6 @@ dist
 dev-dev-dist
 *.local
 .library-src/
+
+# Medios de terceros sin licencia propia: no publicar (ver ANIMATIONS en catalog.ts)
+public/media/gymvisual/

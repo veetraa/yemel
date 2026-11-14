@@ -47,6 +47,27 @@ export interface ExerciseResource {
 /** Vídeos explicativos disponibles, por id de ejercicio. Vacío hasta que se aporten recursos con licencia compatible. */
 export const VIDEOS: Record<string, VideoAsset> = {}
 
+/**
+ * Animaciones con licencia de terceros (GIF/vídeo en bucle). Solo se muestran con `license: 'granted'`: mientras esté
+ * `pending`, el archivo NO debe estar en el repositorio (un test lo comprueba) y la ficha sigue usando las imágenes.
+ */
+export interface LicensedAnimation {
+  /** Ruta relativa a `public/` */
+  src: string
+  width: number
+  height: number
+  frames: number
+  credit: string
+  license: 'pending' | 'granted'
+  /** Referencia de la autorización (correo, factura o enlace a los términos) cuando esté concedida */
+  licenseRef?: string
+}
+export const ANIMATIONS: Record<string, LicensedAnimation> = {
+  // PRUEBA PILOTO: exercises-dataset (hasaneyldrm), id 0308 «dumbbell fly». Medios © Gym visual: sin licencia propia todavía.
+  'aperturas-mancuernas': { src: 'media/gymvisual/0308-yz9nUhF.gif', width: 180, height: 180, frames: 12, credit: '© Gym visual — https://gymvisual.com/', license: 'pending' },
+}
+export const activeAnimation = (id: string) => (ANIMATIONS[id]?.license === 'granted' ? ANIMATIONS[id] : undefined)
+
 export const MAX_VIDEO_MB = 60
 
 /**

@@ -40,3 +40,16 @@ describe('recursos por ejercicio', () => {
     expect(videoUrl('')).toBeNull()
   })
 })
+
+describe('animaciones con licencia de terceros', () => {
+  it('no se publica ningún archivo cuya licencia esté pendiente y los autorizados tienen su referencia', async () => {
+    const { ANIMATIONS } = await import('../src/modules/gym/resources/catalog')
+    for (const [id, a] of Object.entries(ANIMATIONS)) {
+      expect(EXERCISES.some((e) => e.id === id), `${id}: ejercicio existente`).toBe(true)
+      const there = existsSync(join(__dirname, '..', 'public', a.src))
+      if (a.license === 'pending') expect(there, `${id}: archivo protegido publicado sin licencia`).toBe(false)
+      else { expect(there, `${id}: falta el archivo`).toBe(true); expect(a.licenseRef?.length, `${id}: falta la referencia de la licencia`).toBeGreaterThan(3) }
+      expect(a.credit.length).toBeGreaterThan(5)
+    }
+  })
+})
