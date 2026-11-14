@@ -56,16 +56,65 @@ export interface LicensedAnimation {
   src: string
   width: number
   height: number
-  frames: number
   credit: string
   license: 'pending' | 'granted'
   /** Referencia de la autorización (correo, factura o enlace a los términos) cuando esté concedida */
   licenseRef?: string
 }
-export const ANIMATIONS: Record<string, LicensedAnimation> = {
-  // PRUEBA PILOTO: exercises-dataset (hasaneyldrm), id 0308 «dumbbell fly». Medios © Gym visual (términos: gymvisual.com/content/3-terms-and-conditions-of-use).
-  'aperturas-mancuernas': { src: 'media/gymvisual/0308-yz9nUhF.gif', width: 180, height: 180, frames: 12, credit: '© Gym visual — https://gymvisual.com/', license: 'granted', licenseRef: 'Uso bajo responsabilidad del propietario de la app (sin licencia propia de Gym visual); mantener atribución' },
+/**
+ * Animaciones de exercises-dataset (hasaneyldrm) © Gym visual, 180×180: id del ejercicio de la app → id en ese dataset,
+ * emparejados a mano y revisados fotograma a fotograma. Términos: gymvisual.com/content/3-terms-and-conditions-of-use.
+ * Sin equivalente exacto (se usa el modelo 3D básico): hip-thrust, plancha, press-landmine.
+ */
+export const GYMVISUAL: Record<string, string> = {
+  'press-banca': '0025',
+  'press-banca-inclinado': '0047',
+  'press-inclinado-mancuernas': '0314',
+  'press-mancuernas': '0289',
+  'press-pecho-maquina': '0577',
+  'flexiones': '0662',
+  'cruces-polea': '1269',
+  'fondos': '0251',
+  'dominadas': '0652',
+  'jalon-pecho': '0150',
+  'remo-barra': '0027',
+  'remo-mancuerna': '0292',
+  'remo-polea': '0861',
+  'peso-muerto': '0032',
+  'face-pull': '0233',
+  'press-militar': '1457',
+  'press-hombro-mancuernas': '0405',
+  'elevaciones-laterales': '0334',
+  'elevaciones-frontales': '0310',
+  'pajaros': '0380',
+  'encogimientos': '0406',
+  'curl-barra': '0031',
+  'curl-mancuernas': '0294',
+  'curl-martillo': '0313',
+  'curl-polea': '0868',
+  'extension-triceps-polea': '0201',
+  'press-frances': '0060',
+  'sentadilla': '0043',
+  'sentadilla-goblet': '1760',
+  'prensa': '0739',
+  'zancadas': '0336',
+  'sentadilla-bulgara': '0410',
+  'extension-cuadriceps': '0585',
+  'curl-femoral': '0586',
+  'peso-muerto-rumano': '0085',
+  'puente-gluteos': '3013',
+  'gemelos-pie': '0417',
+  'gemelos-sentado': '0594',
+  'remo-apoyado': '0327',
+  'step-ups': '0431',
+  'farmer-walk': '2133',
+  'pallof-press': '0979',
+  'crunch': '0274',
+  'elevacion-piernas': '0472',
+  'aperturas-mancuernas': '0308'
 }
+const GV_REF = 'Uso bajo responsabilidad del propietario de la app (sin licencia propia de Gym visual)'
+export const ANIMATIONS: Record<string, LicensedAnimation> = Object.fromEntries(Object.entries(GYMVISUAL).map(([id]) => [id, { src: `media/gymvisual/${id}.gif`, width: 180, height: 180, credit: '© Gym visual — https://gymvisual.com/', license: 'granted' as const, licenseRef: GV_REF }]))
 export const activeAnimation = (id: string) => (ANIMATIONS[id]?.license === 'granted' ? ANIMATIONS[id] : undefined)
 
 export const MAX_VIDEO_MB = 60
