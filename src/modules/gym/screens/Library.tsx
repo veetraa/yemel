@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { ExerciseFigure } from '../components/ExerciseFigure'
 import { DemoPlayer } from '../components/DemoPlayer'
 import { LoopAnimation } from '../components/LoopAnimation'
+import { useOwnMedia } from '../components/useOwnMedia'
 import { Exercise3D } from '../components/Exercise3D'
 import { ExerciseThumb } from '../components/ExerciseThumb'
 import { HowToSheet } from '../components/HowToSheet'
@@ -86,7 +87,10 @@ function Hero({ id, name }: { id: string; name: string }) {
   const img = imagesOf(lib)
   const [end, setEnd] = useState(false)
   const [failed, setFailed] = useState(false)
+  const own = useOwnMedia(id)
   const demo = VIDEOS[id]
+  if (own?.kind === 'video') return <DemoPlayer video={{ src: own.url }} name={name} />
+  if (own?.kind === 'image') return <div className="mx-6 rounded-3xl bg-white aspect-[4/3] overflow-hidden grid place-items-center" data-testid="own-animation"><img src={own.url} alt={`Demostración animada: ${name}`} className="h-full w-auto max-w-full object-contain" /></div>
   if (demo) return <DemoPlayer video={demo} name={name} />
   const loop = activeAnimation(id)
   if (loop) return <LoopAnimation anim={loop} name={name} />

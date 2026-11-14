@@ -19,14 +19,15 @@ export function DemoPlayer({ video, name, onFail }: { video: DemoSource; name: s
   const toggle = () => { const v = ref.current; if (!v) return; if (v.paused) void v.play(); else v.pause() }
   const replay = () => { const v = ref.current; if (!v) return; v.currentTime = 0; v.playbackRate = speed; void v.play() }
   const base = import.meta.env.BASE_URL
+  const url = (s: string) => (/^(blob:|https?:)/.test(s) ? s : `${base}${s}`)
   return (
     <>
       <div className="mx-6 rounded-3xl bg-black aspect-[4/3] overflow-hidden relative" data-testid="demo-player">
-        <video ref={ref} playsInline loop={loop} preload={video.poster ? 'none' : 'metadata'} poster={video.poster ? `${base}${video.poster}` : undefined}
+        <video ref={ref} playsInline loop={loop} preload={video.poster ? 'none' : 'metadata'} poster={video.poster ? url(video.poster) : undefined}
           onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onRateChange={(e) => e.currentTarget.playbackRate !== speed && (e.currentTarget.playbackRate = speed)} onError={onFail}
           onClick={toggle} className="w-full h-full object-contain" aria-label={`Demostración: ${name}`}>
-          <source src={`${base}${video.src}`} type="video/mp4" />
-          {video.webm && <source src={`${base}${video.webm}`} type="video/webm" />}
+          <source src={url(video.src)} />
+          {video.webm && <source src={url(video.webm)} type="video/webm" />}
         </video>
         {!playing && (
           <button onClick={toggle} aria-label="Reproducir" className="absolute inset-0 grid place-items-center"><span className="w-16 h-16 rounded-full bg-white/90 text-black grid place-items-center"><Icon name="play" size={26} /></span></button>
