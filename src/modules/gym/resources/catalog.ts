@@ -117,6 +117,17 @@ const GV_REF = 'Uso bajo responsabilidad del propietario de la app (sin licencia
 export const ANIMATIONS: Record<string, LicensedAnimation> = Object.fromEntries(Object.entries(GYMVISUAL).map(([id]) => [id, { src: `media/gymvisual/${id}.gif`, width: 180, height: 180, credit: '© Gym visual — https://gymvisual.com/', license: 'granted' as const, licenseRef: GV_REF }]))
 export const activeAnimation = (id: string) => (ANIMATIONS[id]?.license === 'granted' ? ANIMATIONS[id] : undefined)
 
+/**
+ * PRUEBA PILOTO «anatómico 3D»: ejercicios que usan el modelo anatómico real (Z-Anatomy, CC BY-SA 4.0) con los músculos
+ * en azul eléctrico: `main` = principales, `sec` = secundarios (zonas del modelo: chest, back, traps, delts, biceps,
+ * triceps, forearm, quads, hams, glutes, calves, core). Solo estos tres hasta validar el resultado.
+ */
+export const PILOT_ANATOMY: Record<string, { main: string[]; sec: string[] }> = {
+  'aperturas-mancuernas': { main: ['chest'], sec: [] },
+  'curl-barra': { main: ['biceps'], sec: ['forearm'] },
+  'sentadilla': { main: ['quads', 'glutes'], sec: ['hams', 'core'] },
+}
+
 export const MAX_VIDEO_MB = 60
 
 /**

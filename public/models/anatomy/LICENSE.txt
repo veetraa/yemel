@@ -1,0 +1,9 @@
+Modelo anatómico de YEMEL GYM — obra derivada de Z-Anatomy
+
+Original: Z-Anatomy (https://www.z-anatomy.com, https://github.com/LluisV/Z-Anatomy), MuscularSystem100.fbx.
+Licencia del original y de esta obra derivada: Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Cambios realizados (scripts/build-anatomy.py): se descartan fascias, ligamentos, bolsas, vainas, vasos, nervios y músculos
+profundos; se simplifica la malla (~250 000 triángulos); se agrupan los músculos por zona; se añade un esqueleto de 17 huesos con
+pesos de piel; se convierte a glTF binario. Cualquier copia o adaptación de anatomy.glb debe mantener esta licencia y la atribución.

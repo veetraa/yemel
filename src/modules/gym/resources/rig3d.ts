@@ -9,8 +9,11 @@ import { BONES, PARENT, REST, TAIL_OF, type BoneName } from './body3d'
 const v3 = (a: readonly number[]) => new THREE.Vector3(a[0], a[1], a[2])
 const UP = new THREE.Vector3(0, 1, 0), FRONT = new THREE.Vector3(1, 0, 0)
 const fromTo = (a: THREE.Vector3, b: THREE.Vector3) => new THREE.Quaternion().setFromUnitVectors(a.clone().normalize(), b.clone().normalize())
-const dirOf = (b: BoneName) => v3(TAIL_OF[b]).sub(v3(REST[b])).normalize()
-const lenOf = (b: BoneName) => v3(TAIL_OF[b]).distanceTo(v3(REST[b]))
+/** Esqueleto en reposo: cabeza y cola de cada hueso. Por defecto el del cuerpo generado; el modelo anatómico (GLB) trae el suyo. */
+export interface RigDef { rest: Record<BoneName, readonly number[]>; tail: Record<BoneName, readonly number[]>; /** parte del giro del tronco que asumen pelvis y lumbares (por defecto 0,25 y 0,7) */ torso?: [number, number] }
+let R: RigDef = { rest: REST, tail: TAIL_OF }
+const dirOf = (b: BoneName) => v3(R.tail[b]).sub(v3(R.rest[b])).normalize()
+const lenOf = (b: BoneName) => v3(R.tail[b]).distanceTo(v3(R.rest[b]))
 const I = new THREE.Quaternion()
 
 export interface Targets {
@@ -46,10 +49,11 @@ function ik(s: THREE.Vector3, t: THREE.Vector3, pole: THREE.Vector3, l1: number,
 
 export interface Pose { root: THREE.Vector3; q: Record<BoneName, THREE.Quaternion> }
 
-const L = { th: lenOf('thL'), sh: lenOf('shL'), ua: lenOf('uaL'), fa: lenOf('faL') }
 const ARM_POLE = new THREE.Vector3(-0.35, -1, 0.2), LEG_POLE = new THREE.Vector3(1, 0.1, 0)
 
-export function solve(t: Targets): Pose {
+export function solve(t: Targets, def?: RigDef): Pose {
+  R = def ?? { rest: REST, tail: TAIL_OF }
+  const L = { th: lenOf('thL'), sh: lenOf('shL'), ua: lenOf('uaL'), fa: lenOf('faL') }
   const q = {} as Record<BoneName, THREE.Quaternion>
   const W = {} as Record<BoneName, THREE.Quaternion>
   const local = (n: BoneName, w: THREE.Quaternion) => { W[n] = w; const p = PARENT[n]; q[n] = p ? W[p].clone().invert().multiply(w) : w.clone() }
@@ -65,10 +69,11 @@ export function solve(t: Targets): Pose {
     const ang = Math.atan2(axis.dot(a.clone().cross(b)), a.dot(b))
     Qt = new THREE.Quaternion().setFromAxisAngle(axis, ang).multiply(Qt)
   }
-  local('hips', I.clone().slerp(Qt, 0.25))
-  local('spine', I.clone().slerp(Qt, 0.7))
+  const tf = def?.torso ?? [0.25, 0.7]
+  local('hips', I.clone().slerp(Qt, tf[0]))
+  local('spine', I.clone().slerp(Qt, tf[1]))
   local('chest', Qt.clone())
-  const fk = (n: BoneName, parent: BoneName, base: THREE.Vector3) => base.clone().add(v3(REST[n]).sub(v3(REST[parent])).applyQuaternion(W[parent]))
+  const fk = (n: BoneName, parent: BoneName, base: THREE.Vector3) => base.clone().add(v3(R.rest[n]).sub(v3(R.rest[parent])).applyQuaternion(W[parent]))
   const pHips = t.hip.clone() // el hueso hips se coloca en la cadera del dato
   const pSpine = fk('spine', 'hips', pHips), pChest = fk('chest', 'spine', pSpine), pNeck = fk('neck', 'chest', pChest)
   const nd = t.head.clone().sub(pNeck).normalize()

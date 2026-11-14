@@ -5,6 +5,7 @@ import { LoopAnimation } from '../components/LoopAnimation'
 import { useOwnMedia } from '../components/useOwnMedia'
 import { Exercise3D } from '../components/Exercise3D'
 import { Exercise3DBasic } from '../components/Exercise3DBasic'
+import { ExerciseAnatomy } from '../components/ExerciseAnatomy'
 import { ExerciseThumb } from '../components/ExerciseThumb'
 import { HowToSheet } from '../components/HowToSheet'
 import { Icon } from '../../../shared/components/Icon'
@@ -13,7 +14,7 @@ import { Button, Chip, Header, Label } from '../../../shared/components/ui'
 import { EXERCISES, MUSCLES, allExercises, exerciseById } from '../data/exercises'
 import { useLibraryExercise, useLibraryIndex } from '../library/hooks'
 import { imagesOf } from '../library/library'
-import { APPROVED_3D_MODELS, VIDEOS, activeAnimation } from '../resources/catalog'
+import { APPROVED_3D_MODELS, PILOT_ANATOMY, VIDEOS, activeAnimation } from '../resources/catalog'
 import { exerciseSeries } from '../services/workoutService'
 import { formatDateShort, formatNumber, normalize, toDisplay } from '../../../shared/lib/utils'
 import { useNav } from '../../../nav'
@@ -89,6 +90,9 @@ function Hero({ id, name }: { id: string; name: string }) {
   const [end, setEnd] = useState(false)
   const [failed, setFailed] = useState(false)
   const own = useOwnMedia(id)
+  const [anatomyFailed, setAnatomyFailed] = useState(false)
+  const pilot = PILOT_ANATOMY[id]
+  if (pilot && core && !anatomyFailed) return <ExerciseAnatomy key={id} anim={core.anim} main={pilot.main} sec={pilot.sec} onFail={() => setAnatomyFailed(true)} />
   const demo = VIDEOS[id]
   if (own?.kind === 'video') return <DemoPlayer video={{ src: own.url }} name={name} />
   if (own?.kind === 'image') return <div className="mx-6 rounded-3xl bg-white aspect-[4/3] overflow-hidden grid place-items-center" data-testid="own-animation"><img src={own.url} alt={`Demostración animada: ${name}`} className="h-full w-auto max-w-full object-contain" /></div>
