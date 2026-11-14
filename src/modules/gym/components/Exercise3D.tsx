@@ -37,7 +37,7 @@ export function Exercise3D({ anim, primary }: { anim: string; primary?: string }
     <>
       <div className="mx-6 rounded-3xl bg-s1 aspect-[4/3] grid place-items-center overflow-hidden relative">
         {!ready && <ExerciseFigure anim={anim} primary={primary} className="w-[88%] h-[92%]" />}
-        <div ref={host} className={`absolute inset-0 ${ready ? '' : 'invisible'}`} />
+        <div ref={host} className={`absolute inset-0 ${ready ? 'bg-[radial-gradient(ellipse_at_50%_38%,#2b2e35_0%,#0b0c0f_78%)]' : 'invisible'}`} />
         <span className="absolute left-4 bottom-3 text-[11px] font-semibold uppercase tracking-wider text-dim pointer-events-none">{ready ? 'Modelo 3D' : 'Ejecución'}</span>
       </div>
       {ready && (
