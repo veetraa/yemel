@@ -53,9 +53,9 @@ export function BodySection() {
           <div className="mt-3"><LineChart unit={unit} points={series} /></div>
         </div>
       ) : (
-        <p className="text-[14px] text-mute leading-relaxed bg-s1 rounded-2xl p-4">Aún no hay mediciones de {METRIC_LABEL[metric].toLowerCase()}.</p>
+        <p className="text-[14px] text-mute leading-relaxed bg-s1 rounded-2xl p-4">Sin medidas de {METRIC_LABEL[metric].toLowerCase()}. Tu evolución aparecerá aquí.</p>
       )}
-      <Button variant="secondary" size="md" className="w-full" onClick={() => setOpen(true)}><Icon name="plus" size={18} /> Registrar medidas</Button>
+      <Button variant="secondary" size="md" className="w-full" onClick={() => setOpen(true)}><Icon name="plus" size={18} /> Añadir medidas</Button>
 
       {photos.length > 0 && (
         <div>

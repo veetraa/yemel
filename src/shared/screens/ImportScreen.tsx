@@ -94,7 +94,18 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
     <div className="h-full flex flex-col">
       <Header title={cfg.title} onBack={pop} />
       <div className="scroll flex-1 px-6 pb-10">
-        <p className="text-mute text-[15px] leading-relaxed">{cfg.intro}</p>
+        <ol className="grid grid-cols-4 gap-1.5" aria-label="Pasos de la importación">
+          {['Copiar prompt', 'Pegar JSON', 'Revisar', 'Confirmar'].map((l, i) => {
+            const at = !bundle ? (input.trim() ? 1 : 0) : 2
+            return (
+              <li key={l} aria-current={i === at ? 'step' : undefined} className="flex flex-col items-center gap-1.5 text-center">
+                <span className={`w-7 h-7 rounded-full grid place-items-center text-[13px] font-bold ${i < at ? 'bg-accent text-black' : i === at ? 'bg-white/15 ring-1 ring-inset ring-white/40 text-white' : 'bg-s2 text-dim'}`}>{i < at ? <Icon name="check" size={14} stroke={3.2} /> : i + 1}</span>
+                <span className={`text-[11px] font-semibold leading-tight ${i === at ? 'text-white' : 'text-dim'}`}>{l}</span>
+              </li>
+            )
+          })}
+        </ol>
+        <p className="text-mute text-[15px] leading-relaxed mt-5">{cfg.intro}</p>
         <div className="flex gap-2 mt-4">
           <Button size="sm" variant="secondary" onClick={async () => showToast((await copyText(cfg.prompt())) ? 'Prompt copiado. Pégalo en ChatGPT' : 'No se pudo copiar')}><Icon name="copy" size={16} /> Copiar prompt para ChatGPT</Button>
           <Button size="sm" variant="ghost" onClick={() => setHelp(true)}>Ver formato</Button>
@@ -116,7 +127,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
               className="w-full h-56 bg-s1 border border-line rounded-2xl p-4 text-[13.5px] leading-snug font-mono placeholder:text-dim resize-none" />
             <div className="flex gap-2 mt-3">
               <Button variant="secondary" size="md" onClick={async () => { try { setInput(await navigator.clipboard.readText()) } catch { showToast('Pega el texto manualmente (mantén pulsado)') } }}>Pegar</Button>
-              <Button size="md" className="flex-1" disabled={!input.trim()} onClick={() => analyze()}>ANALIZAR</Button>
+              <Button size="md" className="flex-1" disabled={!input.trim()} onClick={() => analyze()}>REVISAR</Button>
             </div>
           </div>
         ) : (
@@ -133,7 +144,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
         <div ref={preview} className="scroll-mt-4" />
         {bundle && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
-            <Label>Resultado del análisis</Label>
+            <Label>Revisa antes de confirmar</Label>
             {anything && !parseErrors.length && !blocked && <div className="mt-2 flex items-center gap-2 text-glow font-semibold"><Icon name="check" size={18} stroke={2.6} /> Listo para importar</div>}
             {blocked && <div className="mt-2 rounded-xl bg-danger/10 px-3.5 py-3 text-[14px] leading-snug" role="alert"><b className="text-danger">{scope === 'gym' ? 'Esos días rompen' : 'La semana propuesta rompe'} las reglas de recuperación.</b> Puedes importar el resto sin {weekWord}, o corregir el JSON y volver a analizar.</div>}
 
@@ -186,7 +197,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
                 ) : blocked ? (
                   <Button className="w-full" onClick={() => save(false)}>{current?.routine ? `IMPORTAR SIN ${weekWord.toUpperCase()}` : 'NO SE PUEDE APLICAR'}</Button>
                 ) : (
-                  <Button className="w-full" onClick={() => save(true)}>{analysis?.weekChanged && scope !== 'gym' ? 'GUARDAR E IMPORTAR' : 'GUARDAR'}</Button>
+                  <Button className="w-full" onClick={() => save(true)}>CONFIRMAR IMPORTACIÓN</Button>
                 )}
               </div>
             )}

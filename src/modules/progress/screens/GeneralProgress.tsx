@@ -14,7 +14,7 @@ type Filter = 'all' | 'gym' | 'combat' | 'recovery'
 /** Historial general: la única vista que reúne todas las áreas, con filtros por área. */
 export function GeneralProgress() {
   const { sessions, activities, settings } = useStore()
-  const { push } = useNav()
+  const { push, go } = useNav()
   const [f, setF] = useState<Filter>('all')
   const loads = useMemo(() => weeklyLoads(sessions, activities, 6), [sessions, activities])
   const items = useMemo(() => [
@@ -24,7 +24,7 @@ export function GeneralProgress() {
   const shown = items.filter((i) => f === 'all' || i.area === f).slice(0, 40)
   const AREA = { gym: 'GYM', combat: 'CMB', recovery: 'REC' }
   const hasLoad = loads.some((w) => w.total > 0)
-  if (!items.length) return <div className="scroll h-full"><Empty icon="chart" title="Aún no hay datos" text="Registra un entrenamiento." /></div>
+  if (!items.length) return <div className="scroll h-full"><Empty icon="chart" title="Aún no hay datos" text="Tu historial aparecerá aquí al terminar tu primer entrenamiento."><button onClick={() => go('gym', 'today')} className="h-12 rounded-2xl bg-accent text-black font-bold">Comenzar entrenamiento</button></Empty></div>
   return (
     <div className="scroll h-full pb-10"><div className="px-6 pt-5">
       {hasLoad && (

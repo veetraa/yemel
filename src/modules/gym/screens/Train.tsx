@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ExerciseFigure } from '../components/ExerciseFigure'
 import { Icon } from '../../../shared/components/Icon'
+import { Hint } from '../../../shared/components/Hint'
 import { ExercisePicker } from '../components/RoutineForm'
 import { Button, Header, Label, Sheet, Toggle } from '../../../shared/components/ui'
 import { exerciseById, matchExercise } from '../data/exercises'
@@ -34,13 +35,14 @@ function useNow(enabled: boolean, ms = 250) {
 export function Picker() {
   const { settings, profile, adjustment, startWorkout, planRoutine, ctx } = useStore()
   const [adapt, setAdapt] = useState(settings.adaptToRecovery)
-  const { push } = useNav()
+  const { go } = useNav()
   const routine = planRoutine
   const plan = todayPlan(ctx)
 
   return (
     <div className="scroll h-full pb-8">
       <div className="px-6 pt-3">
+        <Hint id="gym-today" className="mb-3">Elige un día y pulsa ▶ para empezar. Sin rutina, usa «Entrenamiento libre».</Hint>
         {routine ? (
           <>
             <Label className="mt-2">{routine.name}</Label>
@@ -79,11 +81,11 @@ export function Picker() {
             </div>
           </>
         ) : (
-          <p className="text-mute text-[15px] leading-relaxed mt-2">Sin rutinas.</p>
+          <p className="text-mute text-[15px] leading-relaxed mt-2">Aún no tienes rutinas. Añade una o entrena libre.</p>
         )}
         <div className="mt-8 space-y-2">
           <Button variant="secondary" className="w-full" onClick={() => startWorkout(undefined, undefined)}><Icon name="plus" size={18} /> Entrenamiento libre</Button>
-          {!routine && <Button className="w-full" onClick={() => push({ name: 'gym.import' })}><Icon name="upload" size={18} /> Importar rutina</Button>}
+          {!routine && <Button className="w-full" onClick={() => go('gym', 'routines')}><Icon name="plus" size={18} /> Añadir rutina</Button>}
         </div>
       </div>
     </div>
@@ -226,19 +228,22 @@ export function Workout() {
               <div className="flex-1 min-w-0">
                 <Label>Ejercicio {active.index + 1} de {active.exercises.length}</Label>
                 <h2 className="text-[27px] leading-[1.1] font-bold tracking-tight mt-1.5">{ex.name}</h2>
-                <div className="text-mute text-[14px] mt-1.5">{ex.muscle} · {ex.sets.length} × {ex.targetReps} · {ex.rest}s</div>
+                <div className="text-mute text-[14px] mt-1.5">{ex.muscle} · {ex.sets.filter((s) => s.done).length}/{ex.sets.length} series · {ex.targetReps} reps · {ex.rest}s descanso</div>
               </div>
               {lib && (
                 <button onClick={() => setInfo(true)} className="w-[92px] h-[92px] rounded-3xl bg-s1 grid place-items-center shrink-0 relative overflow-hidden active:bg-s2" aria-label="Ver técnica">
                   <ExerciseFigure anim={lib.anim} primary={lib.primary} className="w-[84px] h-[84px]" />
+                  <span className="absolute bottom-1.5 inset-x-0 text-center text-[10px] font-semibold uppercase tracking-wider text-dim">Técnica</span>
                 </button>
               )}
             </div>
 
+            <Hint id="workout" className="mt-4">Ajusta peso y reps con − / +. Marca ✓ al terminar cada serie: el descanso empieza solo. «Siguiente» cambia de ejercicio y «Terminar» guarda el entrenamiento.</Hint>
+
             {rec && (rec.kind !== 'none' || rec.weight === null) ? (
               <div className="mt-4 flex gap-3 items-start text-[13.5px] leading-snug">
                 <div className="mt-0.5 w-6 h-6 rounded-full bg-glow/15 text-glow grid place-items-center shrink-0"><Icon name="star" size={13} stroke={2.4} /></div>
-                <div className="text-mute"><span className="text-white font-semibold">{rec!.weight !== null && rec!.weight > 0 ? `Sugerido ${formatNumber(toDisplay(rec!.weight, unit))} ${unit}` : 'Sin referencia'}{rec!.reps ? ` × ${rec!.reps}` : ''}.</span> {rec!.reason}</div>
+                <div className="text-mute"><span className="text-white font-semibold">{rec!.weight !== null && rec!.weight > 0 ? `Usa ${formatNumber(toDisplay(rec!.weight, unit))} ${unit}` : 'Sin referencia'}{rec!.reps ? ` × ${rec!.reps}` : ''}.</span> {rec!.reason}</div>
               </div>
             ) : null}
             {ex.notes && <div className="mt-3 text-[13.5px] text-dim italic leading-snug">“{ex.notes}”</div>}
@@ -246,7 +251,7 @@ export function Workout() {
             {/* Series */}
             <div className="mt-6">
               <div className="grid grid-cols-[28px_1fr_1fr_52px] gap-2 px-0.5 mb-2">
-                <span /><Label className="text-center">{unit.toUpperCase()}</Label><Label className="text-center">Reps</Label><span />
+                <Label className="text-center">Nº</Label><Label className="text-center">Peso ({unit})</Label><Label className="text-center">Reps</Label><Label className="text-center">Hecha</Label>
               </div>
               <div className="space-y-2">
                 {ex.sets.map((s, i) => (

@@ -13,6 +13,10 @@ export interface Settings {
   adaptToRecovery: boolean
   /** false solo en la primera ejecución: muestra la bienvenida */
   welcomed?: boolean
+  /** Guía de primeros pasos omitida u oculta */
+  setupDismissed?: boolean
+  /** Ayudas contextuales ya cerradas por el usuario */
+  hintsSeen?: string[]
   /** Fondo personalizado (foto propia, solo en este dispositivo) */
   bgPhoto?: string
   activeRoutineId?: string

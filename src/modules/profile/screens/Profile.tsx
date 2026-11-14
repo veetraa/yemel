@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { Accordion, Seg, SubLabel } from '../../../shared/components/fields'
 import { Icon } from '../../../shared/components/Icon'
+import { Hint } from '../../../shared/components/Hint'
 import { Button, Header, Label, Row, Sheet, Toggle } from '../../../shared/components/ui'
 import { copyText, readFileText, saveTextFile } from '../../../shared/lib/files'
 import { loadStatus } from '../../../shared/services/fatigueService'
@@ -76,7 +77,8 @@ export function ProfileScreen() {
         </div>
         {p.sports.length > 0 && <div className="flex flex-wrap gap-2 mt-5">{p.sports.map((s) => <span key={s} className="text-[12px] font-semibold text-mute bg-s2 rounded-full px-3 py-1">{s}</span>)}</div>}
 
-        <Button variant="secondary" size="md" className="w-full mt-6" onClick={() => push({ name: 'profile.progress' })}><Icon name="chart" size={18} /> Progreso</Button>
+        <Hint id="profile" className="mt-6">Edita tus datos en las secciones de abajo. Tu progreso está en el botón «Progreso».</Hint>
+        <Button variant="secondary" size="md" className="w-full mt-3" onClick={() => push({ name: 'profile.progress' })}><Icon name="chart" size={18} /> Progreso</Button>
 
         {/* Secciones */}
         <div className="mt-5 border-t border-line/70">
@@ -120,6 +122,8 @@ export function ProfileScreen() {
               <Row><div className="flex-1"><div className="font-semibold">Sonido al terminar el descanso</div></div><Toggle on={settings.sound} onChange={(v) => updateSettings({ sound: v })} /></Row>
               <Row><div className="flex-1"><div className="font-semibold">Vibración</div><div className="text-[12.5px] text-mute">Solo en dispositivos compatibles</div></div><Toggle on={settings.vibrate} onChange={(v) => updateSettings({ vibrate: v })} /></Row>
               <Row onClick={() => push({ name: 'shared.week' })}><Icon name="clock" size={20} className="text-mute" /><span className="flex-1 font-semibold">Semana y recuperación</span><Icon name="chev" size={16} className="text-dim" /></Row>
+              <Row onClick={() => updateSettings({ setupDismissed: false })}><Icon name="list" size={20} className="text-mute" /><span className="flex-1 font-semibold">Mostrar primeros pasos</span><Icon name="chev" size={16} className="text-dim" /></Row>
+              <Row onClick={() => { updateSettings({ hintsSeen: [] }); showToast('Ayudas activadas') }}><Icon name="info" size={20} className="text-mute" /><span className="flex-1 font-semibold">Volver a mostrar las ayudas</span><Icon name="chev" size={16} className="text-dim" /></Row>
               <Row onClick={() => push({ name: 'profile.hybridImport' })}><Icon name="upload" size={20} className="text-mute" /><span className="flex-1"><span className="font-semibold block">Importar planificación híbrida</span><span className="text-[12px] text-mute">Gym + combate + atleta desde ChatGPT</span></span><Icon name="chev" size={16} className="text-dim" /></Row>
               <Row onClick={async () => showToast((await copyText(chatGptPrompt())) ? 'Prompt copiado' : 'No se pudo copiar')}><Icon name="copy" size={20} className="text-mute" /><span className="flex-1 font-semibold">Copiar prompt híbrido para ChatGPT</span></Row>
               <Row onClick={() => setInstall(true)}><Icon name="download" size={20} className="text-mute" /><span className="flex-1 font-semibold">Instalar en la pantalla de inicio</span><Icon name="chev" size={16} className="text-dim" /></Row>

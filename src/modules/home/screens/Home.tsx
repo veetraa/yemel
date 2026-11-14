@@ -18,6 +18,7 @@ import { INTENSITY_LABEL, isCombat } from '../../combat/services/combatService'
 import { quoteOfDay, suggestedTheme } from '../../philosophy/services/philosophyService'
 import { useNav } from '../../../nav'
 import { useStore } from '../../../store'
+import { SetupGuide } from '../components/SetupGuide'
 import type { SlotType } from '../../../types'
 
 const DAY = 86400000
@@ -71,9 +72,11 @@ export function HomeScreen() {
         {t.slot && <p className="text-white/80 mt-3 text-[16px]">{TODAY_LABEL[t.slot.type]}{t.slot.label && t.slot.type !== 'rest' && t.slot.type !== 'recovery' ? ` · ${t.slot.label}` : ''}</p>}
       </div>
 
+      <SetupGuide />
+
       <div className="px-6 mt-7 space-y-3">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <Card icon="gym" title="Gym" cta={active ? 'Continuar' : 'Ir a Gym'} onClick={() => go('gym', 'today')}>
+          <Card icon="gym" title="Gym" cta={active ? 'Continuar' : 'Entrenar'} onClick={() => go('gym', 'today')}>
             {active ? <><div className="display-b text-[28px]">{active.dayName}</div><div className="text-[13.5px] text-glow mt-1 font-semibold">En curso</div></>
               : gym ? <><div className="text-[12.5px] text-mute font-semibold">{gym.label === 'Hoy' ? 'Hoy' : `Próximo · ${gym.label}`}</div>
                 <div className="display-b text-[28px] mt-0.5">{gym.day.name}</div>
