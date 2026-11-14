@@ -54,7 +54,7 @@ export function ReflectionDetail({ id }: { id: string }) {
         <Label className="mt-9">Preguntas</Label>
         <ol className="mt-3 space-y-4">{r.prompts.map((p, i) => <li key={i} className="flex gap-4"><span className="num w-6 shrink-0 text-glow font-bold text-lg leading-snug">{i + 1}</span><span className="text-[16px] leading-relaxed">{p}</span></li>)}</ol>
         <Button className="w-full mt-10" onClick={() => replace({ name: 'philo.entry', id: `new:r:${r.id}` })}>EMPEZAR Y ESCRIBIR</Button>
-        <p className="text-[12px] text-dim mt-3 text-center">Se guardará en tu diario, privado en este dispositivo.</p>
+        <p className="text-[12px] text-dim mt-3 text-center">Se guarda en tu diario.</p>
       </div>
     </div>
   )

@@ -34,9 +34,8 @@ export function PersonalSection() {
           <Button variant="secondary" size="md" className="flex-1" onClick={() => file.current?.click()}>{profile.photo ? 'Cambiar foto' : 'Añadir foto de perfil'}</Button>
           {profile.photo && <Button variant="danger" size="md" onClick={() => updateProfile({ photo: undefined })}>Quitar</Button>}
         </div>
-        <p className="text-[12px] text-dim mt-2 leading-snug">La foto es opcional, se reduce y se guarda únicamente en tu dispositivo.</p>
       </div>
-      <p className="text-[12px] text-dim leading-snug">Edad {ageOf(profile) ?? '—'} · {profile.heightCm ?? '—'} cm · {weight ?? '—'} kg. Todos los datos son editables en cualquier momento.</p>
+      <p className="text-[12px] text-dim leading-snug">Edad {ageOf(profile) ?? '—'} · {profile.heightCm ?? '—'} cm · {weight ?? '—'} kg.</p>
     </>
   )
 }

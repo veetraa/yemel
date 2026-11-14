@@ -36,7 +36,7 @@ export function GoalsSection() {
           <div className="flex justify-between items-baseline"><div className="font-bold">Peso objetivo</div><div className="num font-bold">{cw !== undefined ? formatNumber(cw) : '—'} <span className="text-mute font-semibold">→ {formatNumber(target)} kg</span></div></div>
           {autoStart !== undefined && cw !== undefined && autoStart !== target
             ? <Bar pct={Math.min(1, Math.max(0, (cw - autoStart) / (target - autoStart)))} done={Math.abs(cw - target) < 0.05} />
-            : <p className="text-[12.5px] text-dim mt-2">Registra tu peso en el historial corporal para ver el progreso.</p>}
+            : <p className="text-[12.5px] text-dim mt-2">Sin peso registrado.</p>}
         </div>
       )}
       {rows.map(({ g, p }) => (
@@ -53,7 +53,7 @@ export function GoalsSection() {
           </div>
         </button>
       ))}
-      {!rows.length && target === undefined && <p className="text-[14px] text-mute leading-relaxed">Define objetivos medibles y verás aquí tu progreso real, calculado con tu historial corporal y tus entrenamientos.</p>}
+      {!rows.length && target === undefined && <p className="text-[14px] text-mute leading-relaxed">Sin objetivos.</p>}
       <Button variant="secondary" size="md" className="w-full" onClick={() => setAdding(true)}><Icon name="plus" size={18} /> Añadir objetivo</Button>
 
       <GoalSheet open={adding} onClose={() => setAdding(false)} onSave={(g) => { updateProfile({ goals: [...profile.goals, g] }); setAdding(false); showToast('Objetivo añadido') }} />
@@ -61,7 +61,7 @@ export function GoalsSection() {
         {edit && (
           <div className="space-y-4">
             {edit.metric === 'manual' && <NumInput label="Valor actual" unit={edit.unit} decimal value={edit.current} onChange={(n) => { const g = { ...edit, current: n }; setEdit(g); updateProfile({ goals: profile.goals.map((x) => (x.id === g.id ? g : x)) }) }} hint="Actualízalo cuando midas un avance" />}
-            {edit.metric !== 'manual' && <p className="text-[13.5px] text-mute leading-relaxed">El progreso se calcula automáticamente con {edit.metric === 'e1rm' ? 'tu 1RM estimado en tus entrenamientos' : 'tus mediciones del historial corporal'}.</p>}
+            {edit.metric !== 'manual' && <p className="text-[13.5px] text-mute leading-relaxed">Progreso automático: {edit.metric === 'e1rm' ? '1RM estimado' : 'historial corporal'}.</p>}
             <div className="grid grid-cols-2 gap-3">
               <NumInput label="Inicio" unit={edit.unit} decimal value={edit.start} onChange={(n) => { if (n === undefined) return; const g = { ...edit, start: n }; setEdit(g); updateProfile({ goals: profile.goals.map((x) => (x.id === g.id ? g : x)) }) }} />
               <NumInput label="Meta" unit={edit.unit} decimal value={edit.target} onChange={(n) => { if (n === undefined) return; const g = { ...edit, target: n }; setEdit(g); updateProfile({ goals: profile.goals.map((x) => (x.id === g.id ? g : x)) }) }} />

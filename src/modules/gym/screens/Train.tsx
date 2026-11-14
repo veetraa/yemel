@@ -79,7 +79,7 @@ export function Picker() {
             </div>
           </>
         ) : (
-          <p className="text-mute text-[15px] leading-relaxed mt-2">Todavía no tienes rutinas. Impórtala desde ChatGPT o entrena libremente.</p>
+          <p className="text-mute text-[15px] leading-relaxed mt-2">Sin rutinas.</p>
         )}
         <div className="mt-8 space-y-2">
           <Button variant="secondary" className="w-full" onClick={() => startWorkout(undefined, undefined)}><Icon name="plus" size={18} /> Entrenamiento libre</Button>
@@ -184,7 +184,7 @@ export function Workout() {
     return (
       <div className="h-full flex flex-col">
         <Header title={active.dayName} right={<Button size="sm" variant="danger" onClick={() => cancelWorkout()}>Cancelar</Button>} />
-        <div className="px-6 pt-4"><p className="text-mute">Entrenamiento libre vacío. Añade tu primer ejercicio.</p>
+        <div className="px-6 pt-4"><p className="text-mute">Añade un ejercicio.</p>
           <Button className="w-full mt-5" onClick={() => setAdding(true)}><Icon name="plus" size={18} /> Añadir ejercicio</Button></div>
         <ExercisePicker open={adding} onClose={() => setAdding(false)} onPick={(e) => { setAdding(false); updateActive((a) => ({ ...a, exercises: [...a.exercises, { id: uid(), exerciseId: e.exerciseId, name: e.name, muscle: e.muscle, targetReps: e.reps, rest: e.rest, sets: Array.from({ length: e.sets }, () => ({ weight: 0, reps: 10, done: false })) }] })) }} />
       </div>
@@ -310,7 +310,7 @@ export function Workout() {
       </Sheet>
 
       <Sheet open={finish} onClose={() => setFinish(false)} title="¿Terminar entrenamiento?">
-        <p className="text-mute leading-relaxed">{doneCount === 0 ? 'No has completado ninguna serie; no se guardará nada.' : `Has completado ${doneCount} de ${total} series en ${formatClock(elapsed)}. Las series sin marcar no se guardan.`}</p>
+        <p className="text-mute leading-relaxed">{doneCount === 0 ? 'Sin series completadas: no se guardará nada.' : `${doneCount} de ${total} series · ${formatClock(elapsed)}. Las series sin marcar no se guardan.`}</p>
         <div className="mt-5 space-y-2">
           <Button className="w-full" onClick={doFinish}>{doneCount ? 'Terminar y guardar' : 'Salir'}</Button>
           <Button variant="secondary" className="w-full" onClick={() => setFinish(false)}>Seguir entrenando</Button>

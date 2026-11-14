@@ -46,7 +46,7 @@ export function RoutinesPanel() {
       <div className="px-6 mt-8">
         <Label>Mis rutinas</Label>
         {routines.length === 0 ? (
-          <Empty icon="list" title="Sin rutinas todavía" text="Importa una rutina creada con ChatGPT o crea la tuya desde cero.">
+          <Empty icon="list" title="Sin rutinas todavía" text="Importa o crea una.">
             <Button variant="secondary" size="md" onClick={() => push({ name: 'gym.import' })}>Ver cómo importar</Button>
           </Empty>
         ) : (

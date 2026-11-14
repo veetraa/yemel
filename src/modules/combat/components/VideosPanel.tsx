@@ -41,7 +41,7 @@ export function VideosPanel({ sport, techniqueId }: { sport: CombatSport; techni
 
   return (
     <>
-      <p className="text-[13.5px] text-mute leading-relaxed">Guarda tus vídeos de clase o de referencia. Los archivos se quedan <b className="text-white">solo en tu iPhone</b> (funcionan sin conexión); también puedes guardar enlaces.</p>
+      <p className="text-[13.5px] text-mute leading-relaxed">Archivos <b className="text-white">solo en tu iPhone</b>. También enlaces.</p>
       <Button variant="secondary" size="md" className="w-full mt-4" onClick={() => setAdding(true)}><Icon name="plus" size={18} /> Añadir vídeo</Button>
       {list.length === 0 ? (
         <div className="text-center px-6 py-10"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="video" size={26} /></div><div className="font-bold mt-4">Aún no tienes vídeos de {sport}</div></div>
@@ -64,7 +64,7 @@ export function VideosPanel({ sport, techniqueId }: { sport: CombatSport; techni
           <TextInput label="Título" value={title} onChange={setTitle} placeholder="Clase de martes, drill de guardia…" />
           <input ref={file} type="file" accept="video/*" className="hidden" onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = '' }} />
           <Button className="w-full" onClick={() => file.current?.click()}><Icon name="upload" size={18} /> Elegir vídeo del iPhone</Button>
-          <p className="text-[12px] text-dim leading-snug">Se guarda de forma privada en este dispositivo (máx. {MAX_MB} MB) y no se incluye en la copia de seguridad.</p>
+          <p className="text-[12px] text-dim leading-snug">Máx. {MAX_MB} MB. No entra en la copia de seguridad.</p>
           <div className="h-px bg-line" />
           <TextInput label="…o pega un enlace" value={url} onChange={setUrl} placeholder="https://" />
           <Button variant="secondary" className="w-full" disabled={!url.trim()} onClick={saveLink}>Guardar enlace</Button>

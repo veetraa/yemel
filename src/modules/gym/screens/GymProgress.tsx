@@ -30,7 +30,7 @@ export function GymProgress() {
   if (!sessions.length) {
     return (
       <div className="scroll h-full">
-        <Empty icon="chart" title="Aún no hay datos de gimnasio" text="Completa tu primer entrenamiento de gimnasio y aquí verás tu volumen, récords y progresión por ejercicio.">
+        <Empty icon="chart" title="Aún no hay datos de gimnasio" text="Completa tu primer entrenamiento.">
           <button onClick={() => go('gym', 'today')} className="h-12 rounded-2xl bg-accent text-black font-bold">Ir a Gym</button>
         </Empty>
       </div>
@@ -55,7 +55,7 @@ export function GymProgress() {
         <div className="mt-3">
           <BarChart unit="kg" data={weeks.map((w, i) => ({ label: i === weeks.length - 1 ? 'Ahora' : `${new Date(w.start).getDate()}/${new Date(w.start).getMonth() + 1}`, value: toDisplay(w.volume, unit), highlight: i === weeks.length - 1 }))} />
         </div>
-        <p className="text-[12px] text-dim mt-1">Kilos totales movidos ({unit}) por semana: series completadas × peso × repeticiones.</p>
+        <p className="text-[12px] text-dim mt-1">Volumen semanal ({unit}).</p>
 
         {current && (
           <>
@@ -73,7 +73,7 @@ export function GymProgress() {
                 <div className="mt-3"><LineChart unit={unit} points={series.map((p) => ({ ts: p.ts, v: toDisplay(p.e1rm, unit) }))} /></div>
               </div>
             ) : (
-              <p className="text-mute text-[14.5px] mt-4 leading-relaxed">Necesitas al menos dos sesiones con «{current.name}» para ver la curva. Mejor serie hasta ahora: {formatNumber(toDisplay(series[0]?.topWeight ?? 0, unit))} {unit} × {series[0]?.reps}.</p>
+              <p className="text-mute text-[14.5px] mt-4 leading-relaxed">Mejor serie: {formatNumber(toDisplay(series[0]?.topWeight ?? 0, unit))} {unit} × {series[0]?.reps}.</p>
             )}
           </>
         )}

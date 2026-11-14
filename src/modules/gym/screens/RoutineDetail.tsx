@@ -56,9 +56,9 @@ export function RoutineDetail({ id }: { id: string }) {
             {isActive ? (
               <div className="mt-3">
                 <WeekdayChips value={d.weekdays} mark={combatDays(plan)} onChange={(v) => { const r = setGymDays(d.id, v); if (r.ok) setBlocked([]); else setBlocked(errorsOf(r.issues)) }} />
-                <p className="text-[11.5px] text-dim mt-2">Días de la semana de este entrenamiento («JJ» marca días de combate).</p>
+                <p className="text-[11.5px] text-dim mt-2">Días de la semana.</p>
               </div>
-            ) : <p className="text-[12px] text-dim mt-2">Activa esta rutina para asignar sus días de la semana.</p>}
+            ) : <p className="text-[12px] text-dim mt-2">Actívala para asignar días.</p>}
             <div className="mt-3">
               {d.exercises.map((e) => {
                 const lib = exerciseById(e.exerciseId)
@@ -95,7 +95,7 @@ export function RoutineDetail({ id }: { id: string }) {
         <Label className="mt-6 text-center">Creada con formato compatible con ChatGPT</Label>
       </div>
       <Sheet open={confirm} onClose={() => setConfirm(false)} title="¿Eliminar rutina?">
-        <p className="text-mute">Se borrará «{r.name}». Tu historial de entrenamientos se conserva.</p>
+        <p className="text-mute">Se borrará «{r.name}». Tu historial se conserva.</p>
         <div className="flex gap-2 mt-5"><Button variant="secondary" className="flex-1" onClick={() => setConfirm(false)}>Cancelar</Button><Button variant="danger" className="flex-1" onClick={() => { deleteRoutine(r.id); setConfirm(false); pop() }}>Eliminar</Button></div>
       </Sheet>
     </div>

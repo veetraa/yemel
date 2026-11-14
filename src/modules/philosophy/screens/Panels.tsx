@@ -50,7 +50,7 @@ export function TodayPanel() {
         <div className="mt-9 bg-s1 rounded-2xl p-4">
           <Label>Reflexión sugerida · {refl.when.toLowerCase()}</Label>
           <div className="font-bold text-[18px] mt-1.5">{refl.title}</div>
-          <p className="text-[13.5px] text-mute leading-snug mt-1">{level === 'low' ? 'Tu recuperación está baja: hoy encaja mejor calma que exigencia. ' : ''}{refl.intro}</p>
+          <p className="text-[13.5px] text-mute leading-snug mt-1">{refl.intro}</p>
           <Button className="w-full mt-4" onClick={() => push({ name: 'philo.reflection', id: refl.id })}>HACER LA REFLEXIÓN · {refl.minutes} MIN</Button>
         </div>
 
@@ -58,7 +58,7 @@ export function TodayPanel() {
           <button onClick={() => push({ name: 'philo.entry', id: `new:q:${q.id}` })} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="book" size={20} className="text-glow" /><div className="font-bold mt-2.5">Escribir en el diario</div><div className="text-[12.5px] text-mute mt-0.5">{streak > 0 ? `${streak} día${streak > 1 ? 's' : ''} seguido${streak > 1 ? 's' : ''}` : 'Empieza hoy'}</div></button>
           <button onClick={() => setSub('philosophy', 'pillars')} className="bg-s1 rounded-2xl p-4 text-left active:bg-s2"><Icon name="column" size={20} className="text-glow" /><div className="font-bold mt-2.5">Pilares</div><div className="text-[12.5px] text-mute mt-0.5">Disciplina · Autocontrol · Resiliencia</div></button>
         </div>
-        <p className="text-[12px] text-dim mt-6 leading-snug">Tema de hoy: {THEMES.find((t) => t.key === theme)?.label}. Las frases son adaptaciones al español, no traducciones literales.</p>
+        <p className="text-[12px] text-dim mt-6 leading-snug">Tema: {THEMES.find((t) => t.key === theme)?.label}</p>
       </div>
     </div>
   )
@@ -99,7 +99,7 @@ export function ReflectionsPanel() {
   const { push } = useNav()
   return (
     <div className="scroll h-full pb-8"><div className="px-6 pt-3">
-      <p className="text-[13.5px] text-mute leading-relaxed pt-1">Prácticas guiadas de pocos minutos. Al terminar se guardan en tu diario.</p>
+      <p className="text-[13.5px] text-mute leading-relaxed pt-1">Prácticas guiadas de pocos minutos.</p>
       {REFLECTIONS.map((r) => (
         <button key={r.id} onClick={() => push({ name: 'philo.reflection', id: r.id })} className="w-full text-left py-4 border-b border-line/70 last:border-0 active:bg-s1">
           <div className="flex items-center gap-2"><span className="font-bold text-[17px]">{r.title}</span><span className="ml-auto num text-[12.5px] text-mute">{r.minutes} min</span></div>
@@ -141,7 +141,7 @@ export function JournalPanel() {
         </>
       )}
       {journal.length === 0 ? (
-        <div className="text-center px-6 py-12"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="book" size={26} /></div><div className="text-lg font-bold mt-4">Tu diario está vacío</div><p className="text-mute text-[15px] leading-relaxed mt-2">Escribe unas líneas al día o haz una reflexión guiada. Es privado y nunca sale de tu iPhone.</p></div>
+        <div className="text-center px-6 py-12"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="book" size={26} /></div><div className="text-lg font-bold mt-4">Tu diario está vacío</div><p className="text-mute text-[15px] leading-relaxed mt-2">Escribe o haz una reflexión.</p></div>
       ) : (
         <div className="mt-2">{list.map((e) => (
           <button key={e.id} onClick={() => push({ name: 'philo.entry', id: e.id })} className="w-full text-left py-4 border-b border-line/70 last:border-0 active:bg-s1">
@@ -161,7 +161,7 @@ export function FavoritesPanel() {
   const phs = favorites.philosophers.map(philosopherById).filter(Boolean)
   const refs = favorites.reflections.map(reflectionById).filter(Boolean)
   if (!quotes.length && !phs.length && !refs.length) return (
-    <div className="scroll h-full"><div className="text-center px-6 py-16"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="heart" size={26} /></div><div className="text-lg font-bold mt-4">Sin favoritos todavía</div><p className="text-mute text-[15px] leading-relaxed mt-2">Toca «Guardar» en una frase, o el corazón en un filósofo o una reflexión, y aparecerán aquí.</p></div></div>
+    <div className="scroll h-full"><div className="text-center px-6 py-16"><div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="heart" size={26} /></div><div className="text-lg font-bold mt-4">Sin favoritos todavía</div><p className="text-mute text-[15px] leading-relaxed mt-2">Guarda frases con «Guardar».</p></div></div>
   )
   return (
     <div className="scroll h-full pb-8"><div className="px-6 pt-4">

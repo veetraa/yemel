@@ -20,7 +20,7 @@ export function Welcome() {
         <motion.h1 initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15, duration: 0.6 }} className="display text-[64px] leading-[0.9] text-shadow-soft">
           Entrena cada día —<br />supera cada límite
         </motion.h1>
-        <p className="text-white/80 text-[17px] mt-4 leading-snug max-w-[320px]">Fuerza, combate y mente en una sola app. Gratis, sin cuentas y todo en tu iPhone.</p>
+        <p className="text-white/80 text-[17px] mt-4 leading-snug max-w-[320px]">Fuerza, combate y mente. Sin cuentas.</p>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="¿Cómo te llamas? (opcional)" aria-label="Tu nombre"
           className="mt-6 h-12 rounded-full bg-white/10 ring-1 ring-inset ring-white/20 backdrop-blur-xl px-5 text-[16px] placeholder:text-white/45" />
         <div className="grid grid-cols-2 gap-3 mt-4 mb-5">

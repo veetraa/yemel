@@ -2,6 +2,7 @@
  * PROGRESO — estadísticas SEPARADAS por disciplina:
  * General (historial de todo), Gym, Combat y Cuerpo (evolución física).
  */
+import { useState } from 'react'
 import { Header } from '../../../shared/components/ui'
 import { SubTabs } from '../../../shared/components/SubTabs'
 import { useNav } from '../../../nav'
@@ -13,12 +14,12 @@ import { GeneralProgress } from './GeneralProgress'
 const SUBS = [{ key: 'general', label: 'General' }, { key: 'gym', label: 'Gym' }, { key: 'combat', label: 'Combat' }, { key: 'body', label: 'Cuerpo' }]
 
 export function ProgressScreen() {
-  const { sub, setSub } = useNav()
-  const key = sub.progress ?? 'general'
+  const { pop } = useNav()
+  const [key, setKey] = useState('general')
   return (
     <div className="h-full flex flex-col">
-      <Header title="Progreso" large />
-      <SubTabs id="progress" items={SUBS} value={key} onChange={(k) => setSub('progress', k)} />
+      <Header title="Progreso" large onBack={pop} />
+      <SubTabs id="progress" items={SUBS} value={key} onChange={(k) => setKey(k)} />
       <div className="flex-1 min-h-0 relative">
         <div className="absolute inset-0">
           {key === 'general' && <GeneralProgress />}

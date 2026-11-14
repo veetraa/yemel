@@ -29,7 +29,7 @@ export function WeekOverview() {
     <div className="h-full flex flex-col">
       <Header title="Semana y recuperación" onBack={pop} />
       <div className="scroll flex-1 px-6 pb-10">
-        <p className="text-mute text-[14.5px] leading-relaxed">Vista global. Los días de <b className="text-white">gimnasio</b> se editan en Gym, las sesiones de <b className="text-white">combate</b> en Combat, y aquí eliges tus días de <b className="text-white">descanso completo</b>. Cualquier cambio se comprueba contra las reglas de recuperación.</p>
+        <p className="text-mute text-[14.5px] leading-relaxed">Gimnasio en <b className="text-white">Gym</b> · combate en <b className="text-white">Combat</b> · descansos aquí.</p>
         <div className="grid grid-cols-3 gap-3 mt-5">
           <Count label="Gimnasio" n={gymN} target={profile.weeklyGoal} />
           <Count label="Combate" n={count('combat')} target={profile.contactSessionsPerWeek} />
@@ -56,7 +56,7 @@ export function WeekOverview() {
 
         <Label className="mt-9">Días de descanso completo</Label>
         <div className="mt-3"><WeekdayChips value={profile.restDays ?? []} onChange={(v) => { const r = setRestDays(v); if (r.ok) { setBlocked([]); showToast('Descansos actualizados') } else setBlocked(errorsOf(r.issues)) }} /></div>
-        <p className="text-[12px] text-dim mt-2 leading-snug">Los demás días libres son de recuperación activa (movilidad). Necesitas al menos un descanso completo.</p>
+        <p className="text-[12px] text-dim mt-2 leading-snug">Mínimo un descanso completo.</p>
         {blocked.length > 0 && (
           <div className="mt-4 rounded-xl bg-danger/10 px-3.5 py-3" role="alert">
             <div className="text-[12px] font-bold uppercase tracking-wider text-danger">No se puede aplicar</div>
@@ -77,7 +77,7 @@ export function WeekOverview() {
         <Button variant="ghost" size="md" className="w-full mt-8 border border-line" onClick={() => setReset(true)}>Restaurar semana por defecto</Button>
       </div>
       <Sheet open={reset} onClose={() => setReset(false)} title="¿Restaurar la semana?">
-        <p className="text-mute leading-relaxed">Vuelve a la semana del propietario: GYM A/B/C (lun, jue, sáb), combate (mar, vie) y descanso el domingo. Tu historial no se toca.</p>
+        <p className="text-mute leading-relaxed">Vuelve a la semana original. Tu historial no se toca.</p>
         <div className="mt-5 flex gap-2"><Button variant="secondary" className="flex-1" onClick={() => setReset(false)}>Cancelar</Button><Button className="flex-1" onClick={() => { resetWeek(); setReset(false); showToast('Semana restaurada') }}>Restaurar</Button></div>
       </Sheet>
     </div>

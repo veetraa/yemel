@@ -53,7 +53,7 @@ export function BodySection() {
           <div className="mt-3"><LineChart unit={unit} points={series} /></div>
         </div>
       ) : (
-        <p className="text-[14px] text-mute leading-relaxed bg-s1 rounded-2xl p-4">Aún no hay mediciones de {METRIC_LABEL[metric].toLowerCase()}. Solo se muestran los datos que tú registres.</p>
+        <p className="text-[14px] text-mute leading-relaxed bg-s1 rounded-2xl p-4">Aún no hay mediciones de {METRIC_LABEL[metric].toLowerCase()}.</p>
       )}
       <Button variant="secondary" size="md" className="w-full" onClick={() => setOpen(true)}><Icon name="plus" size={18} /> Registrar medidas</Button>
 
@@ -85,7 +85,7 @@ export function BodySection() {
       )}
 
       <Sheet open={open} onClose={() => setOpen(false)} title="Registrar medidas">
-        <p className="text-[13.5px] text-mute leading-relaxed">Rellena solo lo que hayas medido: lo que dejes vacío no se guarda.</p>
+        <p className="text-[13.5px] text-mute leading-relaxed">Rellena solo lo medido.</p>
         <div className="space-y-3 mt-4">
           <TextInput label="Fecha" type="date" value={d.date} onChange={(v) => setD({ ...d, date: v || dateKey() })} />
           <div className="grid grid-cols-2 gap-3">

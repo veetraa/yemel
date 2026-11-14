@@ -38,9 +38,9 @@ Día 2 - Tirón
 - Remo con barra 3x10 - 90s`
 
 const CFG: Record<ImportScope, { title: string; intro: string; example: string; prompt: () => string; text: boolean; sample?: string; sections: string }> = {
-  gym: { title: 'Importar rutina de gym', intro: 'Pídele a ChatGPT una rutina de musculación con nuestro prompt, pega la respuesta y revísala antes de guardar. Aquí solo entran rutinas de gimnasio y ejercicios de fuerza.', example: SCHEMA_EXAMPLE, prompt: gymChatGptPrompt, text: true, sample: SAMPLE_JSON, sections: 'days, customExercises' },
-  combat: { title: 'Importar sesiones de combate', intro: 'Importa tu planificación de combate (MMA, BJJ, boxeo, kickboxing, wrestling). Aquí solo entran sesiones de contacto: las rutinas de musculación se importan desde Gym.', example: COMBAT_EXAMPLE, prompt: combatPrompt, text: false, sections: 'sessions' },
-  hybrid: { title: 'Planificación híbrida', intro: 'Un único JSON con rutina, semana, combate y atleta. Cada parte se guarda en su propio módulo (Gym, Combat, Perfil) sin mezclarse.', example: HYBRID_EXAMPLE, prompt: chatGptPrompt, text: true, sections: 'days, week, mma, customExercises, athlete' },
+  gym: { title: 'Importar rutina de gym', intro: 'Copia el prompt, pégalo en ChatGPT y pega aquí la respuesta.', example: SCHEMA_EXAMPLE, prompt: gymChatGptPrompt, text: true, sample: SAMPLE_JSON, sections: 'days, customExercises' },
+  combat: { title: 'Importar sesiones de combate', intro: 'Pega aquí tu planificación de combate.', example: COMBAT_EXAMPLE, prompt: combatPrompt, text: false, sections: 'sessions' },
+  hybrid: { title: 'Planificación híbrida', intro: 'Un JSON con rutina, semana, combate y atleta.', example: HYBRID_EXAMPLE, prompt: chatGptPrompt, text: true, sections: 'days, week, mma, customExercises, athlete' },
 }
 
 export function ImportScreen({ scope }: { scope: ImportScope }) {
@@ -180,7 +180,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
               <div className="mt-8 space-y-2">
                 {parseErrors.length ? (
                   <>
-                    <p className="text-[13px] text-mute leading-snug">Hay errores: lo marcado como «Error» se omitiría. Corrige el texto y vuelve a analizar para no perder nada, o importa solo lo válido.</p>
+                    <p className="text-[13px] text-mute leading-snug">Lo marcado como «Error» se omitirá.</p>
                     <Button variant="secondary" className="w-full" onClick={() => save(!blocked)}>IMPORTAR SOLO LO VÁLIDO</Button>
                   </>
                 ) : blocked ? (
@@ -195,7 +195,7 @@ export function ImportScreen({ scope }: { scope: ImportScope }) {
       </div>
 
       <Sheet open={help} onClose={() => setHelp(false)} title="Formato JSON">
-        <p className="text-mute text-[14px] leading-relaxed">Secciones admitidas aquí: <code>{cfg.sections}</code>. También acepta claves en español. El descanso va en segundos; los días, por nombre o 0–6 (0 = lunes).</p>
+        <p className="text-mute text-[14px] leading-relaxed">Secciones: <code>{cfg.sections}</code>. Descanso en segundos; días 0–6 (0 = lunes).</p>
         <pre className="mt-4 bg-s2 rounded-xl p-4 text-[11.5px] leading-snug overflow-x-auto font-mono select-text">{cfg.example}</pre>
         <div className="flex gap-2 mt-4">
           <Button size="md" variant="secondary" className="flex-1" onClick={async () => showToast((await copyText(cfg.example)) ? 'Formato copiado' : 'No se pudo copiar')}>Copiar formato</Button>
