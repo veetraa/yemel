@@ -30,8 +30,8 @@ export function GymProgress() {
   if (!sessions.length) {
     return (
       <div className="scroll h-full">
-        <Empty icon="chart" title="Aún no hay datos de gimnasio" text="Completa tu primer entrenamiento.">
-          <button onClick={() => go('gym', 'today')} className="h-12 rounded-2xl bg-accent text-black font-bold">Ir a Gym</button>
+        <Empty icon="chart" title="Aún no hay datos de gimnasio" text="Tu historial aparecerá aquí al terminar tu primer entrenamiento.">
+          <button onClick={() => go('gym', 'today')} className="h-12 rounded-2xl bg-accent text-black font-bold">Comenzar entrenamiento</button>
         </Empty>
       </div>
     )

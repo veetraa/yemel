@@ -18,7 +18,7 @@ export function SportHistory({ sport, limit = 12 }: { sport: CombatSport; limit?
     <div className="text-center px-6 py-12">
       <div className="mx-auto w-14 h-14 rounded-full bg-s2 grid place-items-center text-mute"><Icon name="glove" size={26} /></div>
       <div className="text-lg font-bold mt-4">Sin sesiones de {sport}</div>
-      <p className="text-mute text-[15px] leading-relaxed mt-2">Registra una sesión para ver tu historial.</p>
+      <p className="text-mute text-[15px] leading-relaxed mt-2">Tu historial aparecerá aquí.</p>
     </div>
   )
   return (

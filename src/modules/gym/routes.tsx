@@ -13,10 +13,10 @@ import { SessionDetail, SummaryScreen } from './screens/SessionDetail'
 import { Picker, Workout } from './screens/Train'
 
 const SUBS = [
-  { key: 'today', label: 'Hoy' },
+  { key: 'today', label: 'Entrenar' },
   { key: 'routines', label: 'Rutinas' },
-  { key: 'library', label: 'Biblioteca' },
-  { key: 'loads', label: 'Cargas' },
+  { key: 'library', label: 'Ejercicios' },
+  { key: 'loads', label: 'Pesos' },
 ]
 
 export function GymRoot() {

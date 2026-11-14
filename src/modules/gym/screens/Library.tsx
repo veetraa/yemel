@@ -3,6 +3,7 @@ import { ExerciseFigure } from '../components/ExerciseFigure'
 import { Exercise3D } from '../components/Exercise3D'
 import { HowToSheet } from '../components/HowToSheet'
 import { Icon } from '../../../shared/components/Icon'
+import { Hint } from '../../../shared/components/Hint'
 import { Button, Chip, Header, Label } from '../../../shared/components/ui'
 import { MUSCLES, exerciseById, searchExercises } from '../data/exercises'
 import { exerciseSeries } from '../services/workoutService'
@@ -19,6 +20,7 @@ export function LibraryPanel() {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 pt-3">
+        <Hint id="gym-library" className="mb-3">Toca un ejercicio para ver su modelo 3D y cómo se hace.</Hint>
         <div className="flex items-center gap-2 bg-s2 rounded-xl h-11 px-3">
           <Icon name="search" size={18} className="text-mute" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar ejercicio, músculo o equipo" className="bg-transparent flex-1" />

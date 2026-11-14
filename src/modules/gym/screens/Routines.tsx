@@ -1,4 +1,5 @@
 import { Icon } from '../../../shared/components/Icon'
+import { Hint } from '../../../shared/components/Hint'
 import { Button, Chip, Empty, Label } from '../../../shared/components/ui'
 import { WEEKDAYS_SHORT, formatDateShort, uid } from '../../../shared/lib/utils'
 import { useNav } from '../../../nav'
@@ -21,6 +22,7 @@ export function RoutinesPanel() {
 
   return (
     <div className="scroll h-full pb-8">
+      <Hint id="gym-routines" className="mx-6 mt-4">Aquí están tus rutinas. Importa una de ChatGPT o crea la tuya; pulsa una para verla o editarla.</Hint>
       <div className="px-6 flex gap-2 pt-4">
         <Button size="md" onClick={() => push({ name: 'gym.import' })} className="flex-1"><Icon name="upload" size={18} /> Importar</Button>
         <Button size="md" variant="secondary" onClick={create} className="flex-1"><Icon name="plus" size={18} /> Crear</Button>
@@ -46,8 +48,9 @@ export function RoutinesPanel() {
       <div className="px-6 mt-8">
         <Label>Mis rutinas</Label>
         {routines.length === 0 ? (
-          <Empty icon="list" title="Sin rutinas todavía" text="Importa o crea una.">
-            <Button variant="secondary" size="md" onClick={() => push({ name: 'gym.import' })}>Ver cómo importar</Button>
+          <Empty icon="list" title="Sin rutinas todavía" text="Añade una rutina para entrenar con tu plan.">
+            <Button size="md" onClick={() => push({ name: 'gym.import' })}><Icon name="upload" size={18} /> Importar rutina</Button>
+            <Button variant="secondary" size="md" onClick={create}><Icon name="plus" size={18} /> Crear desde cero</Button>
           </Empty>
         ) : (
           <div className="mt-2">
