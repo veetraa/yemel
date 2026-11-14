@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from '../../../shared/components/Icon'
 import { Button, Label, Sheet } from '../../../shared/components/ui'
+import { DemoPlayer } from './DemoPlayer'
 import { imagesOf, type LibExercise } from '../library/library'
 import { MAX_VIDEO_MB, VIDEOS } from '../resources/catalog'
 import { getUserVideo, removeUserVideo, saveUserVideo, videoUrl, type UserVideo } from '../resources/userVideos'
@@ -51,7 +52,9 @@ export function HowToSheet({ id, name, lib, steps, open, onClose }: { id: string
   return (
     <Sheet open={open} onClose={onClose} title={name}>
       <div className="space-y-4">
-        {playing ? (
+        {official ? (
+          <div className="-mx-6"><DemoPlayer video={official} name={name} /><p className="mx-6 mt-3 text-[12px] text-dim leading-snug">{official.credit} · {official.license}</p></div>
+        ) : playing ? (
           <>
             <video ref={vid} key={src} src={src} controls playsInline preload="metadata" onError={() => setFailed(true)}
               className="mx-auto block w-auto max-w-full max-h-[56dvh] rounded-2xl bg-black" aria-label={`Vídeo: ${name}`} />
@@ -59,7 +62,6 @@ export function HowToSheet({ id, name, lib, steps, open, onClose }: { id: string
               <Button variant="secondary" size="md" className="flex-1" onClick={replay}><Icon name="play" size={16} /> Repetir</Button>
               {!official && <Button variant="secondary" size="md" className="flex-1" onClick={async () => { await removeUserVideo(id); setMine(undefined) }}><Icon name="trash" size={16} /> Quitar</Button>}
             </div>
-            {official && <p className="text-[12px] text-dim leading-snug">{official.credit} · {official.license}</p>}
           </>
         ) : (
           <>
