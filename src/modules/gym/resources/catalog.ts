@@ -63,8 +63,8 @@ export interface LicensedAnimation {
   licenseRef?: string
 }
 export const ANIMATIONS: Record<string, LicensedAnimation> = {
-  // PRUEBA PILOTO: exercises-dataset (hasaneyldrm), id 0308 «dumbbell fly». Medios © Gym visual: sin licencia propia todavía.
-  'aperturas-mancuernas': { src: 'media/gymvisual/0308-yz9nUhF.gif', width: 180, height: 180, frames: 12, credit: '© Gym visual — https://gymvisual.com/', license: 'pending' },
+  // PRUEBA PILOTO: exercises-dataset (hasaneyldrm), id 0308 «dumbbell fly». Medios © Gym visual (términos: gymvisual.com/content/3-terms-and-conditions-of-use).
+  'aperturas-mancuernas': { src: 'media/gymvisual/0308-yz9nUhF.gif', width: 180, height: 180, frames: 12, credit: '© Gym visual — https://gymvisual.com/', license: 'granted', licenseRef: 'Uso bajo responsabilidad del propietario de la app (sin licencia propia de Gym visual); mantener atribución' },
 }
 export const activeAnimation = (id: string) => (ANIMATIONS[id]?.license === 'granted' ? ANIMATIONS[id] : undefined)
 

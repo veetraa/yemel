@@ -3,7 +3,8 @@ import { Icon } from '../../../shared/components/Icon'
 import { Button, Label, Sheet } from '../../../shared/components/ui'
 import { DemoPlayer } from './DemoPlayer'
 import { imagesOf, type LibExercise } from '../library/library'
-import { MAX_VIDEO_MB, VIDEOS } from '../resources/catalog'
+import { MAX_VIDEO_MB, VIDEOS, activeAnimation } from '../resources/catalog'
+import { LoopAnimation } from './LoopAnimation'
 import { getUserVideo, isImageMedia, removeUserVideo, saveUserVideo, videoUrl, type UserVideo } from '../resources/userVideos'
 
 /**
@@ -21,6 +22,7 @@ export function HowToSheet({ id, name, lib, steps, open, onClose }: { id: string
   const vid = useRef<HTMLVideoElement>(null)
   const file = useRef<HTMLInputElement>(null)
   const img = imagesOf(lib)
+  const loop = activeAnimation(id)
 
   useEffect(() => { if (open) { setFailed(false); setErr(''); setAdding(false); void getUserVideo(id).then(setMine) } }, [open, id])
 
@@ -66,7 +68,8 @@ export function HowToSheet({ id, name, lib, steps, open, onClose }: { id: string
           </>
         ) : (
           <>
-            {img && (
+            {loop && <div className="-mx-6"><LoopAnimation anim={loop} name={name} /></div>}
+            {!loop && img && (
               <div className={`grid gap-2 ${img.end ? 'grid-cols-2' : 'grid-cols-1'}`}>
                 {[img.start ?? img.main, img.end].filter(Boolean).map((s, i) => (
                   <figure key={s} className="rounded-2xl overflow-hidden bg-white/95 relative aspect-square">

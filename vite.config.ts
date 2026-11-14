@@ -34,6 +34,7 @@ export default defineConfig({
         runtimeCaching: [
           { urlPattern: /\/data\/library\/(index|ex\/[^/]+)\.json$/, handler: 'StaleWhileRevalidate', options: { cacheName: 'library-data', expiration: { maxEntries: 1000 } } },
           { urlPattern: /\/data\/library\/img\/.+\.webp$/, handler: 'CacheFirst', options: { cacheName: 'library-img', expiration: { maxEntries: 150 } } },
+          { urlPattern: /\/media\/.+\.(gif|mp4|webm)$/, handler: 'CacheFirst', options: { cacheName: 'exercise-media', expiration: { maxEntries: 60 } } },
           { urlPattern: /^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\//, handler: 'CacheFirst', options: { cacheName: 'library-photos', expiration: { maxEntries: 80 }, cacheableResponse: { statuses: [0, 200] } } },
         ],
       },
