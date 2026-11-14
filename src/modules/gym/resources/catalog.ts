@@ -14,8 +14,10 @@ import { EXERCISES, exerciseById, type Exercise } from '../data/exercises'
 import { TEMPLATES, type Template } from '../data/poses'
 
 export interface VideoAsset {
-  /** Ruta relativa a `public/` */
+  /** Ruta relativa a `public/` (MP4 H.264: el más compatible con Safari de iPhone) */
   src: string
+  /** Alternativa WebM opcional */
+  webm?: string
   poster?: string
   seconds: number
   /** Autor y licencia del recurso (obligatorios: solo se admiten recursos libres o propios) */
