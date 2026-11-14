@@ -62,7 +62,7 @@ export function ExerciseDetail({ id }: { id: string }) {
     <div className="h-full flex flex-col">
       <Header onBack={pop} />
       <div className="scroll flex-1 pb-10">
-        <Exercise3D key={e.id} anim={e.anim} primary={e.primary} />
+        <Exercise3D key={e.id} anim={e.anim} primary={e.primary} secondary={e.secondary} />
         <div className="px-6 mt-6">
           <h1 className="display text-[44px]">{e.name}</h1>
           <Button variant="secondary" size="md" className="w-full mt-4 tracking-[0.06em]" onClick={() => setHowTo(true)}><Icon name="play" size={16} /> CÓMO SE HACE</Button>
