@@ -3,7 +3,7 @@
  * antiguo) cae a localStorage y, en último caso, a memoria.
  */
 const DB_NAME = 'forma-db'
-const STORES = ['routines', 'sessions', 'kv', 'body', 'wellness', 'activities', 'journal', 'videos', 'philo'] as const
+const STORES = ['routines', 'sessions', 'kv', 'body', 'wellness', 'activities', 'journal', 'videos', 'philo', 'gymvideos'] as const
 /** Almacenes del núcleo compartido (los módulos con datos propios limpian los suyos) */
 const CORE = ['routines', 'sessions', 'kv', 'body', 'wellness', 'activities'] as const
 export type StoreName = (typeof STORES)[number]
@@ -16,7 +16,7 @@ function open(): Promise<IDBDatabase | null> {
   dbPromise = new Promise((resolve) => {
     if (typeof indexedDB === 'undefined') return resolve(null)
     try {
-      const req = indexedDB.open(DB_NAME, 4)
+      const req = indexedDB.open(DB_NAME, 5)
       req.onupgradeneeded = () => {
         const db = req.result
         for (const s of STORES) if (!db.objectStoreNames.contains(s)) db.createObjectStore(s)

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { ExerciseFigure } from '../components/ExerciseFigure'
+import { Exercise3D } from '../components/Exercise3D'
+import { HowToSheet } from '../components/HowToSheet'
 import { Icon } from '../../../shared/components/Icon'
-import { Chip, Header, Label } from '../../../shared/components/ui'
+import { Button, Chip, Header, Label } from '../../../shared/components/ui'
 import { MUSCLES, exerciseById, searchExercises } from '../data/exercises'
 import { exerciseSeries } from '../services/workoutService'
 import { formatDateShort, formatNumber, toDisplay } from '../../../shared/lib/utils'
@@ -49,6 +51,7 @@ export function ExerciseDetail({ id }: { id: string }) {
   const { sessions, settings } = useStore()
   const e = exerciseById(id)
   const series = useMemo(() => (e ? exerciseSeries(sessions, e.name, e.id) : []), [sessions, e])
+  const [howTo, setHowTo] = useState(false)
   if (!e) return null
   const best = series.length ? series.reduce((a, b) => (b.e1rm > a.e1rm ? b : a)) : null
   const last = series[series.length - 1]
@@ -57,12 +60,10 @@ export function ExerciseDetail({ id }: { id: string }) {
     <div className="h-full flex flex-col">
       <Header onBack={pop} />
       <div className="scroll flex-1 pb-10">
-        <div className="mx-6 rounded-3xl bg-s1 aspect-[4/3] grid place-items-center overflow-hidden relative">
-          <ExerciseFigure anim={e.anim} primary={e.primary} className="w-[88%] h-[92%]" />
-          <span className="absolute left-4 bottom-3 text-[11px] font-semibold uppercase tracking-wider text-dim">Ejecución</span>
-        </div>
+        <Exercise3D key={e.id} anim={e.anim} primary={e.primary} />
         <div className="px-6 mt-6">
           <h1 className="display text-[44px]">{e.name}</h1>
+          <Button variant="secondary" size="md" className="w-full mt-4 tracking-[0.06em]" onClick={() => setHowTo(true)}><Icon name="play" size={16} /> CÓMO SE HACE</Button>
 
           <div className="mt-6 grid grid-cols-1 gap-5">
             <div>
@@ -112,6 +113,7 @@ export function ExerciseDetail({ id }: { id: string }) {
           </ul>
         </div>
       </div>
+      <HowToSheet id={e.id} open={howTo} onClose={() => setHowTo(false)} />
     </div>
   )
 }
